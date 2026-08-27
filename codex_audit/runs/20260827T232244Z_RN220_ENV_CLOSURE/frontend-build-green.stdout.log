@@ -1,0 +1,13 @@
+
+> @research-navigator/web@2.2.0 build E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web
+> tsc -b && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4885 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.53 kB │ gzip:   0.39 kB
+dist/assets/index-CC2Bg5lk.css     13.35 kB │ gzip:   4.05 kB
+dist/assets/index-CVqVsP6o.js   1,244.06 kB │ gzip: 396.26 kB
+✓ built in 8.26s

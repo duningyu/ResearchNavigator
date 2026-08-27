@@ -1,0 +1,887 @@
+stderr | src/components/PaperIntelligenceCards.test.tsx > PaperIntelligenceCards > renders provenance-aware author and dataset cards without inventing missing values
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/EvaluationsPage.test.tsx > EvaluationsPage > does not describe simulated, LLM or developer ratings as real expert validation
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/components/EvidenceWorkflowPanel.test.tsx > EvidenceWorkflowPanel > renders terminal status, strongest evidence, source failure and event timeline
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/EvaluationsPage.test.tsx > EvaluationsPage > does not describe simulated, LLM or developer ratings as real expert validation
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/DirectionMapPage.test.tsx > DirectionMapPage > clusters explicitly selected favorite papers and always shows the classification disclaimer
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/DirectionMapPage.test.tsx > DirectionMapPage > clusters explicitly selected favorite papers and always shows the classification disclaimer
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+TypeError: Cannot destructure property 'basename' of 'React10.useContext(...)' as it is null.
+    at LinkWithRef (file:///E:/AI_Projects/ResearchNavigator_2.2.0_ENV_CLOSURE/ResearchNavigator_2.2.0_evidence_platform_2026-08-28/apps/web/node_modules/.pnpm/react-router@7.18.2_react-d_ebd9f6aaf916bfadf05eff1070ce6f8a/node_modules/react-router/dist/development/chunk-62JRHF6Z.mjs:10518:11)
+    at Object.react_stack_bottom_frame (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:25904:20)
+    at renderWithHooks (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:7662:22)
+    at updateForwardRef (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:9724:19)
+    at beginWork (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:12117:18)
+    at runWithFiberInDEV (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at performUnitOfWork (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+    at workLoopSync (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+    at renderRootSync (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+    at performWorkOnRoot (E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+An error occurred in the <Link> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/components/EvidenceWorkflowPanel.test.tsx > EvidenceWorkflowPanel > allows a pending workflow to run or be cancelled
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/paperSelectionExperience.test.tsx > selection-first paper workflow > restores a persisted Top50 search session and paginates ten papers per page
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/DirectionMapPage.test.tsx > DirectionMapPage > clusters explicitly selected favorite papers and always shows the classification disclaimer
+TestingLibraryElementError: Unable to find an element with the text: /不是学术领域的客观分类/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+
+Ignored nodes: comments, script, style
+<body>
+  <div />
+</body>
+ ❯ waitForWrapper node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/DirectionMapPage.test.tsx:37:25
+     35|     });
+     36|     render(<DirectionMapPage />);
+     37|     expect(await screen.findByText(/不是学术领域的客观分类/)).toBeInTheDocument();
+       |                         ^
+     38|     fireEvent.mouseDown(screen.getByLabelText('研究项目'));
+     39|     fireEvent.click(await screen.findByText('TSAD'));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+TestingLibraryElementError: Found multiple elements with the text: 缺失字段
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<span>
+  缺失字段
+</span>
+
+Ignored nodes: comments, script, style
+<span>
+  缺失字段
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"
+      style="width: 100%;"
+    >
+      <div
+        class="ant-space-item"
+      >
+        <div
+          class="ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+        >
+          <div
+            class="ant-card-head"
+          >
+            <div
+              class="ant-card-head-wrapper"
+            >
+              <div
+                class="ant-card-head-title"
+              >
+                Evidence Acquisition for Industrial Alerts
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-card-body"
+          >
+            <div
+              class="ant-descriptions ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+            >
+              <div
+                class="ant-descriptions-view"
+              >
+                <table>
+                  <tbody>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          作者
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未知
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          年份 / Venue
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未知
+                           / 
+                          未知
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          DOI / arXiv
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          无
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          开放状态
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未核验
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          摘要可信状态
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未验证或不存在
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          摘要
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未在当前可访问文本中找到。
+                        </span>
+                      </td>
+              ...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/pages/PaperPage.test.tsx:100:19
+     98|     expect(await screen.findByText('证据等级：metadata_only')).toBeInTheDoc…
+     99|     expect(screen.getAllByText('未在当前可访问文本中找到。').length).toBeGreaterTha…
+    100|     expect(screen.getByText('缺失字段').closest('tr')).toHaveTextContent('…
+       |                   ^
+    101| 
+    102|     fireEvent.click(screen.getByRole('button', { name: '获取更多证据并重新分析' }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/components/EvidenceWorkflowPanel.test.tsx > EvidenceWorkflowPanel > renders terminal status, strongest evidence, source failure and event timeline
+TestingLibraryElementError: Found multiple elements with the text: abstract_only
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<span
+  class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+>
+  abstract_only
+</span>
+
+Ignored nodes: comments, script, style
+<span>
+  abstract_only
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+    >
+      <div
+        class="ant-card-head"
+      >
+        <div
+          class="ant-card-head-wrapper"
+        >
+          <div
+            class="ant-card-head-title"
+          >
+            证据获取工作流
+          </div>
+          <div
+            class="ant-card-extra"
+          >
+            <div
+              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+              style="flex-wrap: wrap;"
+            >
+              <div
+                class="ant-space-item"
+              >
+                <span
+                  class="ant-tag ant-tag-filled ant-tag-orange css-dev-only-do-not-override-viwxw0 css-var-root"
+                >
+                  partial
+                </span>
+              </div>
+              <div
+                class="ant-space-item"
+              >
+                <span
+                  class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+                >
+                  abstract_only
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-card-body"
+      >
+        <div
+          class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-middle ant-space-gap-col-middle css-var-root"
+          style="width: 100%;"
+        >
+          <div
+            class="ant-space-item"
+          >
+            <div
+              class="ant-descriptions ant-descriptions-small ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+            >
+              <div
+                class="ant-descriptions-view"
+              >
+                <table>
+                  <tbody>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          工作流 ID
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          #
+                          31
+                        </span>
+                      </td>
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          最终证据等级
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          abstract_only
+                        </span>
+                      </td>
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          执行次数
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          1
+                          /
+                          3
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          terminal
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          true
+                        </span>
+                      </td>
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          开始时间
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          2026-08-28T01:00:00Z
+                        </span>
+                      </td>
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          结束时间
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          2026-08-28T01:01:00Z
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-space-item"
+          >
+            <div
+              class="ant-alert ant-alert-warning ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-viwxw0"
+              data-show="true"
+              role="alert"
+            >
+              <span
+                class="ant-alert-icon"
+              >
+                <span
+                  aria-label="exclamation-circle"
+                  class="anticon anticon-exclamation-circle"
+                  role="img"
+                >
+                  <svg
+                    aria-hidden="true"
+                    data-icon="exclamation-circle"
+                    fill="currentColor"
+                    focusable="false"
+                    height="1em"
+                    viewBox="64 64 896 896"
+                    width="1em"
+                  >
+                    <path
+                      d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 010-96 48.01 48.01 0 010 96z"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <div
+                class="ant-alert-section"
+              >
+                <div
+                  class="ant-alert-title"
+                >
+                  工作流存在降级或失败步骤
+                </div>
+                <div
+                  class="ant-alert-description"
+                >
+                  OpenAlex rate limited
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-space-item"
+          >
+            <div
+              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+              style="flex-wrap: wrap;"
+            >
+              <div
+                class="ant-space-item"
+              >
+                <span
+                  class="ant-tag ant-tag-filled ant-tag-orange css-dev-only-do-not-override-viwxw0 css-var-root"
+                >
+                  openalex
+                  : 
+                  rate_limited
+                </span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-space-item"
+          >
+            <div
+              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+              style="flex-wrap: wrap;"
+            >
+              <div
+                class="ant-space-item"
+              >
+                <button
+                  class="ant-btn css-dev-only-do-not-override-viwxw0 css-var-root ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                  type="button"
+                >
+                  <span>
+                    刷新状态
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-space-item"
+          >
+            <div
+              class="ant-list ant-list-split css-dev-only-do-not-override-viwxw0 css-var-root"
+            >
+              <div
+                class="ant-list-header"
+              >
+                <span
+                  class="ant-typography css-dev-only-do-not-override-viwxw0 css-var-root"
+                >
+                  <strong>
+                    证据工作流时间线
+                  </strong>
+                </span>
+              </div>
+              <div
+                aria-busy="false"
+                aria-live="polite"
+                class="ant-spin css-dev-only-do-not-override-viwxw0 css-var-root"
+              >
+                <div
+                  class="ant-spin-container"
+                >
+                  <ul
+                    class="ant-list-items ant-list-container css-var-root"
+                  >
+                    <li
+                      class="ant-list-item"
+                    >
+                      <div
+                        class="ant-list-item-meta"
+                      >
+                        <div
+                          class="ant-list-item-meta-content"
+                        >
+                          <h4
+                            class="ant-list-item-meta-title"
+                          >
+                            <div
+                              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+                            >
+                              <div
+                                class="ant-space-item"
+                              >
+                                <span
+                                  class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+                                >
+                                  abstract_acquisition
+                                </span>
+                              </div>
+                              <div
+                                class="ant-space-item"
+                              >
+                                <span
+                                  class="ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"
+                                >
+                                  2026-08-28T01:00:10Z
+                                </span>
+                              </div>
+                            </div>
+                          </h4>
+                          <div
+                            class="ant-list-item-meta-description"
+                          >
+                            <pre
+                              class="inline-json"
+                            >
+                              {
+  "outcome": "abstract_acquired",
+  "evidence_after": "abstract_only"
+}
+                            </pre>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li
+                      class="ant-list-item"
+                    >
+                      <div
+                        class="ant-list-item-meta"
+                      >
+                        <div
+                          class="ant-list-item-meta-content"
+                        >
+                          <h4
+                            class="ant-list-item-meta-title"
+                          >
+                            <div
+                              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+                            >
+                              <div
+                                class="ant-space-item"
+                              >
+                                <span
+                                  class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+                                >
+                                  oa_location_discovery
+                                </span>
+                              </div>
+                              <div
+                                class="ant-space-item"
+                              >
+                                <span
+                                  class="ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"
+                                >
+                                  2026-08-28T01:00:20Z
+                                </span>
+                              </div>
+                            </div>
+                          </h4>
+                          <div
+                            class="ant-list-item-meta-description"
+                          >
+                            <pre
+                              class="inline-json"
+                            >
+                              {
+  "error": "HTTP 429"
+}
+                            </pre>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/EvidenceWorkflowPanel.test.tsx:34:19
+     32|     render(<EvidenceWorkflowPanel workflow={workflow} busy={false} onR…
+     33|     expect(screen.getByText('partial')).toBeInTheDocument();
+     34|     expect(screen.getByText('abstract_only')).toBeInTheDocument();
+       |                   ^
+     35|     expect(screen.getByText(/OpenAlex rate limited/)).toBeInTheDocumen…
+     36|     expect(screen.getByText(/HTTP 429/)).toBeInTheDocument();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/components/PaperIntelligenceCards.test.tsx > PaperIntelligenceCards > renders provenance-aware author and dataset cards without inventing missing values
+TestingLibraryElementError: Found multiple elements with the text: SWaT
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<strong>
+  SWaT
+</strong>
+
+Ignored nodes: comments, script, style
+<span
+  class="ant-descriptions-item-content"
+>
+  SWaT
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ant-row css-dev-only-do-not-override-viwxw0 css-var-root"
+      style="margin-inline: -8px; row-gap: 16px;"
+    >
+      <div
+        class="ant-col ant-col-xs-24 ant-col-xl-12 css-dev-only-do-not-override-viwxw0 css-var-root"
+        style="padding-inline: 8px;"
+      >
+        <div
+          class="ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+        >
+          <div
+            class="ant-card-head"
+          >
+            <div
+              class="ant-card-head-wrapper"
+            >
+              <div
+                class="ant-card-head-title"
+              >
+                作者卡（来源可验证，不按姓名强制合并）
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-card-body"
+          >
+            <div
+              class="ant-list ant-list-split css-dev-only-do-not-override-viwxw0 css-var-root"
+            >
+              <div
+                aria-busy="false"
+                aria-live="polite"
+                class="ant-spin css-dev-only-do-not-override-viwxw0 css-var-root"
+              >
+                <div
+                  class="ant-spin-container"
+                >
+                  <ul
+                    class="ant-list-items ant-list-container css-var-root"
+                  >
+                    <li
+                      class="ant-list-item"
+                    >
+                      <div
+                        class="ant-card ant-card-bordered ant-card-small css-dev-only-do-not-override-viwxw0 css-var-root"
+                        style="width: 100%;"
+                      >
+                        <div
+                          class="ant-card-head"
+                        >
+                          <div
+                            class="ant-card-head-wrapper"
+                          >
+                            <div
+                              class="ant-card-head-title"
+                            >
+                              <div
+                                class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+                                style="flex-wrap: wrap;"
+                              >
+                                <div
+                                  class="ant-space-item"
+                                >
+                                  <span
+                                    class="ant-typography css-dev-only-do-not-override-viwxw0 css-var-root"
+                                  >
+                                    <strong>
+                                      A. Researcher
+                                    </strong>
+                                  </span>
+                                </div>
+                                <div
+                                  class="ant-space-item"
+                                >
+                                  <span
+                                    class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+                                  >
+                                    resolved_identifier
+                                  </span>
+                                </div>
+                                <div
+                                  class="ant-space-item"
+                                >
+                                  <span
+                                    class="ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"
+                                  >
+                                    作者顺序 #
+                                    1
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          class="ant-card-body"
+                        >
+                          <div
+                            class="ant-descriptions ant-descriptions-small css-dev-only-do-not-override-viwxw0 css-var-root"
+                          >
+                            <div
+                              class="ant-descriptions-view"
+                            >
+                              <table>
+                                <tbody>
+                                  <tr
+                                    class="ant-descriptions-row"
+                                  >
+                                    <td
+                                      class="ant-descriptions-item"
+                                      colspan="1"
+                                    >
+                                      <div
+                                        class="ant-descriptions-item-container"
+                                      >
+                                        <span
+                                          class="ant-descriptions-item-label"
+                                        >
+                                          ORCID
+                                        </span>
+                                        <span
+                                          class="ant-descriptions-item-content"
+                                        >
+                                          未在当前可访问证据中找到。
+         ...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/PaperIntelligenceCards.test.tsx:21:19
+     19|     expect(screen.getByText('A. Researcher')).toBeInTheDocument();
+     20|     expect(screen.getByText('resolved_identifier')).toBeInTheDocument(…
+     21|     expect(screen.getByText('SWaT')).toBeInTheDocument();
+       |                   ^
+     22|     expect(screen.getByText('mentioned_only')).toBeInTheDocument();
+     23|     expect(screen.getAllByText('未在当前可访问证据中找到。').length).toBeGreaterTha…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: Cannot destructure property 'basename' of 'React10.useContext(...)' as it is null.
+ ❯ LinkWithRef node_modules/.pnpm/react-router@7.18.2_react-d_ebd9f6aaf916bfadf05eff1070ce6f8a/node_modules/react-router/dist/development/chunk-62JRHF6Z.mjs:10518:11
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateForwardRef node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:9724:19
+ ❯ beginWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:12117:18
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ ❯ workLoopSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ ❯ renderRootSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+ ❯ performWorkOnRoot node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:16583:35
+
+This error originated in "src/pages/DirectionMapPage.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "clusters explicitly selected favorite papers and always shows the classification disclaimer". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+

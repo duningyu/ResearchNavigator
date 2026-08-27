@@ -1,0 +1,53 @@
+date_utc=2026-08-27T23:22:55.9180435Z
+pwd=E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28
+git_head=e2648080dee6b4c5f7c8969f09cb21f7d9954bc8
+git_status:
+?? codex_audit/runs/20260827T232244Z_RN220_ENV_CLOSURE/
+git_log:
+e264808 chore: import ResearchNavigator 2.2.0 audited package
+
+[python --version]
+Python 3.9.7
+
+[node --version]
+v24.19.0
+
+[corepack --version]
+0.35.0
+
+[uv --version]
+uv : The term 'uv' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spe
+lling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ uv --version
++ ~~
+    + CategoryInfo          : ObjectNotFound: (uv:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+[docker --version]
+docker : The term 'docker' is not recognized as the name of a cmdlet, function, script file, or operable program. Check
+ the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ docker --version
++ ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (docker:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+[docker compose version]
+docker : The term 'docker' is not recognized as the name of a cmdlet, function, script file, or operable program. Check
+ the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ docker compose version
++ ~~~~~~
+    + CategoryInfo          : ObjectNotFound: (docker:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+environment_variables:
+OPENALEX_API_KEY=UNSET
+CROSSREF_MAILTO=UNSET
+SEMANTIC_SCHOLAR_API_KEY=UNSET
+UNPAYWALL_EMAIL=UNSET
+LLM_BASE_URL=UNSET
+LLM_API_KEY=UNSET
+LLM_MODEL=UNSET
+RN_MCP_ACCESS_TOKEN=UNSET

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\scripts\verify_docker_persistence.py", line 27, in <module>
+    from datetime import UTC, datetime
+ImportError: cannot import name 'UTC' from 'datetime' (C:\Users\ASUS\AppData\Local\Programs\Python\Python39\lib\datetime.py)

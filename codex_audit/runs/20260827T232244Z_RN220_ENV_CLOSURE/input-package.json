@@ -1,0 +1,8 @@
+{
+  "filename": "ResearchNavigator_2.2.0_evidence_platform_2026-08-28.zip",
+  "size": 1337011,
+  "sha256": "1b0a7bbe6002a77c39c4c55db62961a14814a4a5ddd90d7f2664ca586832e441",
+  "entries": 793,
+  "testzip": "PASS",
+  "run_dir": "codex_audit/runs/20260827T232244Z_RN220_ENV_CLOSURE"
+}

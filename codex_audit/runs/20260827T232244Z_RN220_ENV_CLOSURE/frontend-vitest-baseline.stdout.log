@@ -1,0 +1,784 @@
+
+> @research-navigator/web@2.2.0 test E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web
+> vitest run --exclude tests/e2e/**
+
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator_2.2.0_ENV_CLOSURE/ResearchNavigator_2.2.0_evidence_platform_2026-08-28/apps/web
+
+ ✓ src/api/client.test.ts (2 tests) 14ms
+ ✓ src/components/scoreMath.test.ts (2 tests) 3ms
+ ❯ src/components/PaperIntelligenceCards.test.tsx (1 test | 1 failed) 313ms
+   × PaperIntelligenceCards > renders provenance-aware author and dataset cards without inventing missing values 311ms
+     → Found multiple elements with the text: SWaT
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mSWaT[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+[36m>[39m
+  [0mSWaT[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ant-row css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+      [33mstyle[39m=[32m"margin-inline: -8px; row-gap: 16px;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-col ant-col-xs-24 ant-col-xl-12 css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+        [33mstyle[39m=[32m"padding-inline: 8px;"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-head"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-card-head-title"[39m
+              [36m>[39m
+                [0m作者卡（来源可验证，不按姓名强制合并）[0m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-body"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-list ant-list-split css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-busy[39m=[32m"false"[39m
+                [33maria-live[39m=[32m"polite"[39m
+                [33mclass[39m=[32m"ant-spin css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-spin-container"[39m
+                [36m>[39m
+                  [36m<ul[39m
+                    [33mclass[39m=[32m"ant-list-items ant-list-container css-var-root"[39m
+                  [36m>[39m
+                    [36m<li[39m
+                      [33mclass[39m=[32m"ant-list-item"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"ant-card ant-card-bordered ant-card-small css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                        [33mstyle[39m=[32m"width: 100%;"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mclass[39m=[32m"ant-card-head"[39m
+                        [36m>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+                          [36m>[39m
+                            [36m<div[39m
+                              [33mclass[39m=[32m"ant-card-head-title"[39m
+                            [36m>[39m
+                              [36m<div[39m
+                                [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+                                [33mstyle[39m=[32m"flex-wrap: wrap;"[39m
+                              [36m>[39m
+                                [36m<div[39m
+                                  [33mclass[39m=[32m"ant-space-item"[39m
+                                [36m>[39m
+                                  [36m<span[39m
+                                    [33mclass[39m=[32m"ant-typography css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                  [36m>[39m
+                                    [36m<strong>[39m
+                                      [0mA. Researcher[0m
+                                    [36m</strong>[39m
+                                  [36m</span>[39m
+                                [36m</div>[39m
+                                [36m<div[39m
+                                  [33mclass[39m=[32m"ant-space-item"[39m
+                                [36m>[39m
+                                  [36m<span[39m
+                                    [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                  [36m>[39m
+                                    [0mresolved_identifier[0m
+                                  [36m</span>[39m
+                                [36m</div>[39m
+                                [36m<div[39m
+                                  [33mclass[39m=[32m"ant-space-item"[39m
+                                [36m>[39m
+                                  [36m<span[39m
+                                    [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                  [36m>[39m
+                                    [0m作者顺序 #[0m
+                                    [0m1[0m
+                                  [36m</span>[39m
+                                [36m</div>[39m
+                              [36m</div>[39m
+                            [36m</div>[39m
+                          [36m</div>[39m
+                        [36m</div>[39m
+                        [36m<div[39m
+                          [33mclass[39m=[32m"ant-card-body"[39m
+                        [36m>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-descriptions ant-descriptions-small css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                          [36m>[39m
+                            [36m<div[39m
+                              [33mclass[39m=[32m"ant-descriptions-view"[39m
+                            [36m>[39m
+                              [36m<table>[39m
+                                [36m<tbody>[39m
+                                  [36m<tr[39m
+                                    [33mclass[39m=[32m"ant-descriptions-row"[39m
+                                  [36m>[39m
+                                    [36m<td[39m
+                                      [33mclass[39m=[32m"ant-descriptions-item"[39m
+                                      [33mcolspan[39m=[32m"1"[39m
+                                    [36m>[39m
+                                      [36m<div[39m
+                                        [33mclass[39m=[32m"ant-descriptions-item-container"[39m
+                                      [36m>[39m
+                                        [36m<span[39m
+                                          [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                                        [36m>[39m
+                                          [0mORCID[0m
+                                        [36m</span>[39m
+                                        [36m<span[39m
+                                          [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                                        [36m>[39m
+                                          [0m未在当前可访问证据中找到。[0m
+         ...
+ ✓ src/pages/EvaluationsPage.test.tsx (1 test) 271ms
+ ❯ src/pages/PaperPage.test.tsx (1 test | 1 failed) 566ms
+   × paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence 565ms
+     → Found multiple elements with the text: 缺失字段
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0m缺失字段[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0m缺失字段[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"[39m
+      [33mstyle[39m=[32m"width: 100%;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-space-item"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-head"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-card-head-title"[39m
+              [36m>[39m
+                [0mEvidence Acquisition for Industrial Alerts[0m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-body"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-descriptions ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-descriptions-view"[39m
+              [36m>[39m
+                [36m<table>[39m
+                  [36m<tbody>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m作者[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未知[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m年份 / Venue[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未知[0m
+                          [0m / [0m
+                          [0m未知[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mDOI / arXiv[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m无[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m开放状态[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未核验[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m摘要可信状态[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未验证或不存在[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m摘要[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未在当前可访问文本中找到。[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+              ...
+ ❯ src/components/EvidenceWorkflowPanel.test.tsx (2 tests | 1 failed) 578ms
+   × EvidenceWorkflowPanel > renders terminal status, strongest evidence, source failure and event timeline 308ms
+     → Found multiple elements with the text: abstract_only
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+[36m>[39m
+  [0mabstract_only[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span>[39m
+  [0mabstract_only[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-card-head"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-head-title"[39m
+          [36m>[39m
+            [0m证据获取工作流[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-extra"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+              [33mstyle[39m=[32m"flex-wrap: wrap;"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-space-item"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ant-tag ant-tag-filled ant-tag-orange css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [0mpartial[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-space-item"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [0mabstract_only[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-card-body"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-middle ant-space-gap-col-middle css-var-root"[39m
+          [33mstyle[39m=[32m"width: 100%;"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-space-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-descriptions ant-descriptions-small ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-descriptions-view"[39m
+              [36m>[39m
+                [36m<table>[39m
+                  [36m<tbody>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m工作流 ID[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m#[0m
+                          [0m31[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m最终证据等级[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mabstract_only[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m执行次数[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m1[0m
+                          [0m/[0m
+                          [0m3[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mterminal[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mtrue[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m开始时间[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m2026-08-28T01:00:00Z[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m结束时间[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m2026-08-28T01:01:00Z[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                  [36m</tbody>[39m
+                [36m</table>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-space-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-alert ant-alert-warning ant-alert-outlined ant-alert-with-description css-var-root css-dev-only-do-not-override-viwxw0"[39m
+              [33mdata-show[39m=[32m"true"[39m
+              [33mrole[39m=[32m"alert"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"ant-alert-icon"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33maria-label[39m=[32m"exclamation-circle"[39m
+                  [33mclass[39m=[32m"anticon anticon-exclamation-circle"[39m
+                  [33mrole[39m=[32m"img"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mdata-icon[39m=[32m"exclamation-circle"[39m
+                    [33mfill[39m=[32m"currentColor"[39m
+                    [33mfocusable[39m=[32m"false"[39m
+                    [33mheight[39m=[32m"1em"[39m
+                    [33mviewBox[39m=[32m"64 64 896 896"[39m
+                    [33mwidth[39m=[32m"1em"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm-32 232c0-4.4 3.6-8 8-8h48c4.4 0 8 3.6 8 8v272c0 4.4-3.6 8-8 8h-48c-4.4 0-8-3.6-8-8V296zm32 440a48.01 48.01 0 010-96 48.01 48.01 0 010 96z"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</span>[39m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-alert-section"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-alert-title"[39m
+                [36m>[39m
+                  [0m工作流存在降级或失败步骤[0m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-alert-description"[39m
+                [36m>[39m
+                  [0mOpenAlex rate limited[0m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-space-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+              [33mstyle[39m=[32m"flex-wrap: wrap;"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-space-item"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ant-tag ant-tag-filled ant-tag-orange css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [0mopenalex[0m
+                  [0m: [0m
+                  [0mrate_limited[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-space-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+              [33mstyle[39m=[32m"flex-wrap: wrap;"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-space-item"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"ant-btn css-dev-only-do-not-override-viwxw0 css-var-root ant-btn-default ant-btn-color-default ant-btn-variant-outlined"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<span>[39m
+                    [0m刷新状态[0m
+                  [36m</span>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-space-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-list ant-list-split css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-list-header"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ant-typography css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [36m<strong>[39m
+                    [0m证据工作流时间线[0m
+                  [36m</strong>[39m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33maria-busy[39m=[32m"false"[39m
+                [33maria-live[39m=[32m"polite"[39m
+                [33mclass[39m=[32m"ant-spin css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-spin-container"[39m
+                [36m>[39m
+                  [36m<ul[39m
+                    [33mclass[39m=[32m"ant-list-items ant-list-container css-var-root"[39m
+                  [36m>[39m
+                    [36m<li[39m
+                      [33mclass[39m=[32m"ant-list-item"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"ant-list-item-meta"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mclass[39m=[32m"ant-list-item-meta-content"[39m
+                        [36m>[39m
+                          [36m<h4[39m
+                            [33mclass[39m=[32m"ant-list-item-meta-title"[39m
+                          [36m>[39m
+                            [36m<div[39m
+                              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+                            [36m>[39m
+                              [36m<div[39m
+                                [33mclass[39m=[32m"ant-space-item"[39m
+                              [36m>[39m
+                                [36m<span[39m
+                                  [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                [36m>[39m
+                                  [0mabstract_acquisition[0m
+                                [36m</span>[39m
+                              [36m</div>[39m
+                              [36m<div[39m
+                                [33mclass[39m=[32m"ant-space-item"[39m
+                              [36m>[39m
+                                [36m<span[39m
+                                  [33mclass[39m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                [36m>[39m
+                                  [0m2026-08-28T01:00:10Z[0m
+                                [36m</span>[39m
+                              [36m</div>[39m
+                            [36m</div>[39m
+                          [36m</h4>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-list-item-meta-description"[39m
+                          [36m>[39m
+                            [36m<pre[39m
+                              [33mclass[39m=[32m"inline-json"[39m
+                            [36m>[39m
+                              [0m{
+  "outcome": "abstract_acquired",
+  "evidence_after": "abstract_only"
+}[0m
+                            [36m</pre>[39m
+                          [36m</div>[39m
+                        [36m</div>[39m
+                      [36m</div>[39m
+                    [36m</li>[39m
+                    [36m<li[39m
+                      [33mclass[39m=[32m"ant-list-item"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"ant-list-item-meta"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mclass[39m=[32m"ant-list-item-meta-content"[39m
+                        [36m>[39m
+                          [36m<h4[39m
+                            [33mclass[39m=[32m"ant-list-item-meta-title"[39m
+                          [36m>[39m
+                            [36m<div[39m
+                              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+                            [36m>[39m
+                              [36m<div[39m
+                                [33mclass[39m=[32m"ant-space-item"[39m
+                              [36m>[39m
+                                [36m<span[39m
+                                  [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                [36m>[39m
+                                  [0moa_location_discovery[0m
+                                [36m</span>[39m
+                              [36m</div>[39m
+                              [36m<div[39m
+                                [33mclass[39m=[32m"ant-space-item"[39m
+                              [36m>[39m
+                                [36m<span[39m
+                                  [33mclass[39m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                                [36m>[39m
+                                  [0m2026-08-28T01:00:20Z[0m
+                                [36m</span>[39m
+                              [36m</div>[39m
+                            [36m</div>[39m
+                          [36m</h4>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-list-item-meta-description"[39m
+                          [36m>[39m
+                            [36m<pre[39m
+                              [33mclass[39m=[32m"inline-json"[39m
+                            [36m>[39m
+                              [0m{
+  "error": "HTTP 429"
+}[0m
+                            [36m</pre>[39m
+                          [36m</div>[39m
+                        [36m</div>[39m
+                      [36m</div>[39m
+                    [36m</li>[39m
+                  [36m</ul>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   ✓ EvidenceWorkflowPanel > allows a pending workflow to run or be cancelled 268ms
+ ✓ src/pages/paperSelectionExperience.test.tsx (3 tests) 893ms
+   ✓ selection-first paper workflow > uses saved favourites as an explicit selection source  318ms
+   ✓ selection-first paper workflow > restores a persisted Top50 search session and paginates ten papers per page  310ms
+ ❯ src/pages/DirectionMapPage.test.tsx (1 test | 1 failed) 1332ms
+   × DirectionMapPage > clusters explicitly selected favorite papers and always shows the classification disclaimer 1331ms
+     → Unable to find an element with the text: /不是学术领域的客观分类/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ✓ src/app/workspaceExperience.test.tsx (3 tests) 646ms
+   ✓ research workspace experience > explains the evidence-driven workflow before a researcher signs in  303ms
+
+ Test Files  4 failed | 5 passed (9)
+      Tests  4 failed | 12 passed (16)
+     Errors  1 error
+   Start at  07:24:47
+   Duration  7.16s (transform 558ms, setup 3.65s, collect 23.20s, tests 4.62s, environment 8.48s, prepare 1.93s)
+
+ ELIFECYCLE  Test failed. See above for more details.

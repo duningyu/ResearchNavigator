@@ -1,0 +1,4 @@
+
+> @research-navigator/web@2.2.0 typecheck E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\apps\web
+> tsc -b --pretty false
+
