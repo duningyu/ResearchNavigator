@@ -1,0 +1,14 @@
+utc=2026-08-27T14:56:36.0527583Z
+pwd=E:\AI_Projects\ResearchNavigator
+git_head=UNAVAILABLE_NO_GIT_METADATA
+git_status=UNAVAILABLE_NO_GIT_METADATA
+python=Python 3.9.7 (exit=0)
+uv=UNAVAILABLE (The term 'uv' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.)
+node=v24.19.0 (exit=0)
+npm=11.17.0 (exit=0)
+pnpm=11.7.0 (exit=0)
+docker=UNAVAILABLE (The term 'docker' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.)
+docker_compose=UNAVAILABLE (The term 'docker' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.)

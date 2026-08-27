@@ -1,0 +1,56 @@
+name: research-navigator
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    env_file:
+      - ../.env
+    environment:
+      RN_DATA_DIR: /app/runtime
+      RN_DATABASE_URL: sqlite+pysqlite:////app/runtime/research_navigator.db
+      RN_UPLOAD_DIR: /app/runtime/uploads
+      RN_VECTOR_DIR: /app/runtime/vector_index
+      RN_BACKUP_DIR: /app/runtime/backups
+    volumes:
+      - ../runtime:/app/runtime
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    command: ["python", "-m", "services.worker.main", "--poll-seconds", "2"]
+    env_file:
+      - ../.env
+    environment:
+      RN_DATA_DIR: /app/runtime
+      RN_DATABASE_URL: sqlite+pysqlite:////app/runtime/research_navigator.db
+      RN_UPLOAD_DIR: /app/runtime/uploads
+      RN_VECTOR_DIR: /app/runtime/vector_index
+      RN_BACKUP_DIR: /app/runtime/backups
+    volumes:
+      - ../runtime:/app/runtime
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/web.Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

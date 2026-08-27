@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\scripts\verify_live_sources.py", line 118, in <module>
+    asyncio.run(main())
+  File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 664, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\scripts\verify_live_sources.py", line 107, in main
+    report = await execute(args.query, args.limit)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\scripts\verify_live_sources.py", line 65, in execute
+    result = await adapter.search(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps\api\research_navigator\scholarly\crossref.py", line 75, in search
+    publication_date = _first_date(item)
+                       ^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps\api\research_navigator\scholarly\crossref.py", line 28, in _first_date
+    return date(int(year), int(month), int(day))
+                ^^^^^^^^^
+TypeError: int() argument must be a string, a bytes-like object or a real number, not 'NoneType'

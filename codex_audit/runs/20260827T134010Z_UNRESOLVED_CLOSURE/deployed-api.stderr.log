@@ -1,0 +1,115 @@
+INFO:     Started server process [45976]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 352, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps/api\research_navigator\routes\search.py", line 248, in search_papers
+    return await _perform_search(payload=payload, request=request, user=user, session=session)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps/api\research_navigator\routes\search.py", line 192, in _perform_search
+    paper_models = [upsert_paper(session, item.record) for item in ranked]
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps/api\research_navigator\scholarly\repository.py", line 115, in upsert_paper
+    session.flush()
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4353, in flush
+    self._flush(objects)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4449, in _flush
+    flush_context.execute()
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 465, in execute
+    rec.execute(self)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 94, in save_obj
+    _emit_insert_statements(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1234, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked
+[SQL: INSERT INTO source_requests (run_id, user_id, project_id, source, "query", request_json, response_metadata_json, source_records_json, status, error, started_at, finished_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: (None, 97, None, 'fixture', 'anomaly detection', '{"query": "anomaly detection", "limit": 2, "offset": 0, "year_from": null, "year_to": null, "open_access_only": false, "sources": ["fixture"], "project_id": null}', '{"status": "ok", "result_count": 2, "detail": "offline fixture", "checked_at": "2026-08-27T14:25:17.572394Z", "raw_response_hash": "95cb9b4f84ceff132 ... (8 characters truncated) ... 8c192bf4997016a939ee64141c1fd628c0e8738", "audit_semantics": "aggregate hash of persisted per-record raw hashes; not a byte-for-byte HTTP body hash"}', '[{"source_id": "fixture-anomaly-transformer", "source_url": "https://example.org/fixture/anomaly-transformer", "raw_hash": null, "fetched_at": "2026- ... (74 characters truncated) ... tranad", "source_url": "https://example.org/fixture/tranad", "raw_hash": null, "fetched_at": "2026-08-27T14:22:45.543586+00:00", "is_fixture": true}]', 'ok', None, '2026-08-27 14:25:17.572394', '2026-08-27 14:25:17.572394', '2026-08-27 14:25:17.572969', '2026-08-27 14:25:17.572969')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

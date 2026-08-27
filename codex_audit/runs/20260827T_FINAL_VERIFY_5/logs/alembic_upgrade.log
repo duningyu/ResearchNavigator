@@ -1,0 +1,14 @@
+name=alembic_upgrade
+status=PASS
+command=alembic upgrade head
+exit_code=0
+duration_seconds=1.469
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Frozen explicit initial ResearchNavigator schema.
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Add minimum traceable audit infrastructure.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Add feedback-closure search, selection, comparison, settings, and idempotency schema.
+

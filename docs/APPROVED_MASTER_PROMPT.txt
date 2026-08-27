@@ -1,0 +1,1784 @@
+我已批准以下产品方向、范围和默认技术架构。请不要只给建议、伪代码、页面原型或空目录，而要实际完成需求分析、PRD、TechDocs、系统设计、前后端代码、数据库、MCP 工具、RAG 流程、测试、Docker 部署和运行文档。
+
+除非遇到必须由我提供的私有 API Key、学校订阅凭据或无法合法获取的付费内容，否则不要反复向我确认已经明确的信息。对于缺失但可以合理决定的细节，采用本 Prompt 中的默认方案，并将假设记录到 ADR 和最终交付报告中。
+
+# 一、你的角色
+
+你需要同时作为以下角色完成项目：
+
+1. 资深 AI 产品经理；
+2. 科研信息检索与学术知识管理产品专家；
+3. Agent、RAG、MCP 和检索系统架构师；
+4. Python/FastAPI 后端工程师；
+5. React/TypeScript 前端工程师；
+6. SQLite、全文检索和向量检索工程师；
+7. 测试、部署、安全与可观测性工程师；
+8. 严格的事实性与科研主张审查者。
+
+不要迎合产品想法。发现范围过大、功能重复、数据源不可合法接入、模型结论证据不足、Agent 只是形式包装、评分没有依据或测试无法验证时，应直接指出并修正设计。
+
+# 二、项目定位
+
+项目暂定名称：
+
+中文名：研途智选
+英文工作名：ResearchNavigator
+
+这是一个面向研究生、科研初学者和准备进入新研究方向的用户的“证据驱动科研选题与论文研究工作台”。
+
+它不是普通论文聊天机器人，也不是简单的论文搜索聚合器。
+
+核心闭环是：
+
+用户研究档案
+→ 大方向拆解
+→ 文献检索
+→ 经典论文与前沿论文推荐
+→ 论文结构化理解
+→ 方向匹配度与复现推荐度
+→ 候选研究空白
+→ 反证检索
+→ 研究问题确认
+→ 阅读和复现计划
+→ 收藏、笔记、任务和进度长期沉淀
+
+默认示范研究方向为：
+
+- 多变量时序异常检测；
+- 工业时序异常预警；
+- 历史窗口到未来 Horizon 的异常风险预测；
+- 有限告警预算下的异常排序；
+- 伪正常记忆和真实异常记忆；
+- 高误报环境下的安全告警抑制；
+- 不确定性与异常冲突处理。
+
+但系统架构不能硬编码为只支持时序异常检测，应支持用户创建其他研究方向。
+
+# 三、产品目标与非目标
+
+## 3.1 产品目标
+
+系统至少帮助用户完成：
+
+1. 建立自己的研究方向档案；
+2. 将宽泛方向拆成任务、数据、方法、应用和评价维度；
+3. 检索并聚合多个论文数据源；
+4. 打开论文原始网页、DOI 页面、arXiv 页面或出版社页面；
+5. 查看论文摘要、研究问题、方法、算法、数据集、实验、贡献、Future Work 和不足；
+6. 区分作者明确写出的 Future Work 与系统推断的潜在不足；
+7. 查看论文与用户研究方向的匹配度；
+8. 查看论文复现推荐度及评分依据；
+9. 收藏论文、添加标签、写笔记并保存阅读状态；
+10. 推荐经典论文、综述论文、代表论文和近期前沿论文；
+11. 基于一组论文生成候选研究空白；
+12. 对候选研究空白执行反证检索；
+13. 将选定方向转换成阶段性阅读、复现和实验计划；
+14. 在关机、重启和重新打开网页后保留全部记录；
+15. 让同组学生通过局域网 URL 使用系统，并隔离各自的数据。
+
+## 3.2 非目标
+
+第一阶段不要实现：
+
+1. 自动替用户证明某项研究绝对没有人做过；
+2. 自动生成可以直接投稿的完整论文；
+3. 绕过出版社登录、学校代理或付费墙；
+4. 未经授权批量下载受版权保护的全文；
+5. 根据期刊分区或引用量直接判断论文质量；
+6. 用一个不可解释的 LLM 分数代替复现评估；
+7. 实现复杂社交网络、导师管理或科研经费管理；
+8. 一开始就支持大规模商业 SaaS；
+9. 让多个自由 Agent 无限制互相对话；
+10. 将未实际接通的 API 写成“已经集成”。
+
+# 四、关键事实与科研主张边界
+
+必须在产品、PRD、TechDocs 和代码中执行以下约束。
+
+## 4.1 研究空白表述
+
+禁止输出：
+
+- “这个问题从未有人研究过。”
+- “这是一个确定的新研究空白。”
+- “这个方向具有绝对创新性。”
+
+允许输出：
+
+- “在本次检索的数据源、查询式和时间范围内，该组合的直接研究证据较少。”
+- “这是一个候选研究空白，需要进一步扩展检索和专家确认。”
+- “当前证据支持度为中等，但存在以下可能推翻该判断的相邻研究。”
+
+每个候选研究空白必须包含：
+
+- gap_id；
+- 候选空白陈述；
+- 空白类型；
+- 适用范围；
+- 支持论文；
+- 相邻但不完全相同的论文；
+- 可能构成反证的论文；
+- 使用的数据源；
+- 中英文检索式；
+- 检索过滤条件；
+- 检索时间；
+- 检索结果数量；
+- 纳入与排除理由；
+- 证据覆盖度；
+- 置信等级；
+- 风险说明；
+- 建议的最小验证实验；
+- “本结果不是创新性证明”的固定提示。
+
+## 4.2 论文分析证据等级
+
+每份论文分析都必须显示 evidence_level：
+
+- metadata_only：只有题目、作者、年份、期刊等元数据；
+- abstract_only：能够读取摘要；
+- open_fulltext：读取了合法开放全文；
+- user_uploaded_fulltext：用户上传了其有权使用的 PDF；
+- publisher_authorized_fulltext：通过合法授权 API 获取全文。
+
+当只有摘要时，不得输出论文中未在摘要中出现的具体网络结构、损失函数、实验参数或 Future Work。
+
+没有找到的内容必须显示：
+
+“未在当前可访问文本中找到。”
+
+不能由模型自行补齐。
+
+## 4.3 Future Work 和不足分类
+
+论文详情页必须区分：
+
+1. 作者明确陈述的 Future Work；
+2. 作者明确陈述的 Limitations；
+3. 系统基于证据推断的潜在限制；
+4. 用户自己添加的批判性笔记。
+
+第三类必须标记为“系统推断”，并提供推断依据。
+
+## 4.4 作者贡献
+
+若论文包含 CRediT Author Statement，则可以展示论文级作者角色。
+
+若没有 CRediT 声明，不得猜测每位作者分别完成了什么。
+
+作者卡片可以展示：
+
+- 规范化作者名称；
+- ORCID 或学术数据库作者 ID；
+- 所属机构；
+- 研究主题分布；
+- 代表论文；
+- 论文时间线；
+- 合作者；
+- 引用和论文数量等来源可验证信息；
+- 作者消歧置信度。
+
+不能将同名作者直接合并。
+
+# 五、版本迭代要求
+
+必须真实建立两个可运行版本，而不是只在文档中写两个版本。
+
+## 5.1 V1.0：论文发现与个人研究工作台
+
+V1.0 必须完整实现：
+
+1. 本地用户注册、登录和退出；
+2. 用户研究方向档案；
+3. 研究项目创建；
+4. 多数据源论文搜索；
+5. 搜索条件与搜索历史；
+6. 论文元数据标准化和去重；
+7. 论文结果列表；
+8. 论文详情页；
+9. 原始论文网页、DOI、arXiv、出版社等外部链接；
+10. 摘要级结构化分析；
+11. 合法开放 PDF 或用户上传 PDF 的全文 RAG；
+12. 论文收藏、标签、笔记、阅读状态；
+13. 方向匹配度；
+14. 复现推荐度；
+15. 基础经典论文和近期论文推荐；
+16. 研究计划和任务清单；
+17. SQLite 持久化；
+18. Docker Compose 部署；
+19. 局域网访问；
+20. 数据导出、备份和恢复；
+21. 完整 PRD、TechDocs、测试和 README。
+
+V1.0 完成后：
+
+- 运行全部测试；
+- 生成 CHANGELOG；
+- 生成发布说明；
+- 记录 Git commit；
+- 如果仓库允许，创建 v1.0.0 tag；
+- 保存 V1 验收报告；
+- 不允许未经验收直接跳到 V2。
+
+## 5.2 V2.0：科研方向与候选研究空白助手
+
+在 V1.0 通过验收后实现：
+
+1. 宽泛方向分解；
+2. 研究问题结构化；
+3. 查询扩展；
+4. 中英文检索式生成；
+5. 主题聚类和研究版图；
+6. 经典、综述、代表性和前沿论文分层推荐；
+7. 论文对比矩阵；
+8. 数据集卡片；
+9. 作者研究轨迹卡片；
+10. 候选研究空白生成；
+11. 候选空白反证检索；
+12. 支持证据与反向证据矩阵；
+13. 人工确认节点；
+14. 阅读计划；
+15. 复现计划；
+16. 最小实验计划；
+17. 周期性论文更新任务；
+18. 方向变化后的推荐刷新；
+19. Agent 运行日志和审计；
+20. Prompt、模型和数据源版本记录。
+
+V2.0 完成后：
+
+- 运行回归测试和新增测试；
+- 验证 V1 功能没有被破坏；
+- 生成 V1 与 V2 功能差异；
+- 创建 v2.0.0 发布说明和验收报告。
+
+## 5.3 可选 V3，不进入本次强制范围
+
+V3 只能记录为规划，不能伪装成已经实现：
+
+- GitHub 代码仓库自动匹配；
+- Notebook 复现实验助手；
+- 数据集下载和字段预览；
+- 实验配置和运行记录；
+- 文献增量订阅；
+- 小组协作和导师批注；
+- Zotero 导入导出；
+- BibTeX 和引用管理；
+- 研究报告自动生成。
+
+# 六、核心用户流程
+
+## 6.1 首次使用
+
+1. 用户注册或使用管理员提供的邀请码；
+2. 填写研究阶段：
+   - 硕士一年级；
+   - 硕士二年级；
+   - 博士；
+   - 转方向；
+   - 其他；
+3. 填写专业和已有知识；
+4. 选择宽泛方向；
+5. 输入导师给出的方向；
+6. 输入已有论文、关键词和排除词；
+7. 输入可使用的数据、算力、时间和代码能力；
+8. 设置偏好：
+   - 理论研究；
+   - 方法研究；
+   - 工程应用；
+   - 数据研究；
+   - 复现优先；
+   - 发表优先；
+9. 生成研究方向档案；
+10. 用户必须可以人工修改所有系统推断内容。
+
+## 6.2 论文搜索
+
+用户可以搜索：
+
+- 关键词；
+- 完整题目；
+- DOI；
+- arXiv ID；
+- 作者；
+- 期刊或会议；
+- 研究任务；
+- 方法；
+- 数据集；
+- 时间范围。
+
+支持：
+
+- 中文输入扩展为英文关键词；
+- AND、OR、NOT；
+- 年份筛选；
+- 论文类型筛选；
+- 开放全文筛选；
+- 有代码筛选；
+- 有公开数据筛选；
+- 按相关度、时间和引用信息排序；
+- 保存搜索式；
+- 查看本次搜索调用了哪些数据源；
+- 查看数据源失败或限流状态。
+
+搜索结果必须去重。
+
+优先去重键：
+
+1. DOI；
+2. arXiv ID；
+3. PubMed ID 或其他稳定 ID；
+4. 标准化标题 + 年份 + 第一作者；
+5. 标题相似度只能作为候选，不能直接静默合并。
+
+## 6.3 论文详情
+
+论文详情页至少包括：
+
+- 题目；
+- 中文标题；
+- 作者；
+- 机构；
+- 年份；
+- 期刊或会议；
+- DOI；
+- arXiv ID；
+- 来源数据源；
+- 数据更新时间；
+- 摘要；
+- 中文简介；
+- 研究背景；
+- 研究问题；
+- 输入和输出；
+- 核心方法；
+- 新算法或新模块；
+- 实验设计；
+- 使用的数据集；
+- 基线；
+- 指标；
+- 主要结果；
+- 贡献；
+- Future Work；
+- 作者声明的局限；
+- 系统推断的局限；
+- 与用户方向的相似度；
+- 复现推荐度；
+- 代码和数据链接；
+- 引用论文；
+- 被引论文；
+- 相似论文；
+- 证据等级；
+- 引用定位；
+- 收藏、标签、笔记和阅读状态；
+- 跳转到原始网页。
+
+每项结构化分析必须能够回到：
+
+- 摘要；
+- 章节；
+- 页码；
+- chunk_id；
+- 外部来源。
+
+## 6.4 候选研究空白
+
+用户选择一个研究问题或一组论文后，系统执行：
+
+1. 构造研究维度矩阵；
+2. 提取论文任务、数据、方法、监督形式、预测目标、实验设置和评价指标；
+3. 查找覆盖不足的组合；
+4. 生成候选空白；
+5. 生成反向检索式；
+6. 搜索可能推翻该空白的论文；
+7. 更新支持证据和反向证据；
+8. 输出置信等级；
+9. 要求用户人工确认；
+10. 生成最小可行实验建议。
+
+候选空白类型至少包括：
+
+- 任务定义空白；
+- 数据场景空白；
+- 方法与任务错位；
+- 评价协议空白；
+- 鲁棒性空白；
+- 部署和资源约束空白；
+- 不确定性空白；
+- 跨设备或跨领域泛化空白；
+- 负结果或复现空白；
+- 相邻工作之间未覆盖的组合。
+
+系统不能仅根据“关键词共现少”就判断研究空白。
+
+# 七、数据源设计
+
+## 7.1 默认开放数据源
+
+优先实现适配器：
+
+1. OpenAlex；
+2. Crossref；
+3. arXiv；
+4. Semantic Scholar；
+5. Unpaywall。
+
+根据可用性选配：
+
+- CORE；
+- PubMed；
+- DBLP；
+- OpenReview；
+- Papers with Code。
+
+## 7.2 授权数据源
+
+以下数据源只能作为需要凭据的可选适配器：
+
+- Web of Science；
+- Elsevier/ScienceDirect；
+- Scopus；
+- 学校图书馆授权资源。
+
+实现要求：
+
+1. 所有凭据仅保存在服务端环境变量；
+2. 前端不能获取 API Key；
+3. 没有凭据时显示“未配置”，而不是报系统错误；
+4. 提供 .env.example；
+5. 提供管理员数据源配置页；
+6. 提供连通性测试；
+7. 不得模拟登录；
+8. 不得绕过付费墙；
+9. 不得违反 robots、API 条款或版权要求；
+10. 不得把模拟数据写成真实搜索结果。
+
+## 7.3 papers.cool
+
+将 papers.cool 设计为：
+
+- arXiv 论文的可选外部阅读链接；
+- 会议页面或相关论文的补充入口；
+- 只有在确认其公开接口、路由和使用方式符合要求后才实现程序化接入。
+
+不要把它作为唯一底层论文索引。
+
+## 7.4 统一论文数据模型
+
+所有适配器必须转换到统一 PaperRecord。
+
+至少包含：
+
+- internal_id；
+- title；
+- normalized_title；
+- translated_title；
+- abstract；
+- publication_year；
+- publication_date；
+- authors；
+- author_ids；
+- affiliations；
+- venue；
+- venue_type；
+- doi；
+- arxiv_id；
+- external_ids；
+- source_urls；
+- publisher_url；
+- pdf_url；
+- open_access_status；
+- citation_count；
+- reference_count；
+- fields_of_study；
+- concepts；
+- keywords；
+- source_provenance；
+- fetched_at；
+- raw_record_hash。
+
+保留原始数据源 provenance，不能只保存融合后的结果。
+
+# 八、RAG 设计
+
+## 8.1 可使用的语料
+
+允许进入 RAG 的内容：
+
+1. 公开摘要；
+2. 合法开放全文；
+3. 用户上传且用户确认有权使用的 PDF；
+4. 经过授权 API 获取的全文；
+5. 用户自己的笔记。
+
+不允许：
+
+- 绕过权限获取的全文；
+- 搜索结果中截断的片段被误当成全文；
+- 模型根据题目自行生成的“伪全文”。
+
+## 8.2 文档处理
+
+实现以下流程：
+
+文档解析
+→ 章节识别
+→ 文本清洗
+→ 结构化切块
+→ 元数据绑定
+→ 向量化
+→ 全文检索
+→ 混合召回
+→ 可选重排
+→ 有证据回答
+→ 引用校验
+
+切块优先按论文结构：
+
+- Abstract；
+- Introduction；
+- Related Work；
+- Method；
+- Experiments；
+- Results；
+- Limitations；
+- Conclusion；
+- Appendix。
+
+每个 chunk 必须保存：
+
+- paper_id；
+- section；
+- page_start；
+- page_end；
+- chunk_index；
+- text_hash；
+- source_type；
+- evidence_level；
+- ingestion_version。
+
+## 8.3 检索
+
+V1 至少实现：
+
+- SQLite FTS5 或等价 BM25；
+- 向量召回；
+- 混合分数；
+- top_k 配置；
+- 引用返回。
+
+不要只调用 LLM 的长上下文而称为 RAG。
+
+允许使用：
+
+- Chroma、LanceDB 或其他本地持久向量库；
+- SQLite 保存业务记录；
+- 向量索引目录也必须挂载到持久化目录。
+
+## 8.4 结构化论文分析 Schema
+
+使用 Pydantic 和 JSON Schema 定义，不允许只返回自由文本。
+
+示例字段：
+
+{
+  "paper_id": "...",
+  "evidence_level": "abstract_only",
+  "analysis_version": "...",
+  "summary": "...",
+  "research_background": "...",
+  "research_problem": "...",
+  "task_definition": {
+    "input": "...",
+    "output": "...",
+    "setting": "..."
+  },
+  "methods": [],
+  "novelty_claims": [],
+  "datasets": [],
+  "baselines": [],
+  "metrics": [],
+  "experiment_design": [],
+  "main_findings": [],
+  "contributions": [],
+  "future_work_explicit": [],
+  "limitations_author_stated": [],
+  "limitations_inferred": [],
+  "code_repositories": [],
+  "data_links": [],
+  "direction_similarity": {},
+  "reproduction_assessment": {},
+  "citations": [],
+  "missing_fields": [],
+  "warnings": []
+}
+
+每个重要字段必须关联 citations。
+
+## 8.5 RAG 质量评价
+
+至少建立一组开放论文测试集，评价：
+
+- Retrieval Hit Rate；
+- Citation Precision；
+- Citation Coverage；
+- Answer Faithfulness；
+- Structured Extraction Accuracy；
+- 不存在字段的拒答准确率；
+- 摘要级与全文级结果边界；
+- PDF 解析失败率。
+
+不要只使用“看起来回答合理”作为验收。
+
+# 九、方向匹配度
+
+方向匹配度不能只让 LLM 输出一个 87%。
+
+实现可解释的组合评分。
+
+建议默认维度：
+
+- 语义相似度：35%；
+- 研究任务一致性：25%；
+- 数据模态和应用场景：15%；
+- 预测目标或输出形式：10%；
+- 实验和评价协议：10%；
+- 用户资源约束：5%。
+
+缺失字段使用 missing-aware normalization：
+
+score =
+sum(weight_i × component_score_i × available_i)
+/
+sum(weight_i × available_i)
+
+同时输出：
+
+- 总分；
+- 各组成分；
+- 可用证据覆盖率；
+- 评分理由；
+- 不匹配原因；
+- 评分版本。
+
+针对时序异常检测示例，需要区分：
+
+- 异常检测；
+- 异常预测；
+- 未来窗口风险；
+- 故障预测；
+- 剩余寿命预测；
+- 变化点检测；
+- 点级分类；
+- 事件级预警；
+- 固定预算排序。
+
+不能因为都包含 anomaly 关键词就判定为高度相似。
+
+# 十、复现推荐度
+
+复现推荐度必须基于可观察证据，不允许完全由 LLM 主观评分。
+
+默认维度：
+
+- 官方或作者代码可用性：20%；
+- 数据可用性：20%；
+- 方法描述完整性：15%；
+- 环境和依赖说明：10%；
+- 超参数说明：10%；
+- 计算资源适配：10%；
+- 评价协议完整性：10%；
+- 许可证清晰度：5%。
+
+每一项输出：
+
+- 得分；
+- 证据；
+- 状态：verified、partial、unknown、missing；
+- 来源；
+- 检查时间。
+
+总结果同时显示：
+
+- reproduction_score；
+- evidence_coverage；
+- estimated_difficulty；
+- estimated_compute_level；
+- blocking_reasons；
+- recommended_first_step。
+
+unknown 不能等同于 missing。
+
+若没有检查代码仓库、数据链接和论文正文，不能输出高置信复现评分。
+
+# 十一、经典论文与前沿论文推荐
+
+推荐结果分为：
+
+1. 入门综述；
+2. 经典基础论文；
+3. 任务定义代表论文；
+4. 关键方法论文；
+5. 高相关近期论文；
+6. 反向或不同路线论文；
+7. 最适合复现的论文。
+
+不要将“引用量高”等同于“适合用户”。
+
+每篇推荐必须说明：
+
+- 推荐类别；
+- 推荐原因；
+- 与用户方向的关系；
+- 推荐阅读顺序；
+- 阅读前置知识；
+- 是否建议复现；
+- 可能误导用户的地方。
+
+“经典论文”和“顶刊顶会”标签的来源、规则和版本必须可配置和审计。
+
+# 十二、候选研究空白引擎
+
+实现 Evidence Matrix。
+
+矩阵至少包含：
+
+- 论文；
+- 研究任务；
+- 输入；
+- 输出；
+- 数据类型；
+- 数据集；
+- 监督形式；
+- 预测 Horizon；
+- 方法；
+- 业务约束；
+- 是否在线；
+- 是否跨设备；
+- 是否处理类别不平衡；
+- 是否评价误报；
+- 是否评价事件级指标；
+- 是否提供代码；
+- 是否提供数据；
+- 作者 Future Work；
+- 作者 Limitations。
+
+生成 GapCandidate Schema：
+
+{
+  "gap_id": "...",
+  "gap_type": "...",
+  "claim": "...",
+  "scope": "...",
+  "supporting_evidence": [],
+  "adjacent_work": [],
+  "counter_evidence": [],
+  "search_queries": [],
+  "data_sources": [],
+  "search_time": "...",
+  "coverage": {},
+  "confidence": "low|medium|high",
+  "risk_factors": [],
+  "minimal_validation": [],
+  "suggested_research_question": "...",
+  "not_novelty_proof": true
+}
+
+生成候选空白后必须自动生成 challenge queries，例如：
+
+- 同义词替换；
+- 邻近任务名称；
+- 不同领域名称；
+- 不同数据模态；
+- 不同监督形式；
+- 早期术语；
+- 最新术语；
+- 方法名反查；
+- 引用链和被引链扩展。
+
+只有完成 challenge search 后，候选空白才可以进入“待人工确认”。
+
+# 十三、Agent 与工作流
+
+不要实现无边界的 Agent 群。
+
+推荐实现：
+
+- 一个可审计的总协调工作流；
+- 多个职责单一的确定性节点或受控 LLM 节点；
+- MCP 作为工具接入层；
+- 人工确认作为关键状态转换条件。
+
+## 13.1 文献发现工作流
+
+ResearchProfile
+→ QueryFormulation
+→ QueryExpansion
+→ FederatedSearch
+→ Normalize
+→ Deduplicate
+→ Rank
+→ PersistSearchEvidence
+→ Recommend
+→ HumanReview
+
+## 13.2 论文分析工作流
+
+ResolvePaper
+→ FetchMetadata
+→ ResolveAccess
+→ ParseContent
+→ Chunk
+→ Index
+→ RetrieveEvidence
+→ StructuredExtraction
+→ CitationValidation
+→ PersistAnalysis
+
+## 13.3 研究空白工作流
+
+SelectCorpus
+→ BuildEvidenceMatrix
+→ GenerateGapCandidates
+→ GenerateChallengeQueries
+→ CounterSearch
+→ UpdateEvidence
+→ ConfidenceAssessment
+→ HumanConfirmation
+→ GenerateResearchPlan
+
+## 13.4 研究计划工作流
+
+ConfirmedResearchQuestion
+→ PrerequisiteReading
+→ CoreReading
+→ ReproductionCandidate
+→ DatasetPreparation
+→ BaselinePlan
+→ MinimalExperiment
+→ RiskChecklist
+→ Milestones
+→ UserEditing
+→ PersistPlan
+
+所有运行都必须保存：
+
+- run_id；
+- user_id；
+- project_id；
+- workflow_version；
+- prompt_version；
+- model_provider；
+- model_name；
+- tool_calls；
+- search_queries；
+- source_records；
+- started_at；
+- finished_at；
+- status；
+- error；
+- output_hash。
+
+如果使用 LangGraph：
+
+- 用于 V2 的状态工作流、人工确认和中断恢复；
+- 不要把简单数据库 CRUD 封装成 Agent；
+- 图状态必须使用明确 Schema；
+- 必须能够在服务重启后恢复任务；
+- 必须有节点级单元测试。
+
+如果不使用 LangGraph，应在 ADR 中解释为什么普通 Python 状态机更合适。
+
+# 十四、MCP 设计
+
+MCP 是外部能力标准化层，不是论文分析本身。
+
+至少实现以下 MCP Server。
+
+## 14.1 scholarly-search-mcp
+
+工具：
+
+- search_papers；
+- get_paper_metadata；
+- get_related_papers；
+- get_references；
+- get_citations；
+- search_authors；
+- get_author_profile；
+- source_health_check。
+
+## 14.2 paper-access-mcp
+
+工具：
+
+- resolve_doi；
+- resolve_arxiv；
+- check_open_access；
+- fetch_open_fulltext；
+- parse_uploaded_pdf；
+- get_content_status；
+- delete_local_document。
+
+必须禁止：
+
+- 绕过登录；
+- 绕过付费墙；
+- 把 HTML 登录页当 PDF；
+- 下载超出大小限制的文件；
+- 任意 URL SSRF。
+
+## 14.3 research-workspace-mcp
+
+工具：
+
+- create_research_project；
+- update_research_profile；
+- save_paper；
+- add_note；
+- update_reading_status；
+- create_gap_candidate；
+- confirm_gap_candidate；
+- create_research_plan；
+- update_plan_item；
+- export_workspace。
+
+## 14.4 MCP 工程要求
+
+每个 MCP 工具必须：
+
+- 有 JSON Schema；
+- 有输入校验；
+- 有超时；
+- 有重试策略；
+- 有速率限制；
+- 有错误码；
+- 返回 provenance；
+- 有单元测试；
+- 有 smoke test；
+- 在 README 中有调用示例。
+
+禁止只创建一个 MCP 配置文件就声称“实现了 MCP”。
+
+# 十五、默认技术架构
+
+先检查现有仓库。
+
+如果原“智选简历”仓库存在：
+
+1. 审计当前目录、依赖、数据库和页面；
+2. 只复用通用模块，例如登录、设置、UI 组件、历史记录；
+3. 不保留 resume、job、candidate 等错误领域命名；
+4. 为新领域模型建立迁移；
+5. 在 TechDocs 中记录复用和重构边界。
+
+如果没有可用仓库，则创建 Monorepo。
+
+推荐结构：
+
+research-navigator/
+├─ apps/
+│  ├─ web/                     # React + TypeScript 前端
+│  └─ api/                     # FastAPI
+├─ services/
+│  └─ worker/                  # 持久任务执行器
+├─ packages/
+│  └─ shared-schemas/
+├─ mcp_servers/
+│  ├─ scholarly_search/
+│  ├─ paper_access/
+│  └─ research_workspace/
+├─ docs/
+│  ├─ PRD.md
+│  ├─ TECHDOC_INDEX.md
+│  ├─ architecture.md
+│  ├─ database-design.md
+│  ├─ api-design.md
+│  ├─ mcp-design.md
+│  ├─ rag-design.md
+│  ├─ agent-workflow.md
+│  ├─ research-gap-method.md
+│  ├─ data-source-contracts.md
+│  ├─ security-and-compliance.md
+│  ├─ evaluation-plan.md
+│  ├─ deployment-runbook.md
+│  ├─ claim-boundary.md
+│  ├─ ADR/
+│  └─ releases/
+├─ tests/
+│  ├─ unit/
+│  ├─ integration/
+│  ├─ e2e/
+│  ├─ rag_eval/
+│  └─ fixtures/
+├─ infra/
+│  ├─ docker-compose.yml
+│  └─ nginx/
+├─ scripts/
+├─ data/
+│  └─ demo/
+├─ .env.example
+├─ README.md
+├─ CHANGELOG.md
+└─ LICENSE
+
+默认技术：
+
+前端：
+- React；
+- TypeScript；
+- Vite；
+- Ant Design 或同等成熟组件库；
+- TanStack Query；
+- React Router；
+- 图表可选 ECharts。
+
+后端：
+- Python；
+- FastAPI；
+- Pydantic；
+- SQLAlchemy；
+- Alembic；
+- HTTPX；
+- 结构化日志。
+
+数据库：
+- SQLite；
+- FTS5；
+- WAL 模式；
+- 外键；
+- 数据库迁移；
+- 定期备份；
+- 每用户数据隔离。
+
+向量存储：
+- 选择一个支持本地持久化的轻量方案；
+- 在 ADR 中比较 Chroma、LanceDB 和 FAISS；
+- 不要同时引入多个向量数据库。
+
+任务执行：
+- 使用独立 worker；
+- 任务状态存入 SQLite；
+- 支持 pending、running、succeeded、failed、cancelled；
+- 支持失败重试和服务重启后的任务恢复；
+- V1 不强制引入 Redis。
+
+LLM：
+- 建立 Provider 抽象；
+- 支持 OpenAI-compatible API；
+- 可选支持本地 Ollama；
+- 模型名称从环境变量或管理员页面配置；
+- 禁止硬编码密钥；
+- 没有 LLM Key 时，搜索、收藏、笔记等非生成能力仍能运行；
+- 提供 mock LLM 供测试。
+
+依赖管理：
+- Python 使用 uv 或等价锁定工具；
+- 前端使用 pnpm；
+- 提交 lockfile；
+- 固定可复现版本；
+- 不要盲目使用“最新版本”。
+
+# 十六、数据库设计
+
+至少建立以下实体：
+
+- users；
+- invitations；
+- research_profiles；
+- research_projects；
+- research_questions；
+- search_sessions；
+- search_queries；
+- source_requests；
+- papers；
+- paper_sources；
+- authors；
+- paper_authors；
+- venues；
+- paper_chunks；
+- paper_analyses；
+- dataset_cards；
+- author_cards；
+- favorites；
+- tags；
+- paper_tags；
+- notes；
+- reading_status；
+- recommendations；
+- gap_candidates；
+- gap_evidence；
+- research_plans；
+- plan_items；
+- jobs；
+- agent_runs；
+- tool_calls；
+- prompt_versions；
+- data_source_configs；
+- audit_logs；
+- app_settings。
+
+要求：
+
+1. 每张业务表有 created_at 和 updated_at；
+2. 用户数据必须绑定 user_id；
+3. 论文元数据可以全局复用；
+4. 用户笔记、收藏和计划必须隔离；
+5. 删除用户时支持级联或显式清理；
+6. 论文来源保留 raw hash；
+7. 不能静默覆盖不同来源冲突；
+8. 数据库迁移可从空库执行；
+9. 提供 ER 图；
+10. 提供种子数据。
+
+# 十七、前端页面
+
+至少实现：
+
+1. 登录和注册；
+2. 首页 Dashboard；
+3. 研究方向引导页；
+4. 研究项目详情页；
+5. 论文搜索页；
+6. 搜索结果页；
+7. 论文详情页；
+8. 论文对比页；
+9. 我的论文库；
+10. 收藏和标签页；
+11. 研究笔记页；
+12. 候选研究空白页；
+13. 研究计划页；
+14. 任务进度页；
+15. 数据源状态页；
+16. 用户设置页；
+17. 管理员配置页。
+
+论文列表项至少显示：
+
+- 标题；
+- 中文标题；
+- 作者；
+- 年份；
+- 来源；
+- 研究方向匹配度；
+- 复现推荐度；
+- evidence level；
+- 是否开放全文；
+- 是否有代码；
+- 是否有数据；
+- 收藏按钮；
+- 原始网页按钮。
+
+界面要求：
+
+- 中文优先；
+- 支持英文论文信息；
+- 响应式；
+- 加载状态明确；
+- 错误信息可理解；
+- 不允许只有一个聊天输入框；
+- Agent 过程要显示阶段，而不是无限转圈；
+- 所有评分可点击查看组成依据。
+
+# 十八、API 设计
+
+至少提供：
+
+认证：
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
+- GET /auth/me
+
+研究档案：
+- GET /research-profiles/me
+- PUT /research-profiles/me
+- POST /projects
+- GET /projects
+- GET /projects/{id}
+- PUT /projects/{id}
+
+搜索：
+- POST /search/papers
+- GET /search/sessions
+- GET /search/sessions/{id}
+- POST /search/sessions/{id}/rerun
+
+论文：
+- GET /papers/{id}
+- POST /papers/resolve
+- POST /papers/{id}/analyze
+- POST /papers/{id}/upload
+- GET /papers/{id}/analysis
+- GET /papers/{id}/related
+
+论文库：
+- POST /library/favorites
+- DELETE /library/favorites/{paper_id}
+- POST /library/notes
+- PUT /library/notes/{id}
+- GET /library
+
+推荐：
+- GET /recommendations
+- POST /recommendations/refresh
+
+研究空白：
+- POST /gaps/generate
+- POST /gaps/{id}/challenge
+- POST /gaps/{id}/confirm
+- GET /gaps/{id}
+
+研究计划：
+- POST /plans
+- GET /plans/{id}
+- PUT /plan-items/{id}
+
+任务：
+- GET /jobs/{id}
+- POST /jobs/{id}/cancel
+- GET /jobs/{id}/events
+
+数据源：
+- GET /sources/status
+- POST /sources/{id}/test
+
+为 API 自动生成 OpenAPI 文档。
+
+# 十九、本地部署和持久化
+
+默认部署模式是实验室或小组局域网模式。
+
+必须支持：
+
+1. 一台电脑启动服务；
+2. 服务监听 0.0.0.0；
+3. 同一局域网用户通过：
+   http://主机局域网IP:端口
+   访问；
+4. SQLite 存储到挂载目录；
+5. 上传 PDF 存储到挂载目录；
+6. 向量索引存储到挂载目录；
+7. docker compose down 后数据仍存在；
+8. 主机重启后可以重新启动并恢复；
+9. README 说明 Windows、macOS、Linux 启动方式；
+10. 提供数据备份、恢复和导出脚本；
+11. 提供管理员初始化方式；
+12. 提供修改端口和允许访问 IP 的配置；
+13. 默认不暴露到公网；
+14. 若启用公网模式，提供 HTTPS 和反向代理说明。
+
+Docker Compose 至少包含：
+
+- web；
+- api；
+- worker；
+- 可选反向代理。
+
+不能把 SQLite 文件写进容器临时文件系统。
+
+# 二十、PRD 要求
+
+生成 docs/PRD.md。
+
+PRD 必须包含：
+
+1. 文档信息；
+2. 版本历史；
+3. 产品背景；
+4. 用户问题；
+5. 目标用户；
+6. Persona；
+7. JTBD；
+8. 用户调研假设；
+9. 用户旅程；
+10. 当前解决方式；
+11. 竞品分析；
+12. 产品定位；
+13. 差异化价值；
+14. 产品目标；
+15. 非目标；
+16. 功能架构；
+17. V1 功能需求；
+18. V2 功能需求；
+19. P0/P1/P2 优先级；
+20. 用户故事；
+21. 验收标准；
+22. 异常流程；
+23. 数据源要求；
+24. AI 功能边界；
+25. 科研主张边界；
+26. 隐私和版权；
+27. 非功能需求；
+28. 产品指标；
+29. AI 质量指标；
+30. 风险；
+31. 版本计划；
+32. 上线计划；
+33. 运营和反馈计划；
+34. 已知限制。
+
+竞品分析必须在执行时查询当前真实产品，不得根据记忆虚构。
+
+竞品维度至少包括：
+
+- 目标用户；
+- 检索；
+- 论文阅读；
+- 引用网络；
+- AI 总结；
+- 研究空白；
+- 复现评估；
+- 研究计划；
+- 本地持久化；
+- 团队使用；
+- 数据源；
+- 价格或访问模式；
+- 本产品可借鉴点；
+- 本产品不能声称的优势。
+
+# 二十一、TechDocs 要求
+
+生成：
+
+1. architecture.md
+   - 系统上下文；
+   - 容器关系；
+   - 组件关系；
+   - 数据流；
+   - 部署图。
+
+2. database-design.md
+   - ER 图；
+   - 表结构；
+   - 索引；
+   - 迁移；
+   - 备份。
+
+3. data-source-contracts.md
+   - 每个数据源；
+   - 字段映射；
+   - 限流；
+   - 授权；
+   - 错误；
+   - 降级策略。
+
+4. rag-design.md
+   - 语料边界；
+   - 解析；
+   - chunk；
+   - embedding；
+   - BM25；
+   - 混合召回；
+   - 引用；
+   - 评价。
+
+5. mcp-design.md
+   - server；
+   - tools；
+   - resources；
+   - schemas；
+   - 安全；
+   - 测试。
+
+6. agent-workflow.md
+   - 状态；
+   - 节点；
+   - 输入输出；
+   - 人工确认；
+   - 恢复；
+   - 失败处理。
+
+7. research-gap-method.md
+   - 空白定义；
+   - 证据矩阵；
+   - 反证检索；
+   - 置信度；
+   - 禁止主张。
+
+8. api-design.md
+   - endpoint；
+   - schema；
+   - 鉴权；
+   - 错误码。
+
+9. security-and-compliance.md
+   - API Key；
+   - SSRF；
+   - PDF 上传；
+   - 权限；
+   - 版权；
+   - 日志脱敏。
+
+10. evaluation-plan.md
+    - 产品指标；
+    - RAG 指标；
+    - 推荐指标；
+    - 研究空白人工评价；
+    - 测试集。
+
+11. deployment-runbook.md
+    - 安装；
+    - 配置；
+    - 启动；
+    - 局域网；
+    - 备份；
+    - 恢复；
+    - 升级；
+    - 排错。
+
+12. claim-boundary.md
+    - 已实现；
+    - 未实现；
+    - 使用模拟数据的地方；
+    - 受授权限制的功能；
+    - 简历和作品集中允许与禁止的表述。
+
+13. ADR/
+    至少记录：
+    - 前后端拆分选择；
+    - SQLite 选择；
+    - 向量库选择；
+    - 是否使用 LangGraph；
+    - MCP 边界；
+    - 数据源优先级；
+    - V1/V2 范围。
+
+# 二十二、测试要求
+
+采用测试驱动或至少测试先行的方式。
+
+## 22.1 单元测试
+
+覆盖：
+
+- 论文标准化；
+- DOI 标准化；
+- arXiv ID；
+- 标题去重；
+- 作者消歧候选；
+- 数据源字段映射；
+- 匹配度评分；
+- 复现评分；
+- evidence level；
+- gap candidate；
+- 反证检索式；
+- 用户权限；
+- 数据隔离；
+- PDF MIME 和大小检查；
+- URL 安全；
+- MCP 输入输出 Schema。
+
+## 22.2 集成测试
+
+覆盖：
+
+- 至少两个真实开放论文数据源；
+- 数据源超时；
+- 429 限流；
+- 无摘要；
+- 重复 DOI；
+- 无开放全文；
+- PDF 解析失败；
+- LLM 不可用；
+- 向量索引重建；
+- 数据库迁移；
+- worker 重启恢复。
+
+真实外部 API 测试和 mock 测试分开。
+
+没有 API Key 时，授权数据源测试必须明确 skip，不能假装通过。
+
+## 22.3 E2E 测试
+
+使用 Playwright 或等价工具，覆盖：
+
+1. 注册；
+2. 登录；
+3. 创建研究档案；
+4. 创建项目；
+5. 搜索论文；
+6. 打开详情；
+7. 收藏；
+8. 添加笔记；
+9. 上传合法测试 PDF；
+10. 执行论文分析；
+11. 创建计划；
+12. 退出；
+13. 重启服务；
+14. 再次登录；
+15. 验证记录仍存在。
+
+## 22.4 RAG 评价
+
+建立固定 fixture：
+
+- 开放论文；
+- 摘要；
+- 预期研究问题；
+- 预期数据集；
+- 预期方法；
+- 明确没有出现的字段。
+
+必须测试模型不会为不存在的信息编造答案。
+
+## 22.5 安全测试
+
+覆盖：
+
+- SQL 注入；
+- 越权读取其他用户笔记；
+- 路径穿越；
+- SSRF；
+- 超大 PDF；
+- 错误 MIME；
+- 恶意文件名；
+- API Key 日志泄漏；
+- 未登录访问；
+- 管理员接口权限。
+
+# 二十三、验收标准
+
+只有同时满足以下条件，才能声明 V1 完成：
+
+1. docker compose up --build 能启动；
+2. 前端、API 和 worker 健康检查通过；
+3. 可以创建用户和研究项目；
+4. 可以从真实开放数据源搜索论文；
+5. 搜索结果可以去重；
+6. 可以打开真实论文网页；
+7. 可以保存收藏、笔记和阅读状态；
+8. 可以上传 PDF 并完成 RAG 分析；
+9. 论文分析具有引用定位；
+10. 只有摘要时不会输出全文细节；
+11. 可以生成可解释的匹配度；
+12. 可以生成有证据覆盖度的复现推荐度；
+13. 可以创建研究计划；
+14. 服务重启后记录仍存在；
+15. 用户之间数据隔离；
+16. 单元测试、集成测试和 E2E 测试通过；
+17. 文档和运行命令与实际代码一致；
+18. 没有把 mock 数据展示成真实数据；
+19. 没有硬编码 API Key；
+20. 最终报告列出所有未完成项。
+
+V2 验收还必须包括：
+
+1. 可以生成研究维度矩阵；
+2. 候选空白有支持和反向证据；
+3. 可以执行 challenge search；
+4. 未完成反证检索的空白不能进入已确认状态；
+5. 可以人工修改和确认候选空白；
+6. 可以从确认的问题生成计划；
+7. Agent 运行可中断、失败和恢复；
+8. 每次运行有完整审计日志；
+9. V1 回归测试通过。
+
+# 二十四、产品指标
+
+PRD 中至少定义：
+
+产品指标：
+
+- 首次获得有效论文的时间；
+- 搜索到收藏转化率；
+- 论文详情打开率；
+- 收藏后再次访问率；
+- 计划创建率；
+- 任务完成率；
+- 用户主动修改 AI 结果的比例；
+- 周留存。
+
+检索指标：
+
+- Precision@10；
+- Recall@K；
+- NDCG@10；
+- 重复论文率；
+- 数据源失败率；
+- 搜索响应时间。
+
+论文分析指标：
+
+- Citation Precision；
+- Citation Coverage；
+- Faithfulness；
+- Structured Extraction Accuracy；
+- Missing-field refusal accuracy。
+
+候选空白指标：
+
+- 专家认为“值得进一步查证”的比例；
+- 被反证检索推翻的比例；
+- 支持和反向证据覆盖度；
+- 人工修改率；
+- 候选空白到研究计划转化率。
+
+不能用“生成了多少研究空白”作为核心成功指标。
+
+# 二十五、代码质量与工程要求
+
+1. 前后端严格类型；
+2. 不允许巨大单文件；
+3. 数据源使用 Adapter Interface；
+4. Agent 节点职责单一；
+5. 配置集中管理；
+6. 日志结构化；
+7. 错误码统一；
+8. Prompt 有版本；
+9. 数据库有迁移；
+10. 测试 fixture 与生产数据分离；
+11. 示例数据明确标记 synthetic 或 fixture；
+12. 不在仓库中提交密钥、真实用户数据或受限全文；
+13. pre-commit 或等价检查；
+14. 后端 lint、format、type check；
+15. 前端 lint、type check、build；
+16. 每个主要模块有 README 或 docstring；
+17. 代码中的 TODO 必须进入已知限制，V1 P0 路径不得留下 TODO；
+18. 不得因为页面能打开就宣称功能完成。
+
+# 二十六、执行顺序
+
+严格按照以下阶段执行。
+
+## 阶段 0：仓库审计与设计
+
+1. 检查现有仓库；
+2. 输出目录树；
+3. 检查当前依赖和代码；
+4. 判断复用或新建；
+5. 建立需求追踪矩阵；
+6. 写 PRD；
+7. 写架构设计；
+8. 写 ADR；
+9. 建立测试计划；
+10. 建立实施计划。
+
+本 Prompt 已经构成产品方向和默认架构的批准。除非发现无法兼容的现有架构，不要停留在“是否开始实现”的重复确认上。
+
+## 阶段 1：V1 测试与实现
+
+按功能垂直切片实施：
+
+1. 基础工程；
+2. 数据库和登录；
+3. 研究档案；
+4. 数据源适配；
+5. 搜索和去重；
+6. 论文详情；
+7. 收藏和笔记；
+8. PDF 解析；
+9. RAG；
+10. 评分；
+11. 计划；
+12. 部署；
+13. E2E；
+14. V1 验收；
+15. V1 发布记录。
+
+每个切片：
+
+- 先写测试；
+- 实现；
+- 运行测试；
+- 修复；
+- 记录结果。
+
+## 阶段 2：V2 测试与实现
+
+1. 方向拆解；
+2. 查询扩展；
+3. 论文分层推荐；
+4. 证据矩阵；
+5. 候选空白；
+6. challenge search；
+7. 人工确认；
+8. 计划生成；
+9. Agent 状态持久化；
+10. V1 回归；
+11. V2 验收；
+12. V2 发布记录。
+
+## 阶段 3：交付审计
+
+完成：
+
+1. 完整测试；
+2. Docker 冷启动；
+3. 空数据库迁移；
+4. 服务重启持久化；
+5. 局域网访问配置检查；
+6. API Key 泄漏检查；
+7. mock/真实数据标记检查；
+8. 版权和访问边界检查；
+9. 文档与代码一致性检查；
+10. 最终交付报告。
+
+# 二十七、最终交付物
+
+必须交付：
+
+1. 完整源代码；
+2. V1 可运行版本；
+3. V2 可运行版本；
+4. PRD；
+5. TechDocs；
+6. ADR；
+7. OpenAPI；
+8. 数据库迁移；
+9. MCP Servers；
+10. RAG 流程；
+11. 测试；
+12. Docker Compose；
+13. .env.example；
+14. README；
+15. CHANGELOG；
+16. V1 发布说明；
+17. V2 发布说明；
+18. 测试报告；
+19. 验收报告；
+20. 已知限制；
+21. 简历主张边界；
+22. 演示账户或本地初始化方式；
+23. 示例研究方向；
+24. 示例开放论文数据；
+25. 数据备份和恢复脚本。
+
+# 二十八、最终报告格式
+
+最终回答必须按以下格式：
+
+1. 完成状态；
+2. 仓库路径；
+3. 产品架构；
+4. V1 已实现功能；
+5. V2 已实现功能；
+6. 未实现功能；
+7. 数据源接入状态；
+8. RAG 实现；
+9. MCP 实现；
+10. Agent 实现；
+11. 数据库与持久化；
+12. 安全与版权边界；
+13. 测试命令；
+14. 实际测试结果；
+15. Docker 启动命令；
+16. 局域网访问方式；
+17. 默认账户初始化；
+18. 关键文件列表；
+19. 已知问题；
+20. 下一步建议。
+
+每个“已完成”结论都必须有代码、测试输出或可运行命令支撑。
+
+禁止：
+
+- 未运行测试却写 tests passed；
+- 未接通 API 却写已集成；
+- 只有接口定义却写功能完成；
+- 只有前端假数据却写全链路完成；
+- 将摘要分析写成全文分析；
+- 将候选研究空白写成已证明的创新；
+- 将离线演示写成正式线上系统；
+- 将局域网部署写成公网 SaaS；
+- 将合成测试数据写成真实科研数据。
+
+现在开始执行阶段 0，并在完成设计和实施计划后继续完成 V1，然后完成 V2。不要只输出规划。

@@ -1,0 +1,8 @@
+mcp_servers\compat.py:54: error: "object" has no attribute "tool"  [attr-defined]
+mcp_servers\scholarly_search\server.py:123: error: Unused "type: ignore" comment  [unused-ignore]
+mcp_servers\research_workspace\server.py:98: error: Unused "type: ignore" comment  [unused-ignore]
+mcp_servers\paper_access\server.py:87: error: Unused "type: ignore" comment  [unused-ignore]
+apps\api\research_navigator\analysis\service.py:108: error: Argument "citations" to "analyze_accessible_text" has incompatible type "list[CitationLocator]"; expected "list[dict[str, object] | CitationLocator]"  [arg-type]
+apps\api\research_navigator\analysis\service.py:108: note: "list" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+apps\api\research_navigator\analysis\service.py:108: note: Consider using "Sequence" instead, which is covariant
+Found 5 errors in 5 files (checked 76 source files)

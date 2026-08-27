@@ -1,0 +1,5 @@
+pnpm_install_exit=0
+frontend_typecheck_exit=0
+frontend_test_exit=0
+frontend_build_exit=0
+openapi_export_exit=0

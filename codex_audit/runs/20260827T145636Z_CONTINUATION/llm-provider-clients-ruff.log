@@ -1,0 +1,32 @@
+SIM102 Use a single `if` statement instead of nested `if` statements
+   --> apps\api\research_navigator\analysis\providers.py:103:17
+    |
+101 |                   ) as client:
+102 |                       response = client.post(f"{self.base_url}{path}", json=payload, headers=headers)
+103 | /                 if response.status_code == 429 or response.status_code >= 500:
+104 | |                     if attempt < self.max_attempts:
+    | |___________________________________________________^
+105 |                           continue
+106 |                   response.raise_for_status()
+    |
+help: Combine `if` statements using `and`
+
+F841 [*] Local variable `exc` is assigned to but never used
+   --> apps\api\research_navigator\analysis\providers.py:126:70
+    |
+124 |             raw = json.loads(content) if isinstance(content, str) else content
+125 |             return ProviderExtraction.model_validate(raw).model_dump()
+126 |         except (json.JSONDecodeError, ValidationError, TypeError) as exc:
+    |                                                                      ^^^
+127 |             raise ProviderRequestError("provider returned invalid structured output") from None
+    |
+help: Remove assignment to unused variable `exc`
+    |
+125 |             return ProviderExtraction.model_validate(raw).model_dump()
+    -         except (json.JSONDecodeError, ValidationError, TypeError) as exc:
+126 +         except (json.JSONDecodeError, ValidationError, TypeError):
+127 |             raise ProviderRequestError("provider returned invalid structured output") from None
+    |
+
+Found 2 errors.
+[*] 1 fixable with the `--fix` option.

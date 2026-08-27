@@ -1,0 +1,39 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________ test_acquire_paper_evidence_mcp_submits_a_bounded_api_request ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001384BCA4BF0>
+
+    @pytest.mark.asyncio
+    async def test_acquire_paper_evidence_mcp_submits_a_bounded_api_request(monkeypatch) -> None:
+        captured: dict[str, object] = {}
+    
+        async def request_object(
+            self: ResearchNavigatorClient, method: str, path: str, **kwargs: object
+        ) -> dict[str, object]:
+            captured.update({"method": method, "path": path, **kwargs})
+            return {"outcome": "no_matching_evidence"}
+    
+        monkeypatch.setattr(ResearchNavigatorClient, "request_object", request_object)
+    
+        result = await acquire_paper_evidence(7, project_id=3, sources=["crossref"])
+    
+        assert result == {"outcome": "no_matching_evidence"}
+>       assert captured == {
+            "method": "POST",
+            "path": "/papers/7/acquire-evidence",
+            "json": {"project_id": 3, "sources": ["crossref"]},
+        }
+E       AssertionError: assert {'method': 'P...['crossref']}} == {'method': 'P...['crossref']}}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'json_body': {'project_id': 3, 'sources': ['crossref']}}
+E         Right contains 1 more item:
+E         {'json': {'project_id': 3, 'sources': ['crossref']}}
+E         Use -v to get more diff
+
+tests\unit\test_mcp_contracts.py:52: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_mcp_contracts.py::test_acquire_paper_evidence_mcp_submits_a_bounded_api_request
+1 failed in 0.77s

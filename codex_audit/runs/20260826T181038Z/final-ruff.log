@@ -1,0 +1,42 @@
+SIM117 Use a single `with` statement with multiple contexts instead of nested `with` statements
+  --> scripts\verify_mcp_stdio.py:46:5
+   |
+44 |           cwd=ROOT,
+45 |       )
+46 | /     async with stdio_client(parameters) as (reader, writer):
+47 | |         async with ClientSession(reader, writer) as session:
+   | |____________________________________________________________^
+48 |               initialized = await session.initialize()
+49 |               tools = await session.list_tools()
+   |
+help: Combine `with` statements
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests\integration\test_audit_schema.py:1:1
+   |
+ 1 | / from __future__ import annotations
+ 2 | |
+ 3 | | from pathlib import Path
+ 4 | |
+ 5 | | import sqlalchemy as sa
+ 6 | | from alembic import command
+ 7 | | from alembic.config import Config
+ 8 | | from sqlalchemy import inspect
+   | |______________________________^
+ 9 |
+10 |   ROOT = Path(__file__).resolve().parents[2]
+   |
+help: Organize imports
+   |
+5  | import sqlalchemy as sa
+   - from alembic import command
+6  | from alembic.config import Config
+7  | from sqlalchemy import inspect
+8  |
+9  + from alembic import command
+10 +
+11 | ROOT = Path(__file__).resolve().parents[2]
+   |
+
+Found 2 errors.
+[*] 1 fixable with the `--fix` option.

@@ -1,0 +1,94 @@
+name=http_first_acceptance
+status=PASS
+command=/opt/pyvenv/bin/python scripts/run_acceptance_scenario.py --scenario-version feedback-closure-v1 --output /mnt/data/researchnavigator_impl/src/ResearchNavigator_2.0.0-rc1_full_package_2026-08-27/codex_audit/runs/20260827T101632Z/HTTP_ACCEPTANCE.json
+exit_code=0
+duration_seconds=3.141
+--- stdout ---
+{
+  "scenario_version": "feedback-closure-v1",
+  "execution_mode": "http_api_only_after_bootstrap",
+  "user_id": 1,
+  "project_id": 1,
+  "search": {
+    "session_id": 1,
+    "mode": "discovery",
+    "requested_limit": 50,
+    "actual_count": 5,
+    "diversity_seed": "035b16dd38812a7edab04c7bd10f76c8",
+    "composition": {
+      "requested_limit": 50,
+      "classic_target": 10,
+      "frontier_target": 40,
+      "classic_count": 0,
+      "frontier_count": 5,
+      "fill_count": 0,
+      "classic_shortfall": 10,
+      "frontier_shortfall": 35,
+      "candidate_pool_count": 5,
+      "rule_version": "discovery-ranking-v1",
+      "rankings": {
+        "1": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 1
+        },
+        "2": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 2
+        },
+        "3": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 3
+        },
+        "4": {
+          "label": "frontier_candidate",
+          "relevance": 3.0,
+          "rank_score": 3.0,
+          "relevance_band": 300,
+          "position": 4
+        },
+        "5": {
+          "label": "frontier_candidate",
+          "relevance": 2.0,
+          "rank_score": 2.0,
+          "relevance_band": 200,
+          "position": 5
+        }
+      },
+      "mode_rule_version": "search-mode-v1"
+    }
+  },
+  "paper_set": {
+    "id": 1,
+    "paper_ids": [
+      1,
+      2
+    ]
+  },
+  "comparison": {
+    "id": 1,
+    "row_count": 19,
+    "evidence_hash": "f357ab0bd3f2e9a77857a05a6282c0228bf96fa749c2411fb44b0c94de09cecc"
+  },
+  "gap": {
+    "id": 1,
+    "status": "pending_confirmation",
+    "workflow_stage": "awaiting_human_confirmation",
+    "paper_set_id": 2,
+    "explanation_version": 2,
+    "not_novelty_proof": true
+  },
+  "human_confirmation": "not_performed",
+  "plan": null
+}
+
+--- stderr/blocker ---
+(empty)

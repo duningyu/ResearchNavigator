@@ -1,0 +1,9 @@
+name=docker_cold_start
+status=BLOCKED
+command=docker compose up --build
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+docker executable is unavailable

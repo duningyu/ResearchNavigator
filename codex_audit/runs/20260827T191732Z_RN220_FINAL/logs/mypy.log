@@ -1,0 +1,3 @@
+command: mypy apps/api/research_navigator services mcp_servers
+bash: line 11: mypy: command not found
+exit_code=127

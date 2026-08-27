@@ -1,0 +1,17 @@
+execution_id=20260826T181038Z
+date_utc=2026-08-26T18:10:38.7897135Z
+pwd=C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+git_head_exit_code=128
+git_head=fatal: Needed a single revision
+git_toplevel=C:/Users/ASUS/Documents/ChatGPT/New project
+original_repository_history=unavailable
+reconstructed_history=false
+new_history_origin=POST_AUDIT_BASELINE
+python=Python 3.9.7
+uv=uv 0.12.6 (7938ca5d5 2026-08-25 x86_64-pc-windows-msvc)
+node=v24.19.0
+pnpm=11.19.0
+docker_exit_code=0
+docker=
+compose_exit_code=0
+compose=

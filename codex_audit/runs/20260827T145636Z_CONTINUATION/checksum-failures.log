@@ -1,0 +1,7 @@
+MISMATCH codex_audit/runs/20260827T120000Z_DEPLOY_WIN/logs/live_preview.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-api.stderr.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-api.stdout.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-web.stderr.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-web.stdout.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-worker.stderr.log
+MISMATCH codex_audit/runs/20260827T134010Z_UNRESOLVED_CLOSURE/deployed-worker.stdout.log

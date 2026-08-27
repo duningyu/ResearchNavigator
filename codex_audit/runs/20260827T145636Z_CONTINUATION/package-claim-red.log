@@ -1,0 +1,19 @@
+.F.                                                                      [100%]
+================================== FAILURES ===================================
+___ test_release_metadata_is_consistent_across_generated_delivery_artifacts ___
+
+    def test_release_metadata_is_consistent_across_generated_delivery_artifacts() -> None:
+        from scripts.package_release import PACKAGE_VERSION, RELEASE_LABEL
+    
+        package_info = json.loads((Path("delivery") / "PACKAGE_INFO.json").read_text())
+        status = json.loads((Path("delivery") / "STATUS.json").read_text())
+    
+        assert package_info["package_version"] == PACKAGE_VERSION
+        assert package_info["release_label"] == RELEASE_LABEL
+>       assert RELEASE_LABEL in package_info["claim"]
+E       AssertionError: assert 'audit-completion' in 'Feedback-closure source delivery; see STATUS.json, TEST_REPORT.md, and GAP_LEDGER.csv for executed versus blocked gates.'
+
+tests\unit\test_package_release.py:38: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_package_release.py::test_release_metadata_is_consistent_across_generated_delivery_artifacts
+1 failed, 2 passed in 0.13s

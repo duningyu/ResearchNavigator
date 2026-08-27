@@ -1,0 +1,62 @@
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "E:\AI_Projects\ResearchNavigator\services\worker\main.py", line 218, in <module>
+    main()
+  File "E:\AI_Projects\ResearchNavigator\services\worker\main.py", line 212, in main
+    processed = run_once(database, settings=settings)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\services\worker\main.py", line 172, in run_once
+    job = _claim_job(session, worker_id=identity)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\services\worker\main.py", line 70, in _claim_job
+    job_id = session.scalar(
+             ^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2421, in scalar
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2271, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\bulk_persistence.py", line 1676, in orm_execute_statement
+    return super().orm_execute_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:45988', '2026-08-27 12:11:22.857665', '2026-08-27 12:11:22.857665', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

@@ -1,0 +1,143 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_____ test_openai_provider_sends_only_evidence_with_json_schema_and_auth ______
+
+    def test_openai_provider_sends_only_evidence_with_json_schema_and_auth() -> None:
+        captured: dict[str, object] = {}
+    
+        def handler(request: httpx.Request) -> httpx.Response:
+            captured["url"] = str(request.url)
+            captured["authorization"] = request.headers.get("authorization")
+            captured["body"] = json.loads(request.content)
+            return httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {
+                            "message": {
+                                "content": json.dumps(
+                                    {
+                                        "summary": "Supported claim",
+                                        "methods": [],
+                                        "datasets": [],
+                                        "metrics": [],
+                                        "citations": [{"field": "summary", "chunk_id": 9}],
+                                    }
+                                )
+                            }
+                        }
+                    ]
+                },
+            )
+    
+>       provider = providers.OpenAICompatibleProvider(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            base_url="https://llm.example/v1/",
+            api_key="top-secret",
+            model="audit-model",
+            prompt_version="paper-analysis-v1",
+            transport=httpx.MockTransport(handler),
+        )
+E       AttributeError: module 'research_navigator.analysis.providers' has no attribute 'OpenAICompatibleProvider'
+
+tests\unit\test_llm_provider_clients.py:37: AttributeError
+____ test_ollama_provider_uses_native_structured_chat_without_auth_header _____
+
+    def test_ollama_provider_uses_native_structured_chat_without_auth_header() -> None:
+        captured: dict[str, object] = {}
+    
+        def handler(request: httpx.Request) -> httpx.Response:
+            captured["url"] = str(request.url)
+            captured["authorization"] = request.headers.get("authorization")
+            captured["body"] = json.loads(request.content)
+            return httpx.Response(
+                200,
+                json={
+                    "message": {
+                        "content": json.dumps(
+                            {
+                                "summary": "Local evidence",
+                                "methods": [],
+                                "datasets": [],
+                                "metrics": [],
+                                "citations": [{"field": "summary", "chunk_id": 3}],
+                            }
+                        )
+                    }
+                },
+            )
+    
+>       provider = providers.OllamaProvider(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^
+            base_url="http://127.0.0.1:11434",
+            model="qwen-local",
+            prompt_version="paper-analysis-v1",
+            transport=httpx.MockTransport(handler),
+        )
+E       AttributeError: module 'research_navigator.analysis.providers' has no attribute 'OllamaProvider'
+
+tests\unit\test_llm_provider_clients.py:83: AttributeError
+__________ test_provider_retries_429_once_then_returns_valid_payload __________
+
+    def test_provider_retries_429_once_then_returns_valid_payload() -> None:
+        attempts = 0
+    
+        def handler(request: httpx.Request) -> httpx.Response:
+            nonlocal attempts
+            attempts += 1
+            if attempts == 1:
+                return httpx.Response(429, json={"error": "rate limited"})
+            return httpx.Response(
+                200,
+                json={
+                    "choices": [
+                        {
+                            "message": {
+                                "content": json.dumps(
+                                    {
+                                        "summary": "Recovered",
+                                        "methods": [],
+                                        "datasets": [],
+                                        "metrics": [],
+                                        "citations": [{"field": "summary", "chunk_id": 1}],
+                                    }
+                                )
+                            }
+                        }
+                    ]
+                },
+            )
+    
+>       provider = providers.OpenAICompatibleProvider(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            base_url="https://llm.example/v1",
+            api_key="secret-key",
+            model="audit-model",
+            prompt_version="paper-analysis-v1",
+            max_attempts=2,
+            transport=httpx.MockTransport(handler),
+        )
+E       AttributeError: module 'research_navigator.analysis.providers' has no attribute 'OpenAICompatibleProvider'
+
+tests\unit\test_llm_provider_clients.py:131: AttributeError
+________________ test_provider_failure_does_not_expose_api_key ________________
+
+    def test_provider_failure_does_not_expose_api_key() -> None:
+>       provider = providers.OpenAICompatibleProvider(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            base_url="https://llm.example/v1",
+            api_key="never-log-this-key",
+            model="audit-model",
+            prompt_version="paper-analysis-v1",
+            max_attempts=1,
+            transport=httpx.MockTransport(lambda request: httpx.Response(503, text="unavailable")),
+        )
+E       AttributeError: module 'research_navigator.analysis.providers' has no attribute 'OpenAICompatibleProvider'
+
+tests\unit\test_llm_provider_clients.py:147: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_llm_provider_clients.py::test_openai_provider_sends_only_evidence_with_json_schema_and_auth
+FAILED tests/unit/test_llm_provider_clients.py::test_ollama_provider_uses_native_structured_chat_without_auth_header
+FAILED tests/unit/test_llm_provider_clients.py::test_provider_retries_429_once_then_returns_valid_payload
+FAILED tests/unit/test_llm_provider_clients.py::test_provider_failure_does_not_expose_api_key
+4 failed in 0.27s

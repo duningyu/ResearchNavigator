@@ -1,0 +1,56 @@
+{
+  "query": "attention",
+  "requested_limit_per_source": 1,
+  "started_at": "2026-08-27T19:21:27.324020+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "error",
+      "detail": "ConnectError: [Errno -3] Temporary failure in name resolution",
+      "checked_at": "2026-08-27T19:21:27.441719+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "error",
+      "detail": "ConnectError: [Errno -3] Temporary failure in name resolution",
+      "checked_at": "2026-08-27T19:21:32.482376+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "arxiv",
+      "status": "error",
+      "detail": "ConnectError: [Errno -3] Temporary failure in name resolution",
+      "checked_at": "2026-08-27T19:21:32.536390+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "error",
+      "detail": "ConnectError: [Errno -3] Temporary failure in name resolution",
+      "checked_at": "2026-08-27T19:21:37.634258+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 0,
+    "output_count": 0
+  },
+  "finished_at": "2026-08-27T19:21:37.635135+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "crossref",
+    "arxiv",
+    "semantic_scholar"
+  ]
+}

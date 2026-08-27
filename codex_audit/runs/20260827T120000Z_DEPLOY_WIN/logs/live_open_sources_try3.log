@@ -1,0 +1,98 @@
+{
+  "query": "time series forecasting",
+  "requested_limit_per_source": 2,
+  "started_at": "2026-08-27T13:33:05.181528+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T13:33:09.185292+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "error",
+      "detail": "ConnectError: ",
+      "checked_at": "2026-08-27T13:33:14.595934+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:33:17.789657+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "2410.11674v2",
+          "external_ids": {
+            "arxiv": "2410.11674v2"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2410.11674v2",
+            "https://arxiv.org/abs/2410.11674v2"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2410.11674v2",
+              "source_url": "http://arxiv.org/abs/2410.11674v2",
+              "fetched_at": "2026-08-27T13:33:17.788280+00:00",
+              "raw_hash": "2157eeabb449e1671475632fa881eb85b9de5b51b9a23be26b9e5b9c9a560278",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.1016/j.ijforecast.2025.10.001",
+          "arxiv_id": "2502.19086v5",
+          "external_ids": {
+            "arxiv": "2502.19086v5"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2502.19086v5",
+            "https://arxiv.org/abs/2502.19086v5"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2502.19086v5",
+              "source_url": "http://arxiv.org/abs/2502.19086v5",
+              "fetched_at": "2026-08-27T13:33:17.789657+00:00",
+              "raw_hash": "2508b9ae0014aeca6d10b579019e4604cfae021ae3e728727628dc0d28f8e97b",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-27T13:33:18.981717+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 2,
+    "output_count": 2
+  },
+  "finished_at": "2026-08-27T13:33:18.983723+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "crossref",
+    "semantic_scholar"
+  ]
+}

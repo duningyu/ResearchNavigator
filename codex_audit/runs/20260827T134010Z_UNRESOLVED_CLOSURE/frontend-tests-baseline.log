@@ -1,0 +1,7 @@
+$ vitest run --exclude tests/e2e/**
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+ ✓ src/components/scoreMath.test.ts (2 tests) 1ms
+ ✓ src/api/client.test.ts (2 tests) 5ms
+[ELIFECYCLE] Test failed. See above for more details.

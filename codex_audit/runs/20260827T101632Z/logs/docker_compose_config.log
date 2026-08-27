@@ -1,0 +1,9 @@
+name=docker_compose_config
+status=BLOCKED
+command=docker compose -f infra/docker-compose.yml config
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+docker executable is unavailable

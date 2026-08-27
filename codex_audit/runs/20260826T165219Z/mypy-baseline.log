@@ -1,0 +1,6 @@
+mypy: 
+Line |
+   2 |  … sts }; Capture 'mypy-baseline.log' { Set-Location $root; mypy apps/ap …
+     |                                                             ~~~~
+     | The term 'mypy' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.

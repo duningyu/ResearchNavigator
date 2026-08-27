@@ -1,0 +1,2 @@
+$ tsc -b --pretty false
+typecheck_exit=0

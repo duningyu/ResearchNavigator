@@ -1,0 +1,4 @@
+PASS source=openalex status=ok records=3 first_title='Attention Is All You Need' provenance='https://openalex.org/W2626778328'
+PASS source=crossref status=ok records=3 first_title='Is Attention All You Need?' provenance='10.1007/978-3-031-84300-6_13'
+PASS source=arxiv status=ok records=3 first_title='Do You Even Need Attention? A Stack of Feed-Forward Layers Does Surprisingly Well on ImageNet' provenance='2105.02723v1'
+PASS dedup input=9 output=9

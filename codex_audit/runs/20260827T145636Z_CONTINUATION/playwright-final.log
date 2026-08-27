@@ -1,0 +1,10 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+(node:3628) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\e2e\research-workflow.spec.ts:32:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (29.0s)
+  ok 2 tests\e2e\research-workflow.spec.ts:126:1 › user B cannot observe user A private project or library data (2.3s)
+
+  2 passed (32.2s)

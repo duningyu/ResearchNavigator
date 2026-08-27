@@ -1,0 +1,23 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________________ test_request_object_rejects_non_object_json _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001AE34085B20>
+
+    @pytest.mark.asyncio
+    async def test_request_object_rejects_non_object_json(monkeypatch: pytest.MonkeyPatch) -> None:
+        async def fake_request(self: httpx.AsyncClient, *args: object, **kwargs: object) -> httpx.Response:
+            return httpx.Response(200, json=[{"status": "ok"}], request=httpx.Request("GET", "http://test"))
+    
+        monkeypatch.setattr(httpx.AsyncClient, "request", fake_request)
+        client = ResearchNavigatorClient(base_url="http://test/api", token="secret")
+    
+        with pytest.raises(TypeError, match="JSON object"):
+>           await client.request_object("GET", "/object")
+                  ^^^^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'ResearchNavigatorClient' object has no attribute 'request_object'
+
+tests\unit\test_mcp_client.py:18: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_mcp_client.py::test_request_object_rejects_non_object_json
+1 failed in 0.22s

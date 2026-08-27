@@ -1,0 +1,10 @@
+date_utc=2026-08-26T16:52:19.0558888Z
+pwd=C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+git_head=HEAD
+git_status=?? ../HireLens_AI_Complete_Runnable/ | ?? ../InsightForge_2.0_Complete_Runnable/ | ?? ../InsightForge_2.0_Complete_Runnable_Chinese_UI.zip | ?? ./
+python=Python 3.9.7
+uv=
+node=v24.19.0
+npm=11.17.0
+docker=
+docker_compose=

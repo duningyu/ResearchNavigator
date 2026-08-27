@@ -1,0 +1,3 @@
+== mypy full ==
+apps\api\research_navigator\backups\service.py:162: error: Returning Any from function declared to return "dict[str, object] | None"  [no-any-return]
+Found 6 errors in 3 files (checked 89 source files)

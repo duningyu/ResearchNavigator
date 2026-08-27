@@ -1,0 +1,6 @@
+
+> @research-navigator/web@0.2.0 test
+> vitest run
+
+'vitest' is not recognized as an internal or external command,
+operable program or batch file.

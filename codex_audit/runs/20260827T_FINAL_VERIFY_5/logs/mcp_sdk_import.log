@@ -1,0 +1,14 @@
+name=mcp_sdk_import
+status=BLOCKED
+command=/opt/pyvenv/bin/python -c import mcp; print('official MCP SDK import PASS')
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import mcp; print('official MCP SDK import PASS')
+    ^^^^^^^^^^
+ModuleNotFoundError: No module named 'mcp'
+

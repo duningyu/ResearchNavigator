@@ -1,0 +1,10 @@
+name=openapi_export
+status=PASS
+command=/opt/pyvenv/bin/python scripts/export_openapi.py --output /mnt/data/researchnavigator_impl/src/ResearchNavigator_2.0.0-rc1_full_package_2026-08-27/codex_audit/runs/20260827T101632Z/OPENAPI.json
+exit_code=0
+duration_seconds=1.818
+--- stdout ---
+/mnt/data/researchnavigator_impl/src/ResearchNavigator_2.0.0-rc1_full_package_2026-08-27/codex_audit/runs/20260827T101632Z/OPENAPI.json
+
+--- stderr/blocker ---
+(empty)

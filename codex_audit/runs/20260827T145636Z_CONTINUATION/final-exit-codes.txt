@@ -1,0 +1,7 @@
+pytest_exit=0
+security_rag_exit=0
+ruff_exit=0
+mypy_exit=0
+compileall_exit=0
+json_exit=0
+checksum_exit=1

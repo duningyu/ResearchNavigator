@@ -1,0 +1,98 @@
+INFO:     Started server process [27428]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59731 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52436 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52437 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64361 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59627 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54634 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50647 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60533 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57129 - "GET /api/search/sessions/53/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57128 - "GET /api/search/sessions/53 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60210 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54754 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54753 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54752 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65032 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59254 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51421 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56696 - "GET /api/search/sessions/53 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56697 - "GET /api/search/sessions/53/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55538 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55537 - "GET /api/papers/87/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55535 - "GET /api/papers/87 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55536 - "GET /api/papers/87/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:55718 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63593 - "GET /api/search/sessions/53 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63594 - "GET /api/search/sessions/53/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64766 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64223 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53993 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53992 - "GET /api/paper-sets/21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55059 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58653 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53115 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61736 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57794 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57793 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57792 - "GET /api/paper-sets/23 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60037 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64865 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56065 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56066 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59510 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57248 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57251 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56006 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51554 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51558 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55820 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61730 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63870 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50709 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55380 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58340 - "GET /api/search/sessions/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58341 - "GET /api/search/sessions/54/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61351 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61354 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61353 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61352 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63119 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59398 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51778 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63070 - "GET /api/search/sessions/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63071 - "GET /api/search/sessions/54/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59180 - "GET /api/papers/88 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59183 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59182 - "GET /api/papers/88/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59181 - "GET /api/papers/88/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56925 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50935 - "GET /api/search/sessions/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50936 - "GET /api/search/sessions/54/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53096 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65364 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57203 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57202 - "GET /api/paper-sets/25 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51804 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55143 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60922 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57312 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50835 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50836 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50834 - "GET /api/paper-sets/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50095 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64283 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64577 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64578 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64305 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64310 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60483 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61201 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65428 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:58446 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64625 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51737 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60072 - "GET /api/health HTTP/1.1" 200 OK

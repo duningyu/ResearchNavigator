@@ -1,0 +1,11 @@
+utc=2026-08-27T15:40:39.2097320Z
+pwd=E:\AI_Projects\ResearchNavigator
+git_head=fatal: not a git repository (or any of the parent directories): .git
+git_status:
+fatal: not a git repository (or any of the parent directories): .git
+python=Python 3.12.0
+uv=BLOCKED: executable unavailable
+node=v24.19.0
+pnpm=11.7.0
+docker=BLOCKED: executable unavailable
+docker_compose=BLOCKED: docker unavailable

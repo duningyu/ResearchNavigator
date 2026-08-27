@@ -1,0 +1,817 @@
+INFO:     Started server process [20700]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63159 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63160 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63139 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63143 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63145 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63147 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63149 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63151 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63153 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62590 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62592 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62594 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62596 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62598 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62618 - "POST /api/search/sessions/2/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62636 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51646 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49282 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49306 - "GET /api/search/sessions/2/papers?page=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49308 - "GET /api/search/sessions/2/papers?page=2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61451 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61453 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61455 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61457 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61459 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61461 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61463 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61486 - "POST /api/search/sessions/7/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61505 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59673 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59695 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60362 - "GET /api/search/sessions/7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60364 - "GET /api/search/sessions/7/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60366 - "GET /api/papers/21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60368 - "POST /api/papers/21/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49983 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49985 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49987 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49990 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49992 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49995 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49999 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50021 - "POST /api/search/sessions/12/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50044 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50074 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50092 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50111 - "GET /api/search/sessions/12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50113 - "GET /api/search/sessions/12/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50115 - "GET /api/papers/21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50117 - "POST /api/papers/21/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50119 - "GET /api/papers/21/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50121 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50123 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50125 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50127 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50129 - "POST /api/library/papers/21/tags/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:50131 - "PUT /api/library/papers/21/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50133 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55653 - "POST /api/auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:55655 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55657 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55675 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55677 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55679 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58846 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58848 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58869 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58871 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58873 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58875 - "POST /api/library/papers/21/tags/3 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:58877 - "PUT /api/library/papers/21/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58879 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50935 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50937 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50941 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50943 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50945 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50947 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50949 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51070 - "POST /api/search/sessions/19/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52469 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52488 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52508 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52527 - "GET /api/search/sessions/19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52529 - "GET /api/search/sessions/19/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52531 - "GET /api/papers/21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52533 - "POST /api/papers/21/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52535 - "GET /api/papers/21/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52537 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52539 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52541 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52543 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52545 - "POST /api/library/papers/21/tags/4 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52547 - "PUT /api/library/papers/21/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52549 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52551 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52553 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52555 - "GET /api/paper-sets/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52557 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58341 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58343 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58345 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58347 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58349 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58351 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58353 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56286 - "POST /api/search/sessions/24/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62558 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55132 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49695 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61519 - "GET /api/search/sessions/24 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61521 - "GET /api/search/sessions/24/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61523 - "GET /api/papers/21 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61525 - "POST /api/papers/21/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61527 - "GET /api/papers/21/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61529 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61531 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61533 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61535 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61537 - "POST /api/library/papers/21/tags/5 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:61539 - "PUT /api/library/papers/21/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61541 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61543 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61545 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61547 - "GET /api/paper-sets/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61549 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61551 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61553 - "POST /api/gaps/1/challenge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65327 - "GET /api/gaps/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65329 - "POST /api/plans HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:65331 - "POST /api/gaps/1/confirm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65333 - "POST /api/plans HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65337 - "PUT /api/plan-items/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65339 - "GET /api/search/sessions/24 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65341 - "GET /api/search/sessions/24/papers HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65343 - "GET /api/paper-sets/3 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65345 - "GET /api/comparisons/2 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65347 - "GET /api/gaps/1 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65349 - "GET /api/plans/1 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65351 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+incorrect startxref pointer(1)
+parsing for Object Streams
+INFO:     127.0.0.1:65353 - "POST /api/papers/21/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65355 - "POST /api/papers/21/upload HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:65357 - "GET /api/papers/21/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65359 - "POST /api/papers/21/retrieve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65361 - "DELETE /api/documents/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:65363 - "POST /api/jobs HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65365 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65397 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65399 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65403 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65407 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57941 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57944 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51527 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53890 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53898 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54898 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54910 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54912 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54915 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54921 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54929 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59264 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59266 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59268 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59270 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59272 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59274 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59276 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59278 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59280 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59283 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53729 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53733 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53743 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53745 - "GET /api/jobs/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53748 - "GET /api/jobs/1/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53750 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63247 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63249 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63270 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63272 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63274 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63276 - "POST /api/gaps/2/challenge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61435 - "GET /api/gaps/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49234 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49236 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49238 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49240 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49242 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49244 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49246 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49269 - "POST /api/search/sessions/30/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58289 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58309 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58328 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64456 - "GET /api/search/sessions/30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64458 - "GET /api/search/sessions/30/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64460 - "GET /api/papers/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64462 - "POST /api/papers/54/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64464 - "GET /api/papers/54/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64466 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64468 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64470 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64472 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64474 - "POST /api/library/papers/54/tags/6 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:64476 - "PUT /api/library/papers/54/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64478 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64480 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64482 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64484 - "GET /api/paper-sets/6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64486 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50967 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50969 - "POST /api/gaps/3/challenge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51024 - "GET /api/gaps/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51026 - "POST /api/plans HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:51028 - "POST /api/gaps/3/confirm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51030 - "POST /api/plans HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51032 - "PUT /api/plan-items/8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51034 - "GET /api/search/sessions/30 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51036 - "GET /api/search/sessions/30/papers HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51038 - "GET /api/paper-sets/6 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51040 - "GET /api/comparisons/3 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51042 - "GET /api/gaps/3 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51044 - "GET /api/plans/2 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51046 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+incorrect startxref pointer(1)
+parsing for Object Streams
+INFO:     127.0.0.1:51048 - "POST /api/papers/54/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51050 - "POST /api/papers/54/upload HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51052 - "GET /api/papers/54/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51054 - "POST /api/papers/54/retrieve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51056 - "DELETE /api/documents/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:51058 - "POST /api/jobs HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51060 - "GET /api/jobs/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51062 - "GET /api/jobs/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51067 - "GET /api/jobs/2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51069 - "GET /api/jobs/2/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51074 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51076 - "GET /api/sources/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54733 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54735 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54737 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54739 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54741 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54743 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54745 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56881 - "POST /api/search/sessions/35/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57853 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62796 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53779 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56091 - "GET /api/search/sessions/35 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56093 - "GET /api/search/sessions/35/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56095 - "GET /api/papers/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56097 - "POST /api/papers/54/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56099 - "GET /api/papers/54/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56101 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56103 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56105 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56107 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56109 - "POST /api/library/papers/54/tags/7 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:56111 - "PUT /api/library/papers/54/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56113 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56115 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56117 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56119 - "GET /api/paper-sets/8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56121 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56123 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56125 - "POST /api/gaps/4/challenge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56819 - "GET /api/gaps/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56821 - "POST /api/plans HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:56823 - "POST /api/gaps/4/confirm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56825 - "POST /api/plans HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56827 - "PUT /api/plan-items/15 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56829 - "GET /api/search/sessions/35 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56831 - "GET /api/search/sessions/35/papers HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56833 - "GET /api/paper-sets/8 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56835 - "GET /api/comparisons/4 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56837 - "GET /api/gaps/4 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56839 - "GET /api/plans/3 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56841 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+incorrect startxref pointer(1)
+parsing for Object Streams
+INFO:     127.0.0.1:56843 - "POST /api/papers/54/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56845 - "POST /api/papers/54/upload HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:56847 - "GET /api/papers/54/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56849 - "POST /api/papers/54/retrieve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56851 - "DELETE /api/documents/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:56853 - "POST /api/jobs HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56855 - "GET /api/jobs/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56861 - "GET /api/jobs/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "GET /api/jobs/3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /api/jobs/3/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56867 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56869 - "GET /api/sources/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56871 - "POST /api/sources/fixture/test HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56873 - "PUT /api/settings/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56875 - "GET /api/settings/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56879 - "GET /api/admin/config-status HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56882 - "GET /api/admin/backups HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56884 - "GET /api/workspace/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57452 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57454 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57456 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57458 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57460 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57462 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57464 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57487 - "POST /api/search/sessions/40/rerun HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55773 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55798 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57124 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64235 - "GET /api/search/sessions/40 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64237 - "GET /api/search/sessions/40/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64239 - "GET /api/papers/54 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64241 - "POST /api/papers/54/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64243 - "GET /api/papers/54/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64245 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64247 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64249 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64251 - "POST /api/library/tags HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64253 - "POST /api/library/papers/54/tags/8 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:64255 - "PUT /api/library/papers/54/reading-status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64257 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64259 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64261 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64263 - "GET /api/paper-sets/10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64265 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64269 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64271 - "POST /api/gaps/5/challenge HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63771 - "GET /api/gaps/5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63773 - "POST /api/plans HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:63775 - "POST /api/gaps/5/confirm HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63777 - "POST /api/plans HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63781 - "PUT /api/plan-items/22 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63783 - "GET /api/search/sessions/40 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63785 - "GET /api/search/sessions/40/papers HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63787 - "GET /api/paper-sets/10 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63791 - "GET /api/comparisons/5 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63793 - "GET /api/gaps/5 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63795 - "GET /api/plans/4 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63797 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+incorrect startxref pointer(1)
+parsing for Object Streams
+INFO:     127.0.0.1:63799 - "POST /api/papers/54/upload HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63801 - "POST /api/papers/54/upload HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:63803 - "GET /api/papers/54/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63805 - "POST /api/papers/54/retrieve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63807 - "DELETE /api/documents/1 HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:63809 - "POST /api/jobs HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63811 - "GET /api/jobs/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63813 - "GET /api/jobs/4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63815 - "GET /api/jobs/4/events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63817 - "GET /api/jobs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63819 - "GET /api/sources/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63821 - "POST /api/sources/fixture/test HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63823 - "PUT /api/settings/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63825 - "GET /api/settings/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63827 - "GET /api/admin/config-status HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63829 - "GET /api/admin/backups HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63831 - "GET /api/workspace/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52264 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52266 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63588 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63589 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60928 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64771 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64167 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64168 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61812 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61813 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64976 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62813 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65421 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58696 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64730 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64731 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52857 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50865 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63411 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52703 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51096 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53364 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59739 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59740 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62072 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60420 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52126 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51482 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59288 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59289 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62424 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50893 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51947 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:50852 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49253 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56691 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50201 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50202 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58182 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54415 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63147 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61323 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51067 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56644 - "GET /api/search/sessions/45/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56643 - "GET /api/search/sessions/45 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61022 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61023 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54522 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53744 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50421 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:56784 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56073 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60070 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65070 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65071 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62296 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60692 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51317 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52891 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60966 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64215 - "GET /api/search/sessions/46 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64216 - "GET /api/search/sessions/46/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56351 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56354 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56352 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56353 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52414 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60036 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49799 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49800 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64924 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53766 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:57827 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65411 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49354 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63494 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63495 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61580 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61681 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55345 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50028 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60540 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60541 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56392 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57185 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51302 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:65058 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53337 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58230 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61795 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61796 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50807 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59359 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58874 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64687 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50078 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50079 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52183 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59881 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:60769 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55440 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59324 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54735 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54736 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64565 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53170 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59149 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56838 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49159 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49160 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52399 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51006 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50257 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:50416 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59456 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50276 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52534 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54662 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51690 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50754 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50756 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51388 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56289 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61574 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61401 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64023 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53028 - "GET /api/search/sessions/47 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53029 - "GET /api/search/sessions/47/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56292 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56295 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56293 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56294 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51100 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53331 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62551 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60612 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56923 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55941 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50973 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52490 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59947 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59046 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53200 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53201 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62589 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64496 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54376 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58464 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53144 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60440 - "GET /api/search/sessions/48 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60441 - "GET /api/search/sessions/48/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57414 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57412 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57413 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57415 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56336 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57178 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51674 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56206 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56207 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61941 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51174 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56278 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:54902 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59759 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61020 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56635 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56636 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53060 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54829 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57325 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57078 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62518 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /api/search/sessions/49 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /api/search/sessions/49/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63596 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63599 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63598 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63597 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50112 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59549 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58235 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54634 - "GET /api/search/sessions/49 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54635 - "GET /api/search/sessions/49/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54480 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54481 - "GET /api/papers/88/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54479 - "GET /api/papers/88/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54478 - "GET /api/papers/88 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52494 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64025 - "GET /api/search/sessions/49 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64026 - "GET /api/search/sessions/49/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53600 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63116 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63117 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65124 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59782 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51158 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:50624 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56599 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61162 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64387 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64390 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61872 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55358 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58112 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64465 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49678 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55991 - "GET /api/search/sessions/50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55992 - "GET /api/search/sessions/50/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65228 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65229 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65227 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65230 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64819 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50839 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54569 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61883 - "GET /api/search/sessions/50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61884 - "GET /api/search/sessions/50/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62342 - "GET /api/papers/88/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62343 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62341 - "GET /api/papers/88/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62340 - "GET /api/papers/88 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63778 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55780 - "GET /api/search/sessions/50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55781 - "GET /api/search/sessions/50/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61152 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51370 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53041 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53040 - "GET /api/paper-sets/12 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54698 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:54699 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64984 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52580 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59091 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:50865 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62686 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54497 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58245 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59584 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50995 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62103 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50494 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53335 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60366 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57629 - "GET /api/search/sessions/51 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57630 - "GET /api/search/sessions/51/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65240 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65242 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65243 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65244 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59262 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63422 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51724 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58911 - "GET /api/search/sessions/51 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58912 - "GET /api/search/sessions/51/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63550 - "GET /api/papers/88/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /api/papers/88 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63551 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63549 - "GET /api/papers/88/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58626 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64287 - "GET /api/search/sessions/51 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64288 - "GET /api/search/sessions/51/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53610 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53726 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:61689 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61688 - "GET /api/paper-sets/13 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54900 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52000 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64372 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59288 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57462 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57463 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57461 - "GET /api/paper-sets/15 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58577 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55295 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:63781 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63782 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53286 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:53303 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59422 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64033 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62456 - "POST /api/auth/logout HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:59510 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51186 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65429 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64955 - "POST /api/auth/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64956 - "GET /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62574 - "PUT /api/research-profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53695 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62091 - "POST /api/projects HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60115 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61882 - "POST /api/search/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58009 - "GET /api/search/sessions/52 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58010 - "GET /api/search/sessions/52/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57728 - "GET /api/papers/59 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57731 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57729 - "GET /api/papers/59/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57730 - "GET /api/papers/59/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62696 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56015 - "POST /api/library/notes HTTP/1.1" 201 Created
+INFO:     127.0.0.1:62042 - "POST /api/papers/59/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62529 - "GET /api/search/sessions/52 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62530 - "GET /api/search/sessions/52/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60626 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60625 - "GET /api/papers/87/documents HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60624 - "GET /api/papers/87/analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60623 - "GET /api/papers/87 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56934 - "POST /api/library/favorites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52816 - "GET /api/search/sessions/52 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52817 - "GET /api/search/sessions/52/papers HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61652 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61462 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65483 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65482 - "GET /api/paper-sets/17 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50439 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52575 - "POST /api/comparisons HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52574 - "GET /api/library HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49248 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50952 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50951 - "GET /api/gaps HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50950 - "GET /api/paper-sets/19 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63171 - "POST /api/paper-sets HTTP/1.1" 201 Created
+INFO:     127.0.0.1:51844 - "POST /api/gaps/generate HTTP/1.1" 201 Created
+INFO:     127.0.0.1:50684 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50685 - "GET /api/gaps HTTP/1.1" 200 OK
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\uvicorn\protocols\http\httptools_impl.py", line 422, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 63, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\applications.py", line 96, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1780, in handle
+    await self.original_router.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 2789, in handle
+    await included_router._handle_selected(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1800, in _handle_selected
+    await original_route.handle(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 1279, in handle
+    await app(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\apps/api\research_navigator\routes\auth.py", line 45, in register
+    session.flush()
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4353, in flush
+    self._flush(objects)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4488, in _flush
+    with util.safe_reraise():
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4449, in _flush
+    flush_context.execute()
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 465, in execute
+    rec.execute(self)
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 94, in save_obj
+    _emit_insert_statements(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1234, in _emit_insert_statements
+    result = connection.execute(
+             ^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\AI_Projects\ResearchNavigator\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked
+[SQL: INSERT INTO users (email, password_hash, display_name, is_admin, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('owner-1787835649426@example.com', 'pbkdf2_sha256$390000$vBI9hGIPtktypWWTkZHQOg==$EPfBTWDMnJZNlcH3BQnivlcr1WnxaSCPAKcvb1ZeNY0=', 'Owner A', 0, 1, '2026-08-27 13:00:50.073364', '2026-08-27 13:00:50.073364')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+INFO:     127.0.0.1:49774 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49776 - "GET /api/health HTTP/1.1" 200 OK

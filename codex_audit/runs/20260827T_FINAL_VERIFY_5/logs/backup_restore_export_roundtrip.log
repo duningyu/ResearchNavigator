@@ -1,0 +1,9 @@
+name=backup_restore_export_roundtrip
+status=PASS
+command=/opt/pyvenv/bin/python scripts/seed_demo.py --database /tmp/rn-backup-21he7rf2/runtime/research_navigator.db --email verification@example.invalid --password verification-only-password-123 && /opt/pyvenv/bin/python scripts/export_workspace.py --database /tmp/rn-backup-21he7rf2/runtime/research_navigator.db --email verification@example.invalid --output /tmp/rn-backup-21he7rf2/workspace.json && /opt/pyvenv/bin/python scripts/backup.py --runtime /tmp/rn-backup-21he7rf2/runtime --output /tmp/rn-backup-21he7rf2/backup.zip && /opt/pyvenv/bin/python scripts/restore.py /tmp/rn-backup-21he7rf2/backup.zip --runtime /tmp/rn-backup-21he7rf2/restored --force
+exit_code=0
+duration_seconds=3.426
+--- stdout ---
+{"export_email": "verification@example.invalid", "archive_entries": ["backup-manifest.json", "research_navigator.db"], "backup_format_version": 2, "restored_users": 1, "restored_projects": 1, "sqlite_integrity": "ok", "credentials_omitted": true}
+--- stderr/blocker ---
+(empty)

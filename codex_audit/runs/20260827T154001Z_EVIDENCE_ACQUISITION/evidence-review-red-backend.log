@@ -1,0 +1,294 @@
+F..FFFFF...F.                                                            [100%]
+================================== FAILURES ===================================
+___ test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits ____
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_metadata_only_paper_acqui0')
+
+    def test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits(
+        tmp_path: Path,
+    ) -> None:
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/evidence", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "acquire@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/evidence",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            initial = client.post(f"/api/papers/{paper_id}/analyze", headers=headers, json={})
+            assert initial.json()["analysis"]["evidence_level"] == "metadata_only"
+    
+            adapter.record = record(
+                doi="10.1000/evidence",
+                abstract=(
+                    "We study industrial multivariate time-series alert prediction and propose "
+                    "a bounded evidence acquisition workflow."
+                ),
+            )
+            acquired = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["evidence_source"]},
+            )
+    
+            assert acquired.status_code == 200, acquired.text
+            payload = acquired.json()
+            assert payload["outcome"] == "abstract_acquired"
+            assert payload["evidence_level_before"] == "metadata_only"
+            assert payload["evidence_level_after"] == "abstract_only"
+            assert payload["paper"]["abstract"].startswith("We study industrial")
+>           assert payload["paper"]["abstract_evidence_verified"] is True
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           KeyError: 'abstract_evidence_verified'
+
+tests\integration\test_evidence_acquisition.py:140: KeyError
+___________ test_evidence_acquisition_falls_back_from_doi_to_arxiv ____________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_evidence_acquisition_fall0')
+
+    def test_evidence_acquisition_falls_back_from_doi_to_arxiv(tmp_path: Path) -> None:
+        initial = record(
+            doi="10.1000/fallback",
+            arxiv_id="2608.12345",
+            abstract=None,
+        )
+    
+        class FallbackAdapter(MutableEvidenceAdapter):
+            async def search(self, request: SearchRequest) -> AdapterSearchResult:
+                self.call_count += 1
+                if request.query == "10.1000/fallback":
+                    return AdapterSearchResult(
+                        records=[], status=SourceStatus(status="ok", result_count=0)
+                    )
+                enriched = record(
+                    doi="10.1000/fallback",
+                    arxiv_id="2608.12345",
+                    abstract="The arXiv identifier supplied the exact abstract after DOI fallback.",
+                )
+                return AdapterSearchResult(
+                    records=[enriched], status=SourceStatus(status="ok", result_count=1)
+                )
+    
+        adapter = FallbackAdapter(initial)
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "fallback@example.com")
+>           paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/fallback",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+E           IndexError: list index out of range
+
+tests\integration\test_evidence_acquisition.py:272: IndexError
+____ test_adapter_without_explicit_acquisition_capability_is_never_called _____
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_adapter_without_explicit_0')
+
+    def test_adapter_without_explicit_acquisition_capability_is_never_called(tmp_path: Path) -> None:
+        class UnapprovedAdapter(MutableEvidenceAdapter):
+            name = "unapproved"
+            supports_evidence_acquisition = False
+    
+        approved = MutableEvidenceAdapter(record(doi="10.1000/allowlist", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([approved])
+            headers = register(client, "allowlist@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/allowlist",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            unapproved = UnapprovedAdapter(
+                record(
+                    doi="10.1000/allowlist",
+                    abstract="An unapproved adapter must never supply evidence.",
+                )
+            )
+            app.state.search_service = FederatedSearchService([unapproved])
+    
+            response = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["unapproved"]},
+            )
+    
+            assert response.status_code == 200, response.text
+>           assert response.json()["outcome"] == "no_eligible_source"
+E           AssertionError: assert 'abstract_acquired' == 'no_eligible_source'
+E             
+E             - no_eligible_source
+E             + abstract_acquired
+
+tests\integration\test_evidence_acquisition.py:330: AssertionError
+________ test_fixture_abstract_cannot_be_promoted_by_mixed_provenance _________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_fixture_abstract_cannot_b0')
+
+    def test_fixture_abstract_cannot_be_promoted_by_mixed_provenance(tmp_path: Path) -> None:
+        real_metadata = SourceProvenance(
+            source="evidence_source",
+            source_id="10.1000/mixed",
+            source_url="https://example.test/real-metadata",
+            raw_hash="c" * 64,
+        )
+        fixture_abstract = SourceProvenance(
+            source="fixture",
+            source_id="fixture-mixed",
+            source_url="https://example.test/fixture",
+            raw_hash="d" * 64,
+            is_fixture=True,
+        )
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/mixed", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "mixed@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/mixed",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            adapter.record = PaperRecord(
+                title="Evidence Acquisition for Industrial Alerts",
+                abstract="Fixture text must not become real scholarly evidence.",
+                publication_year=2026,
+                doi="10.1000/mixed",
+                source_provenance=[real_metadata, fixture_abstract],
+                abstract_provenance=fixture_abstract,
+            )
+    
+            response = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["evidence_source"]},
+            )
+    
+            assert response.status_code == 200, response.text
+>           assert response.json()["outcome"] == "no_matching_evidence"
+E           AssertionError: assert 'abstract_acquired' == 'no_matching_evidence'
+E             
+E             - no_matching_evidence
+E             + abstract_acquired
+
+tests\integration\test_evidence_acquisition.py:379: AssertionError
+_______ test_failed_reanalysis_rolls_back_paper_and_finishes_failed_run _______
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_failed_reanalysis_rolls_b0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002AE187EB380>
+
+    def test_failed_reanalysis_rolls_back_paper_and_finishes_failed_run(
+        tmp_path: Path, monkeypatch
+    ) -> None:
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/failure", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app, raise_server_exceptions=False) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "failure@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/failure",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            adapter.record = record(
+                doi="10.1000/failure",
+                abstract="This update must roll back when reanalysis fails.",
+            )
+    
+            def fail_analysis(*args, **kwargs):
+                raise RuntimeError("forced reanalysis failure")
+    
+            monkeypatch.setattr(
+                "research_navigator.analysis.acquisition.run_paper_analysis", fail_analysis
+            )
+            response = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["evidence_source"]},
+            )
+    
+>           assert response.status_code == 502
+E           assert 500 == 502
+E            +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests\integration\test_evidence_acquisition.py:418: AssertionError
+___________ test_evidence_acquisition_limits_requested_source_count ___________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-481/test_evidence_acquisition_limi0')
+
+    def test_evidence_acquisition_limits_requested_source_count(tmp_path: Path) -> None:
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            headers = register(client, "source-limit@example.com")
+            response = client.post(
+                "/api/papers/1/acquire-evidence",
+                headers=headers,
+                json={"sources": [f"source-{index}" for index in range(9)]},
+            )
+>           assert response.status_code == 422
+E           assert 404 == 422
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\integration\test_evidence_acquisition.py:442: AssertionError
+_________ test_fetch_open_fulltext_explicitly_reports_not_implemented _________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002AE18B1C050>
+
+    @pytest.mark.asyncio
+    async def test_fetch_open_fulltext_explicitly_reports_not_implemented(monkeypatch) -> None:
+        async def request_object(
+            self: ResearchNavigatorClient, method: str, path: str, **kwargs: object
+        ) -> dict[str, object]:
+            return {
+                "documents": [
+                    {"id": 9, "evidence_level": "user_uploaded_fulltext"}
+                ]
+            }
+    
+        monkeypatch.setattr(ResearchNavigatorClient, "request_object", request_object)
+    
+        result = await fetch_open_fulltext(7)
+    
+>       assert result["implementation_status"] == "not_implemented"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'implementation_status'
+
+tests\unit\test_mcp_contracts.py:73: KeyError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_evidence_acquisition.py::test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits
+FAILED tests/integration/test_evidence_acquisition.py::test_evidence_acquisition_falls_back_from_doi_to_arxiv
+FAILED tests/integration/test_evidence_acquisition.py::test_adapter_without_explicit_acquisition_capability_is_never_called
+FAILED tests/integration/test_evidence_acquisition.py::test_fixture_abstract_cannot_be_promoted_by_mixed_provenance
+FAILED tests/integration/test_evidence_acquisition.py::test_failed_reanalysis_rolls_back_paper_and_finishes_failed_run
+FAILED tests/integration/test_evidence_acquisition.py::test_evidence_acquisition_limits_requested_source_count
+FAILED tests/unit/test_mcp_contracts.py::test_fetch_open_fulltext_explicitly_reports_not_implemented
+7 failed, 6 passed in 5.25s

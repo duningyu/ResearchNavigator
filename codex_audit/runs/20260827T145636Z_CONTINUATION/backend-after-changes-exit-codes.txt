@@ -1,0 +1,5 @@
+pytest_exit=0
+security_rag_exit=4
+migration_exit=0
+ruff_exit=0
+mypy_exit=0

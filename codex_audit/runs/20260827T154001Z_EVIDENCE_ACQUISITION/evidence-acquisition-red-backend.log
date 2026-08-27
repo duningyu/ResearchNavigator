@@ -1,0 +1,109 @@
+FF.F.                                                                    [100%]
+================================== FAILURES ===================================
+___ test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits ____
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-476/test_metadata_only_paper_acqui0')
+
+    def test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits(
+        tmp_path: Path,
+    ) -> None:
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/evidence", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "acquire@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/evidence",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            initial = client.post(f"/api/papers/{paper_id}/analyze", headers=headers, json={})
+            assert initial.json()["analysis"]["evidence_level"] == "metadata_only"
+    
+            adapter.record = record(
+                doi="10.1000/evidence",
+                abstract=(
+                    "We study industrial multivariate time-series alert prediction and propose "
+                    "a bounded evidence acquisition workflow."
+                ),
+            )
+            acquired = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["evidence_source"]},
+            )
+    
+>           assert acquired.status_code == 200, acquired.text
+E           AssertionError: {"detail":"Not Found"}
+E           assert 404 == 200
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\integration\test_evidence_acquisition.py:124: AssertionError
+_ test_evidence_acquisition_rejects_identifier_conflict_without_mutating_paper _
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-476/test_evidence_acquisition_reje0')
+
+    def test_evidence_acquisition_rejects_identifier_conflict_without_mutating_paper(
+        tmp_path: Path,
+    ) -> None:
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/target", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            headers = register(client, "conflict@example.com")
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=headers,
+                json={
+                    "query": "10.1000/target",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            adapter.record = record(
+                doi="10.1000/different",
+                abstract="This abstract belongs to a different paper and must not be merged.",
+            )
+    
+            response = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=headers,
+                json={"sources": ["evidence_source"]},
+            )
+    
+>           assert response.status_code == 200, response.text
+E           AssertionError: {"detail":"Not Found"}
+E           assert 404 == 200
+E            +  where 404 = <Response [404 Not Found]>.status_code
+
+tests\integration\test_evidence_acquisition.py:180: AssertionError
+________________ test_paper_access_mcp_exposes_required_tools _________________
+
+    def test_paper_access_mcp_exposes_required_tools() -> None:
+>       assert registered_tool_names(access_server) >= {
+            "resolve_doi",
+            "resolve_arxiv",
+            "check_open_access",
+            "fetch_open_fulltext",
+            "acquire_paper_evidence",
+            "parse_uploaded_pdf",
+            "get_content_status",
+            "delete_local_document",
+        }
+E       AssertionError: assert {'check_open_...e_arxiv', ...} >= {'acquire_pap...ded_pdf', ...}
+E         
+E         Extra items in the right set:
+E         'acquire_paper_evidence'
+
+tests\unit\test_mcp_contracts.py:21: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_evidence_acquisition.py::test_metadata_only_paper_acquires_exact_abstract_reanalyzes_and_audits
+FAILED tests/integration/test_evidence_acquisition.py::test_evidence_acquisition_rejects_identifier_conflict_without_mutating_paper
+FAILED tests/unit/test_mcp_contracts.py::test_paper_access_mcp_exposes_required_tools
+3 failed, 2 passed in 2.53s

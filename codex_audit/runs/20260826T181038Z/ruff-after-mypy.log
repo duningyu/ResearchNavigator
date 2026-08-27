@@ -1,0 +1,19 @@
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests\unit\test_mcp_client.py:1:1
+  |
+1 | / from __future__ import annotations
+2 | |
+3 | | import httpx
+4 | | import pytest
+5 | |
+6 | | from mcp_servers.client import ResearchNavigatorClient
+  | |______________________________________________________^
+help: Organize imports
+  |
+4 | import pytest
+  -
+5 | from mcp_servers.client import ResearchNavigatorClient
+  |
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

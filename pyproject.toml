@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "research-navigator"
+version = "2.2.0"
+description = "Local-first, evidence-grounded research direction and paper workspace"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "ResearchNavigator Contributors"}]
+dependencies = [
+  "fastapi>=0.128,<1",
+  "uvicorn[standard]>=0.48,<1",
+  "pydantic>=2.13,<3",
+  "sqlalchemy>=2.0.50,<3",
+  "alembic>=1.18,<2",
+  "httpx>=0.28,<1",
+  "python-multipart>=0.0.20,<1",
+  "pypdf>=5.9,<7",
+  "mcp[cli]>=2.0,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=9,<10",
+  "pytest-asyncio>=1.1,<2",
+  "pytest-cov>=7,<8",
+  "ruff>=0.12,<1",
+  "mypy>=1.17,<2",
+  "reportlab>=4.4,<5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["apps/api/research_navigator"]
+
+[tool.pytest.ini_options]
+pythonpath = ["apps/api", "."]
+testpaths = ["tests"]
+addopts = "-ra"
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["apps/api", "services", "mcp_servers"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = ["apps/api"]
+packages = ["research_navigator"]
+
+[tool.coverage.run]
+source = ["research_navigator"]
+branch = true

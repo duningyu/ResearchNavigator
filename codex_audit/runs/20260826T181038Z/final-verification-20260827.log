@@ -1,0 +1,22 @@
+Final verification date: 2026-08-27 Asia/Shanghai
+pytest -q: PASS, 59 passed
+ruff check .: PASS
+mypy apps/api services/worker mcp_servers: PASS, 77 source files
+pnpm install --frozen-lockfile: PASS
+pnpm typecheck: PASS
+pnpm test: PASS, 4 tests
+pnpm build: PASS, non-blocking chunk-size warning
+verify_live_sources.py: PASS, OpenAlex/Crossref/arXiv; 9 records before dedup
+First MCP check without local API prerequisite: FAIL, HTTP 502
+First Playwright check without local API/Vite prerequisites: FAIL, 2 connection-refused failures
+Corrective orchestration: started FastAPI on 127.0.0.1:8000 and Vite on 127.0.0.1:5173
+verify_mcp_stdio.py with prerequisites: PASS, all three servers, protocol 2025-11-25
+Playwright with prerequisites: PASS, 2 passed in 26.2 seconds
+Target deployment API health: PASS, HTTP 200, database ok
+Target deployment OpenAPI: PASS, HTTP 200
+Target deployment frontend preview: PASS, HTTP 200, root element present
+Docker availability: BLOCKED_BY_ENVIRONMENT, command unavailable, exit 127
+Target Alembic query from source working directory: FAIL, wrong configuration context / unable to open database
+Corrective orchestration: changed working directory to E:\AI_Projects\ResearchNavigator
+Target Alembic query from target working directory: PASS, 0002 (head); runtime\research_navigator.db exists
+Temporary verification processes: STOPPED

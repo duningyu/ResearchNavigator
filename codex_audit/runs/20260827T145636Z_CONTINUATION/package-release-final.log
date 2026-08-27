@@ -1,0 +1,22 @@
+{
+  "package": "ResearchNavigator",
+  "package_version": "2.1.1",
+  "release_label": "audit-completion",
+  "packaged_at_utc": "2026-08-27T15:22:44.391802+00:00",
+  "source_commit": "git rev-parse HEAD failed: fatal: not a git repository (or any of the parent directories): .git",
+  "source_branch": "git branch --show-current failed: fatal: not a git repository (or any of the parent directories): .git",
+  "source_working_tree_at_package_time": "git status --short failed: fatal: not a git repository (or any of the parent directories): .git",
+  "copied_file_count_before_generated_evidence": 634,
+  "runtime_user_data_included": false,
+  "git_directory_included": false,
+  "secrets_included": false,
+  "claim": "audit-completion source delivery; see STATUS.json, TEST_REPORT.md, and GAP_LEDGER.csv for executed versus blocked gates.",
+  "manifest_file_count": 637,
+  "checksum_line_count": 638,
+  "staging_path": "E:\\AI_Projects\\_package_verification\\continuation_20260827T145636Z\\ResearchNavigator_2.1.1_audit-completion_continuation",
+  "archive_path": "E:\\AI_Projects\\_package_verification\\continuation_20260827T145636Z\\ResearchNavigator_2.1.1_audit-completion_continuation.zip",
+  "archive_size_bytes": 1073893,
+  "archive_sha256": "b61fa59e6f9a4ef8f02d86ddbb65a2431855a80ac5ee6b624c40081a74306314",
+  "zip_entry_count": 639,
+  "zip_integrity": "PASS"
+}

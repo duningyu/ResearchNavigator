@@ -1,0 +1,9 @@
+name=frontend_unit_tests
+status=BLOCKED
+command=corepack pnpm test
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+apps/web/node_modules is absent and dependency installation cannot be completed in the current offline/DNS-constrained environment

@@ -1,0 +1,9 @@
+name=ruff
+status=BLOCKED
+command=ruff check ...
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+ruff executable is unavailable

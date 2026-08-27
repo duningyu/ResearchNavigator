@@ -1,0 +1,9 @@
+name=mcp_stdio
+status=BLOCKED
+command=/opt/pyvenv/bin/python scripts/verify_mcp_stdio.py
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+official MCP SDK is unavailable

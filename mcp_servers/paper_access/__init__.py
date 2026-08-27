@@ -1,0 +1,1 @@
+"""Paper-access MCP server."""

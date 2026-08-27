@@ -1,0 +1,6 @@
+{
+  "health": "ok",
+  "version": "2.1.1",
+  "database": "ok",
+  "acquire_endpoint": true
+}

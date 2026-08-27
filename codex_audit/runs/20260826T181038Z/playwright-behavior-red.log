@@ -1,0 +1,73 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+(node:37512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login (9.3s)
+(node:29708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data (30.2s)
+
+
+  1) tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login 
+
+    Error: locator.click: Error: strict mode violation: getByText('研究档案') resolved to 2 elements:
+        1) <span class="ant-menu-title-content">研究档案</span> aka getByText('研究档案', { exact: true })
+        2) <li>完善研究档案与算力约束。</li> aka getByText('完善研究档案与算力约束。')
+
+    Call log:
+      - waiting for getByText('研究档案')
+
+
+      20 |   const email = `golden-${suffix}@example.com`;
+      21 |   await register(page, email, 'Golden User');
+    > 22 |   await page.getByText('研究档案').click();
+         |                                ^
+      23 |   await page.getByLabel('专业').fill('工业时序异常检测');
+      24 |   await page.getByLabel('宽泛研究方向').fill('未来窗口预警');
+      25 |   await page.getByRole('button', { name: '保存档案' }).click();
+        at C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\apps\web\tests\e2e\research-workflow.spec.ts:22:32
+
+    Error Context: test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: '创建' })
+
+
+      71 |   await page.getByRole('button', { name: '新建研究项目' }).click();
+      72 |   await page.getByLabel('项目名称').fill(`A private project ${suffix}`);
+    > 73 |   await page.getByRole('button', { name: '创建' }).click();
+         |                                                  ^
+      74 |   await page.getByRole('button', { name: '退出' }).click();
+      75 |   await page.getByText('注册').click();
+      76 |   await page.getByLabel('姓名').fill('User B');
+        at C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\apps\web\tests\e2e\research-workflow.spec.ts:73:50
+
+    Error Context: test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login 
+    tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data ─
+[ELIFECYCLE] Command failed with exit code 1.

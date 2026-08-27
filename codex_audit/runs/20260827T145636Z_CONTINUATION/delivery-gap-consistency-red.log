@@ -1,0 +1,32 @@
+..F                                                                      [100%]
+================================== FAILURES ===================================
+_______ test_delivery_gap_ledger_does_not_reopen_currently_passed_gates _______
+
+    def test_delivery_gap_ledger_does_not_reopen_currently_passed_gates() -> None:
+        status = json.loads((Path("delivery") / "STATUS.json").read_text())
+        with (Path("delivery") / "GAP_LEDGER.csv").open(
+            newline="", encoding="utf-8-sig"
+        ) as handle:
+            gaps = {row["gap_id"]: row for row in csv.DictReader(handle)}
+    
+        pass_requirements = {
+            "GAP-001": {"frontend_typecheck", "vitest_10", "vite_build"},
+            "GAP-002": {"playwright_2"},
+            "GAP-004": {"mcp_official_stdio_full_matrix"},
+        }
+        passed = set(status["pass"])
+        for gap_id, required_checks in pass_requirements.items():
+            if required_checks <= passed:
+>               assert gaps[gap_id]["status"] == "PASS", (
+                    f"{gap_id} reopens checks already marked PASS: {sorted(required_checks)}"
+                )
+E               AssertionError: GAP-001 reopens checks already marked PASS: ['frontend_typecheck', 'vite_build', 'vitest_10']
+E               assert 'BLOCKED' == 'PASS'
+E                 
+E                 - PASS
+E                 + BLOCKED
+
+tests\unit\test_package_release.py:57: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_package_release.py::test_delivery_gap_ledger_does_not_reopen_currently_passed_gates
+1 failed, 2 passed in 0.09s

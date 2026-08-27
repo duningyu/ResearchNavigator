@@ -1,0 +1,51 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+___ test_evidence_acquisition_denies_foreign_project_before_calling_sources ___
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-479/test_evidence_acquisition_deni0')
+
+    def test_evidence_acquisition_denies_foreign_project_before_calling_sources(
+        tmp_path: Path,
+    ) -> None:
+        adapter = MutableEvidenceAdapter(record(doi="10.1000/private-project", abstract=None))
+        app = create_app(settings_for(tmp_path))
+        with TestClient(app) as client:
+            app.state.search_service = FederatedSearchService([adapter])
+            owner_headers = register(client, "project-owner@example.com")
+            project_id = client.post(
+                "/api/projects",
+                headers=owner_headers,
+                json={"name": "Private evidence project"},
+            ).json()["id"]
+            paper_id = client.post(
+                "/api/search/papers",
+                headers=owner_headers,
+                json={
+                    "query": "10.1000/private-project",
+                    "sources": ["evidence_source"],
+                    "limit": 1,
+                    "mode": "precise",
+                },
+            ).json()["papers"][0]["id"]
+            attacker_headers = register(client, "project-attacker@example.com")
+            adapter.record = record(
+                doi="10.1000/private-project",
+                abstract="This must not be fetched before project authorization succeeds.",
+            )
+            adapter.call_count = 0
+    
+            response = client.post(
+                f"/api/papers/{paper_id}/acquire-evidence",
+                headers=attacker_headers,
+                json={"project_id": project_id, "sources": ["evidence_source"]},
+            )
+    
+            assert response.status_code == 404
+>           assert adapter.call_count == 0
+E           assert 1 == 0
+E            +  where 1 = <test_evidence_acquisition.MutableEvidenceAdapter object at 0x000002521CF098B0>.call_count
+
+tests\integration\test_evidence_acquisition.py:226: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_evidence_acquisition.py::test_evidence_acquisition_denies_foreign_project_before_calling_sources
+1 failed in 1.52s

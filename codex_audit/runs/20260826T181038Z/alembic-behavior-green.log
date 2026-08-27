@@ -1,0 +1,24 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.0, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0, cov-7.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 3 items
+
+tests/integration/test_migrations.py::test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts PASSED [ 33%]
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it PASSED [ 66%]
+tests/integration/test_migrations.py::test_historical_migration_ignores_tables_added_to_runtime_metadata PASSED [100%]
+
+============================== warnings summary ===============================
+tests/integration/test_migrations.py::test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+tests/integration/test_migrations.py::test_historical_migration_ignores_tables_added_to_runtime_metadata
+  C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\alembic\config.py:604: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 3 passed, 5 warnings in 2.62s ========================

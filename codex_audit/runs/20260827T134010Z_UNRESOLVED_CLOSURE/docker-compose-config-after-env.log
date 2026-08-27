@@ -1,0 +1,121 @@
+name: research-navigator
+services:
+  api:
+    build:
+      context: E:\AI_Projects\ResearchNavigator
+      dockerfile: infra/api.Dockerfile
+    environment:
+      CROSSREF_MAILTO: ""
+      LLM_API_KEY: ""
+      LLM_BASE_URL: ""
+      LLM_MODEL: ""
+      OPENALEX_API_KEY: ""
+      RN_ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      RN_API_BASE_URL: http://127.0.0.1:8000/api
+      RN_BACKUP_DIR: /app/runtime/backups
+      RN_DATA_DIR: /app/runtime
+      RN_DATABASE_URL: sqlite+pysqlite:////app/runtime/research_navigator.db
+      RN_ENABLE_ARXIV: "true"
+      RN_ENABLE_CROSSREF: "true"
+      RN_ENABLE_FIXTURE_SOURCE: "false"
+      RN_ENABLE_OPENALEX: "true"
+      RN_ENABLE_SEMANTIC_SCHOLAR: "true"
+      RN_ENVIRONMENT: development
+      RN_MAX_PDF_BYTES: "26214400"
+      RN_MCP_ACCESS_TOKEN: ""
+      RN_MCP_ALLOWED_UPLOAD_ROOT: /workspace/papers
+      RN_SESSION_TTL_HOURS: "168"
+      RN_UPLOAD_DIR: /app/runtime/uploads
+      RN_VECTOR_DIR: /app/runtime/vector_index
+      SEMANTIC_SCHOLAR_API_KEY: ""
+      UNPAYWALL_EMAIL: ""
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health',
+          timeout=3)
+      timeout: 5s
+      interval: 10s
+      retries: 10
+      start_period: 10s
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 8000
+        published: "8000"
+        protocol: tcp
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: E:\AI_Projects\ResearchNavigator\runtime
+        target: /app/runtime
+        bind: {}
+  web:
+    build:
+      context: E:\AI_Projects\ResearchNavigator
+      dockerfile: infra/web.Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+        required: true
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "8080"
+        protocol: tcp
+    restart: unless-stopped
+  worker:
+    build:
+      context: E:\AI_Projects\ResearchNavigator
+      dockerfile: infra/api.Dockerfile
+    command:
+      - python
+      - -m
+      - services.worker.main
+      - --poll-seconds
+      - "2"
+    depends_on:
+      api:
+        condition: service_healthy
+        required: true
+    environment:
+      CROSSREF_MAILTO: ""
+      LLM_API_KEY: ""
+      LLM_BASE_URL: ""
+      LLM_MODEL: ""
+      OPENALEX_API_KEY: ""
+      RN_ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      RN_API_BASE_URL: http://127.0.0.1:8000/api
+      RN_BACKUP_DIR: /app/runtime/backups
+      RN_DATA_DIR: /app/runtime
+      RN_DATABASE_URL: sqlite+pysqlite:////app/runtime/research_navigator.db
+      RN_ENABLE_ARXIV: "true"
+      RN_ENABLE_CROSSREF: "true"
+      RN_ENABLE_FIXTURE_SOURCE: "false"
+      RN_ENABLE_OPENALEX: "true"
+      RN_ENABLE_SEMANTIC_SCHOLAR: "true"
+      RN_ENVIRONMENT: development
+      RN_MAX_PDF_BYTES: "26214400"
+      RN_MCP_ACCESS_TOKEN: ""
+      RN_MCP_ALLOWED_UPLOAD_ROOT: /workspace/papers
+      RN_SESSION_TTL_HOURS: "168"
+      RN_UPLOAD_DIR: /app/runtime/uploads
+      RN_VECTOR_DIR: /app/runtime/vector_index
+      SEMANTIC_SCHOLAR_API_KEY: ""
+      UNPAYWALL_EMAIL: ""
+    networks:
+      default: null
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: E:\AI_Projects\ResearchNavigator\runtime
+        target: /app/runtime
+        bind: {}
+networks:
+  default:
+    name: research-navigator_default

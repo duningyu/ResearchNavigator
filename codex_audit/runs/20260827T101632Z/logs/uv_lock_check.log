@@ -1,0 +1,10 @@
+name=uv_lock_check
+status=PASS
+command=uv lock --check
+exit_code=0
+duration_seconds=0.023
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+Resolved 70 packages in 1ms
+

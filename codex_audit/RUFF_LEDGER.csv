@@ -1,0 +1,9 @@
+rule,count,example_files,semantic_risk,auto_fix_safe,resolution
+E501,143,"apps/api/research_navigator/models.py;scripts/verify_delivery.py",formatting/import-only,yes,"Ruff formatter plus manual wrapping; regression remained green"
+I001,10,"apps/api/alembic/env.py;tests/integration/test_worker_handlers.py",formatting/import-only,yes,"Safe import sorting; regression remained green"
+UP037,4,"apps/api/research_navigator/config.py;models.py",low semantic risk,yes,"Safe quoted-annotation cleanup"
+F401,3,"routes/library.py;scripts/verify_delivery.py",low semantic risk,yes,"Removed proven unused imports"
+SIM105,2,"recommendations/service.py;scholarly/arxiv.py",possible behavioral change,no,"Manually replaced with contextlib.suppress and reran tests"
+SIM103,1,scripts/package_release.py,possible behavioral change,no,"Manually simplified equivalent boolean return and reran tests"
+SIM117,1,scripts/verify_mcp_stdio.py,formatting/import-only,no,"Combined async context managers after MCP behavior passed"
+FINAL,0,,none,n/a,"ruff check . exit 0"

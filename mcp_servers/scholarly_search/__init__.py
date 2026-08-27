@@ -1,0 +1,1 @@
+"""Scholarly-search MCP server."""

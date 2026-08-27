@@ -1,0 +1,179 @@
+{
+  "query": "multivariate time series anomaly detection",
+  "requested_limit_per_source": 3,
+  "started_at": "2026-08-27T13:51:03.644836+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T13:51:04.634397+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:51:06.300701+00:00",
+      "result_count": 3,
+      "identifiers": [
+        {
+          "doi": "10.32657/10356/155731",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.32657/10356/155731"
+          },
+          "source_urls": [
+            "https://doi.org/10.32657/10356/155731"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.32657/10356/155731",
+              "source_url": "https://doi.org/10.32657/10356/155731",
+              "fetched_at": "2026-08-27T13:51:06.300701+00:00",
+              "raw_hash": "cd9732bc67528902bb17c9d985b60b91b4d63cc9f04dc74ffa8e70abb73f1046",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.5220/0012077200003538",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.5220/0012077200003538"
+          },
+          "source_urls": [
+            "https://doi.org/10.5220/0012077200003538"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.5220/0012077200003538",
+              "source_url": "https://doi.org/10.5220/0012077200003538",
+              "fetched_at": "2026-08-27T13:51:06.300701+00:00",
+              "raw_hash": "a2aded33f4a31f33ad1c5ae08a5cb18c7d0d93d637805b88721454d175af16a6",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2139/ssrn.4538474",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2139/ssrn.4538474"
+          },
+          "source_urls": [
+            "https://doi.org/10.2139/ssrn.4538474"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2139/ssrn.4538474",
+              "source_url": "https://doi.org/10.2139/ssrn.4538474",
+              "fetched_at": "2026-08-27T13:51:06.300701+00:00",
+              "raw_hash": "0c75aa8efc72a48de132462549ae42308cd14e57e710f5b22d11fc49de10b980",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:51:08.085578+00:00",
+      "result_count": 3,
+      "identifiers": [
+        {
+          "doi": "10.1111/jtsa.12688",
+          "arxiv_id": "2303.14295v1",
+          "external_ids": {
+            "arxiv": "2303.14295v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2303.14295v1",
+            "https://arxiv.org/abs/2303.14295v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2303.14295v1",
+              "source_url": "http://arxiv.org/abs/2303.14295v1",
+              "fetched_at": "2026-08-27T13:51:08.085578+00:00",
+              "raw_hash": "53b0f2845b21c6240ab0b503abb2535935ae72fc94a8474aa9a52a182ebcc9fc",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2510.18998v1",
+          "external_ids": {
+            "arxiv": "2510.18998v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2510.18998v1",
+            "https://arxiv.org/abs/2510.18998v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2510.18998v1",
+              "source_url": "http://arxiv.org/abs/2510.18998v1",
+              "fetched_at": "2026-08-27T13:51:08.085578+00:00",
+              "raw_hash": "f70360ac3c6a869db7fdf9c5cb5b4807865558bfd1c654aa4c9812caa16546f3",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2406.06518v1",
+          "external_ids": {
+            "arxiv": "2406.06518v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2406.06518v1",
+            "https://arxiv.org/abs/2406.06518v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2406.06518v1",
+              "source_url": "http://arxiv.org/abs/2406.06518v1",
+              "fetched_at": "2026-08-27T13:51:08.085578+00:00",
+              "raw_hash": "29c653f8cd12067e44c6d99aecca0e847b8f1efe63a7ebda826c25bd1d0bc7f3",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-27T13:51:09.308785+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 6,
+    "output_count": 6
+  },
+  "finished_at": "2026-08-27T13:51:09.310414+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "semantic_scholar"
+  ]
+}

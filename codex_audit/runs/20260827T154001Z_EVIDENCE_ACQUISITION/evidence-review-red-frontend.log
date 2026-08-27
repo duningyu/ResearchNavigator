@@ -1,0 +1,360 @@
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+ ❯ src/pages/PaperPage.test.tsx (1 test | 1 failed) 539ms
+   × paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence 538ms
+     → Unable to find an element with the text: crossref: ok. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"[39m
+      [33mstyle[39m=[32m"width: 100%;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-space-item"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-head"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-card-head-title"[39m
+              [36m>[39m
+                [0mEvidence Acquisition for Industrial Alerts[0m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-body"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-descriptions ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-descriptions-view"[39m
+              [36m>[39m
+                [36m<table>[39m
+                  [36m<tbody>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m作者[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未知[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m年份 / Venue[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未知[0m
+                          [0m / [0m
+                          [0m未知[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mDOI / arXiv[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m无[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m开放状态[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m未核验[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                    [36m<tr[39m
+                      [33mclass[39m=[32m"ant-descriptions-row"[39m
+                    [36m>[39m
+                      [36m<th[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-label"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0m摘要[0m
+                        [36m</span>[39m
+                      [36m</th>[39m
+                      [36m<td[39m
+                        [33mclass[39m=[32m"ant-descriptions-item-content"[39m
+                        [33mcolspan[39m=[32m"1"[39m
+                      [36m>[39m
+                        [36m<span>[39m
+                          [0mConcrete abstract evidence[0m
+                        [36m</span>[39m
+                      [36m</td>[39m
+                    [36m</tr>[39m
+                  [36m</tbody>[39m
+                [36m</table>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-divider css-dev-only-do-not-override-viwxw0 css-var-root ant-divider-horizontal ant-divider-rail"[39m
+              [33mrole[39m=[32m"separator"[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"[39m
+              [33mstyle[39m=[32m"flex-wrap: wrap;"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-space-item"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-select ...
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+TestingLibraryElementError: Unable to find an element with the text: crossref: ok. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <div
+      class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"
+      style="width: 100%;"
+    >
+      <div
+        class="ant-space-item"
+      >
+        <div
+          class="ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+        >
+          <div
+            class="ant-card-head"
+          >
+            <div
+              class="ant-card-head-wrapper"
+            >
+              <div
+                class="ant-card-head-title"
+              >
+                Evidence Acquisition for Industrial Alerts
+              </div>
+            </div>
+          </div>
+          <div
+            class="ant-card-body"
+          >
+            <div
+              class="ant-descriptions ant-descriptions-bordered css-dev-only-do-not-override-viwxw0 css-var-root"
+            >
+              <div
+                class="ant-descriptions-view"
+              >
+                <table>
+                  <tbody>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          作者
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未知
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          年份 / Venue
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未知
+                           / 
+                          未知
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          DOI / arXiv
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          无
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          开放状态
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          未核验
+                        </span>
+                      </td>
+                    </tr>
+                    <tr
+                      class="ant-descriptions-row"
+                    >
+                      <th
+                        class="ant-descriptions-item-label"
+                        colspan="1"
+                      >
+                        <span>
+                          摘要
+                        </span>
+                      </th>
+                      <td
+                        class="ant-descriptions-item-content"
+                        colspan="1"
+                      >
+                        <span>
+                          Concrete abstract evidence
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              class="ant-divider css-dev-only-do-not-override-viwxw0 css-var-root ant-divider-horizontal ant-divider-rail"
+              role="separator"
+            />
+            <div
+              class="ant-space css-dev-only-do-not-override-viwxw0 ant-space-horizontal ant-space-align-center ant-space-gap-row-small ant-space-gap-col-small css-var-root"
+              style="flex-wrap: wrap;"
+            >
+              <div
+                class="ant-space-item"
+              >
+                <div
+                  class="ant-select ...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/pages/PaperPage.test.tsx:106:19
+    104|     expect(await screen.findByText('证据等级：abstract_only')).toBeInTheDoc…
+    105|     expect(screen.getAllByText('Concrete abstract evidence').length).t…
+    106|     expect(screen.getByText('crossref: ok')).toBeInTheDocument();
+       |                   ^
+    107|     await waitFor(() => expect(fetchSpy.mock.calls.some(([input]) => S…
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:12:28
+   Duration  3.17s (transform 80ms, setup 187ms, collect 1.62s, tests 539ms, environment 410ms, prepare 167ms)
+

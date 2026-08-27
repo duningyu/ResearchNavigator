@@ -1,0 +1,34 @@
+$ vitest run --exclude tests/e2e/**
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+ ✓ src/components/scoreMath.test.ts (2 tests) 2ms
+ ✓ src/api/client.test.ts (2 tests) 8ms
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/paperSelectionExperience.test.tsx > selection-first paper workflow > restores a persisted Top50 search session and paginates ten papers per page
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+ ✓ src/pages/paperSelectionExperience.test.tsx (3 tests) 515ms
+ ✓ src/pages/PaperPage.test.tsx (1 test) 574ms
+   ✓ paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence  574ms
+ ✓ src/app/workspaceExperience.test.tsx (3 tests) 602ms
+
+ Test Files  5 passed (5)
+      Tests  11 passed (11)
+   Start at  00:41:40
+   Duration  4.35s (transform 239ms, setup 1.08s, collect 6.21s, tests 1.70s, environment 2.38s, prepare 690ms)
+

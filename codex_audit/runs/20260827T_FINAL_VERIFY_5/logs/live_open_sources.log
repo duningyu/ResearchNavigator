@@ -1,0 +1,9 @@
+name=live_open_sources
+status=BLOCKED
+command=/opt/pyvenv/bin/python scripts/verify_live_sources.py
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+live network smoke was not requested; deterministic regression uses fixture sources

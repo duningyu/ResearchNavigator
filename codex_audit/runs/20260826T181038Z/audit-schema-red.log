@@ -1,0 +1,13 @@
+E                                                                        [100%]
+=================================== ERRORS ====================================
+___________ ERROR at setup of test_minimum_audit_schema_is_migrated ___________
+file C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\tests\integration\test_audit_schema.py, line 6
+  def test_minimum_audit_schema_is_migrated(database) -> None:
+E       fixture 'database' not found
+>       available fixtures: _asyncio_loop_factory, _class_scoped_runner, _function_scoped_runner, _module_scoped_runner, _package_scoped_runner, _session_scoped_runner, anyio_backend, anyio_backend_name, anyio_backend_options, cache, capfd, capfdbinary, caplog, capsys, capsysbinary, capteesys, cov, doctest_namespace, event_loop_policy, free_tcp_port, free_tcp_port_factory, free_udp_port, free_udp_port_factory, monkeypatch, no_cover, pytestconfig, record_property, record_testsuite_property, record_xml_attribute, recwarn, subtests, tmp_path, tmp_path_factory, tmpdir, tmpdir_factory, unused_tcp_port, unused_tcp_port_factory, unused_udp_port, unused_udp_port_factory
+>       use 'pytest --fixtures [testpath]' for help on them.
+
+C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\tests\integration\test_audit_schema.py:6
+=========================== short test summary info ===========================
+ERROR tests/integration/test_audit_schema.py::test_minimum_audit_schema_is_migrated
+1 error in 0.24s

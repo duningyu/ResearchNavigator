@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "started_at": "2026-08-27T19:03:46.880015+00:00",
+  "status": "BLOCKED",
+  "compose_project": "rn-acceptance",
+  "compose_file": "/mnt/data/researchnavigator_220_work/EvidenceAcquisitionPatch/infra/docker-compose.acceptance.yml",
+  "runtime_dir": "/mnt/data/researchnavigator_220_work/EvidenceAcquisitionPatch/codex_audit/runtime/docker-acceptance",
+  "phases": {
+    "docker_available": {
+      "status": "BLOCKED",
+      "reason": "Docker executable not found: docker"
+    }
+  },
+  "commands": [],
+  "finished_at": "2026-08-27T19:03:46.880281+00:00"
+}

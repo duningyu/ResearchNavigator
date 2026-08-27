@@ -1,0 +1,861 @@
+[08/27/26 22:26:47] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/search/p                
+                             apers "HTTP/1.1 200 OK"                           
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/sources/                
+                             fixture/test "HTTP/1.1 200 OK"                    
+[08/27/26 22:26:49] ERROR    Tool 'export_workspace' raised an    server.py:440
+                             unexpected exception                              
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:176  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   173                     return |              
+                             |       else resolved              |              
+                             |   174                 pass_direc |              
+                             |   175                            |              
+                             | > 176             result = await |              
+                             |       pass_directly)             |              
+                             |   177                            |              
+                             |   178             # Registration |              
+                             |   179             # a body that  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\utilities\func_met |              
+                             | adata.py:163 in call_fn          |              
+                             |                                  |              
+                             |   160         """                |              
+                             |   161         kwargs = arguments |              
+                             |   162         if fn_is_async:    |              
+                             | > 163             return await f |              
+                             |   164         return await anyio |              
+                             |   165                            |              
+                             |   166     @deprecated(           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\research_workspace\ |              
+                             | server.py:102 in                 |              
+                             | export_workspace                 |              
+                             |                                  |              
+                             |    99 @register_tool(mcp, "expor |              
+                             |   100 async def export_workspace |              
+                             |   101     """Export only the aut |              
+                             | > 102     return await ResearchN |              
+                             |   103                            |              
+                             |   104                            |              
+                             |   105 def main() -> None:        |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:61 in     |              
+                             | request_object                   |              
+                             |                                  |              
+                             |   58             return response |              
+                             |   59                             |              
+                             |   60     async def request_objec |              
+                             |      Any]:                       |              
+                             | > 61         payload = await sel |              
+                             |   62         if not isinstance(p |              
+                             |   63             raise TypeError |              
+                             |   64         return payload      |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:54 in     |              
+                             | request                          |              
+                             |                                  |              
+                             |   51                             |              
+                             |   52     async def request(self, |              
+                             |   53         async with httpx.As |              
+                             |      client:                     |              
+                             | > 54             response = awai |              
+                             |      **kwargs)                   |              
+                             |   55             response.raise_ |              
+                             |   56             if response.sta |              
+                             |   57                 return {"st |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:47 in     |              
+                             | headers                          |              
+                             |                                  |              
+                             |   44     @property               |              
+                             |   45     def headers(self) -> di |              
+                             |   46         if not self.token:  |              
+                             | > 47             raise MCPConfig |              
+                             |   48                 "RN_MCP_ACC |              
+                             |   49             )               |              
+                             |   50         return {"Authorizat |              
+                             +----------------------------------+              
+                             MCPConfigurationError:                            
+                             RN_MCP_ACCESS_TOKEN is required; MCP              
+                             workspace calls are user-scoped.                  
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:427 in   |              
+                             | _handle_call_tool                |              
+                             |                                  |              
+                             |    424     ) -> CallToolResult | |              
+                             |    425         context = Context |              
+                             |        subscriptions=self._subsc |              
+                             |    426         try:              |              
+                             | >  427             return await  |              
+                             |    428         except MCPError:  |              
+                             |    429             raise         |              
+                             |    430         except Exception  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:533 in   |              
+                             | call_tool                        |              
+                             |                                  |              
+                             |    530         """               |              
+                             |    531         if context is Non |              
+                             |    532             context = Con |              
+                             | >  533         return await self |              
+                             |        convert_result=True)      |              
+                             |    534                           |              
+                             |    535     async def list_resour |              
+                             |    536         """List all avail |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\tool_manager |              
+                             | .py:87 in call_tool              |              
+                             |                                  |              
+                             |   84         if not tool:        |              
+                             |   85             raise ToolError |              
+                             |   86                             |              
+                             | > 87         return await tool.r |              
+                             |   88                             |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:210  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   207             raise ToolErro |              
+                             |   208         except Exception a |              
+                             |   209             # A crash: the |              
+                             | > 210             raise Unexpect |              
+                             |   211                            |              
+                             +----------------------------------+              
+                             UnexpectedToolError: Error executing              
+                             tool export_workspace                             
+[08/27/26 22:26:54] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:1/api/search/pape                
+                             rs "HTTP/1.1 502 Bad Gateway"                     
+                    ERROR    Tool 'search_papers' raised an       server.py:440
+                             unexpected exception                              
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:176  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   173                     return |              
+                             |       else resolved              |              
+                             |   174                 pass_direc |              
+                             |   175                            |              
+                             | > 176             result = await |              
+                             |       pass_directly)             |              
+                             |   177                            |              
+                             |   178             # Registration |              
+                             |   179             # a body that  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\utilities\func_met |              
+                             | adata.py:163 in call_fn          |              
+                             |                                  |              
+                             |   160         """                |              
+                             |   161         kwargs = arguments |              
+                             |   162         if fn_is_async:    |              
+                             | > 163             return await f |              
+                             |   164         return await anyio |              
+                             |   165                            |              
+                             |   166     @deprecated(           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\scholarly_search\se |              
+                             | rver.py:21 in search_papers      |              
+                             |                                  |              
+                             |    18     project_id: int | None |              
+                             |    19 ) -> dict[str, Any]:       |              
+                             |    20     """Search enabled scho |              
+                             |       provenance."""             |              
+                             | >  21     return await ResearchN |              
+                             |    22         "POST",            |              
+                             |    23         "/search/papers",  |              
+                             |    24         json={"query": que |              
+                             |       project_id},               |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:61 in     |              
+                             | request_object                   |              
+                             |                                  |              
+                             |   58             return response |              
+                             |   59                             |              
+                             |   60     async def request_objec |              
+                             |      Any]:                       |              
+                             | > 61         payload = await sel |              
+                             |   62         if not isinstance(p |              
+                             |   63             raise TypeError |              
+                             |   64         return payload      |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:55 in     |              
+                             | request                          |              
+                             |                                  |              
+                             |   52     async def request(self, |              
+                             |   53         async with httpx.As |              
+                             |      client:                     |              
+                             |   54             response = awai |              
+                             |      **kwargs)                   |              
+                             | > 55             response.raise_ |              
+                             |   56             if response.sta |              
+                             |   57                 return {"st |              
+                             |   58             return response |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | models.py:829 in                 |              
+                             | raise_for_status                 |              
+                             |                                  |              
+                             |    826         }                 |              
+                             |    827         error_type = erro |              
+                             |    828         message = message |              
+                             | >  829         raise HTTPStatusE |              
+                             |    830                           |              
+                             |    831     def json(self, **kwar |              
+                             |    832         return jsonlib.lo |              
+                             +----------------------------------+              
+                             HTTPStatusError: Server error '502                
+                             Bad Gateway' for url                              
+                             'http://127.0.0.1:1/api/search/paper              
+                             s'                                                
+                             For more information check:                       
+                             https://developer.mozilla.org/en-US/              
+                             docs/Web/HTTP/Status/502                          
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:427 in   |              
+                             | _handle_call_tool                |              
+                             |                                  |              
+                             |    424     ) -> CallToolResult | |              
+                             |    425         context = Context |              
+                             |        subscriptions=self._subsc |              
+                             |    426         try:              |              
+                             | >  427             return await  |              
+                             |    428         except MCPError:  |              
+                             |    429             raise         |              
+                             |    430         except Exception  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:533 in   |              
+                             | call_tool                        |              
+                             |                                  |              
+                             |    530         """               |              
+                             |    531         if context is Non |              
+                             |    532             context = Con |              
+                             | >  533         return await self |              
+                             |        convert_result=True)      |              
+                             |    534                           |              
+                             |    535     async def list_resour |              
+                             |    536         """List all avail |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\tool_manager |              
+                             | .py:87 in call_tool              |              
+                             |                                  |              
+                             |   84         if not tool:        |              
+                             |   85             raise ToolError |              
+                             |   86                             |              
+                             | > 87         return await tool.r |              
+                             |   88                             |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:210  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   207             raise ToolErro |              
+                             |   208         except Exception a |              
+                             |   209             # A crash: the |              
+                             | > 210             raise Unexpect |              
+                             |   211                            |              
+                             +----------------------------------+              
+                             UnexpectedToolError: Error executing              
+                             tool search_papers                                
+[08/27/26 22:26:57] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:1/api/papers/1/re                
+                             lated?limit=1 "HTTP/1.1 502 Bad                   
+                             Gateway"                                          
+[08/27/26 22:26:58] ERROR    Tool 'search_papers' raised an       server.py:440
+                             unexpected exception                              
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | transports\default.py:101 in     |              
+                             | map_httpcore_exceptions          |              
+                             |                                  |              
+                             |    98     if len(HTTPCORE_EXC_MA |              
+                             |    99         HTTPCORE_EXC_MAP = |              
+                             |   100     try:                   |              
+                             | > 101         yield              |              
+                             |   102     except Exception as ex |              
+                             |   103         mapped_exc = None  |              
+                             |   104                            |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | transports\default.py:394 in     |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   391             extensions=req |              
+                             |   392         )                  |              
+                             |   393         with map_httpcore_ |              
+                             | > 394             resp = await s |              
+                             |   395                            |              
+                             |   396         assert isinstance( |              
+                             |   397                            |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\connection_pool.py:256  |              
+                             | in handle_async_request          |              
+                             |                                  |              
+                             |   253                 closing =  |              
+                             |   254                            |              
+                             |   255             await self._cl |              
+                             | > 256             raise exc from |              
+                             |   257                            |              
+                             |   258         # Return the respo |              
+                             |   259         # the point at whi |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\connection_pool.py:236  |              
+                             | in handle_async_request          |              
+                             |                                  |              
+                             |   233                            |              
+                             |   234                 try:       |              
+                             |   235                     # Send |              
+                             | > 236                     respon |              
+                             |   237                         po |              
+                             |   238                     )      |              
+                             |   239                 except Con |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\http_proxy.py:206 in    |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   203             content=reques |              
+                             |   204             extensions=req |              
+                             |   205         )                  |              
+                             | > 206         return await self. |              
+                             |   207                            |              
+                             |   208     def can_handle_request |              
+                             |   209         return origin == s |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\connection.py:103 in    |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   100             self._connect_ |              
+                             |   101             raise exc      |              
+                             |   102                            |              
+                             | > 103         return await self. |              
+                             |   104                            |              
+                             |   105     async def _connect(sel |              
+                             |   106         timeouts = request |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\http11.py:136 in        |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   133             with AsyncShie |              
+                             |   134                 async with |              
+                             |   135                     await  |              
+                             | > 136             raise exc      |              
+                             |   137                            |              
+                             |   138     # Sending the request. |              
+                             |   139                            |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\http11.py:106 in        |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   103                     reason |              
+                             |   104                     header |              
+                             |   105                     traili |              
+                             | > 106                 ) = await  |              
+                             |   107                 trace.retu |              
+                             |   108                     http_v |              
+                             |   109                     status |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\http11.py:177 in        |              
+                             | _receive_response_headers        |              
+                             |                                  |              
+                             |   174         timeout = timeouts |              
+                             |   175                            |              
+                             |   176         while True:        |              
+                             | > 177             event = await  |              
+                             |   178             if isinstance( |              
+                             |   179                 break      |              
+                             |   180             if (           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_async\http11.py:217 in        |              
+                             | _receive_event                   |              
+                             |                                  |              
+                             |   214                 event = se |              
+                             |   215                            |              
+                             |   216             if event is h1 |              
+                             | > 217                 data = awa |              
+                             |   218                     self.R |              
+                             |   219                 )          |              
+                             |   220                            |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_backends\anyio.py:32 in read  |              
+                             |                                  |              
+                             |    29             anyio.ClosedRe |              
+                             |    30             anyio.EndOfStr |              
+                             |    31         }                  |              
+                             | >  32         with map_exception |              
+                             |    33             with anyio.fai |              
+                             |    34                 try:       |              
+                             |    35                     return |              
+                             |                                  |              
+                             | C:\Users\ASUS\AppData\Local\Prog |              
+                             | rams\Python\Python312\Lib\contex |              
+                             | tlib.py:155 in __exit__          |              
+                             |                                  |              
+                             |   152                 # tell if  |              
+                             |   153                 value = ty |              
+                             |   154             try:           |              
+                             | > 155                 self.gen.t |              
+                             |   156             except StopIte |              
+                             |   157                 # Suppress |              
+                             |   158                 # was pass |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpcor |              
+                             | e\_exceptions.py:14 in           |              
+                             | map_exceptions                   |              
+                             |                                  |              
+                             |   11     except Exception as exc |              
+                             |   12         for from_exc, to_ex |              
+                             |   13             if isinstance(e |              
+                             | > 14                 raise to_ex |              
+                             |   15         raise  # pragma: no |              
+                             |   16                             |              
+                             |   17                             |              
+                             +----------------------------------+              
+                             ReadTimeout                                       
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:176  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   173                     return |              
+                             |       else resolved              |              
+                             |   174                 pass_direc |              
+                             |   175                            |              
+                             | > 176             result = await |              
+                             |       pass_directly)             |              
+                             |   177                            |              
+                             |   178             # Registration |              
+                             |   179             # a body that  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\utilities\func_met |              
+                             | adata.py:163 in call_fn          |              
+                             |                                  |              
+                             |   160         """                |              
+                             |   161         kwargs = arguments |              
+                             |   162         if fn_is_async:    |              
+                             | > 163             return await f |              
+                             |   164         return await anyio |              
+                             |   165                            |              
+                             |   166     @deprecated(           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\scholarly_search\se |              
+                             | rver.py:21 in search_papers      |              
+                             |                                  |              
+                             |    18     project_id: int | None |              
+                             |    19 ) -> dict[str, Any]:       |              
+                             |    20     """Search enabled scho |              
+                             |       provenance."""             |              
+                             | >  21     return await ResearchN |              
+                             |    22         "POST",            |              
+                             |    23         "/search/papers",  |              
+                             |    24         json={"query": que |              
+                             |       project_id},               |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:61 in     |              
+                             | request_object                   |              
+                             |                                  |              
+                             |   58             return response |              
+                             |   59                             |              
+                             |   60     async def request_objec |              
+                             |      Any]:                       |              
+                             | > 61         payload = await sel |              
+                             |   62         if not isinstance(p |              
+                             |   63             raise TypeError |              
+                             |   64         return payload      |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\client.py:54 in     |              
+                             | request                          |              
+                             |                                  |              
+                             |   51                             |              
+                             |   52     async def request(self, |              
+                             |   53         async with httpx.As |              
+                             |      client:                     |              
+                             | > 54             response = awai |              
+                             |      **kwargs)                   |              
+                             |   55             response.raise_ |              
+                             |   56             if response.sta |              
+                             |   57                 return {"st |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | client.py:1540 in request        |              
+                             |                                  |              
+                             |   1537             timeout=timeo |              
+                             |   1538             extensions=ex |              
+                             |   1539         )                 |              
+                             | > 1540         return await self |              
+                             |   1541                           |              
+                             |   1542     @asynccontextmanager  |              
+                             |   1543     async def stream(     |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | client.py:1629 in send           |              
+                             |                                  |              
+                             |   1626                           |              
+                             |   1627         auth = self._buil |              
+                             |   1628                           |              
+                             | > 1629         response = await  |              
+                             |   1630             request,      |              
+                             |   1631             auth=auth,    |              
+                             |   1632             follow_redire |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | client.py:1657 in                |              
+                             | _send_handling_auth              |              
+                             |                                  |              
+                             |   1654             request = awa |              
+                             |   1655                           |              
+                             |   1656             while True:   |              
+                             | > 1657                 response  |              
+                             |   1658                     reque |              
+                             |   1659                     follo |              
+                             |   1660                     histo |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | client.py:1694 in                |              
+                             | _send_handling_redirects         |              
+                             |                                  |              
+                             |   1691             for hook in s |              
+                             |   1692                 await hoo |              
+                             |   1693                           |              
+                             | > 1694             response = aw |              
+                             |   1695             try:          |              
+                             |   1696                 for hook  |              
+                             |   1697                     await |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | client.py:1730 in                |              
+                             | _send_single_request             |              
+                             |                                  |              
+                             |   1727             )             |              
+                             |   1728                           |              
+                             |   1729         with request_cont |              
+                             | > 1730             response = aw |              
+                             |   1731                           |              
+                             |   1732         assert isinstance |              
+                             |   1733         response.request  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | transports\default.py:393 in     |              
+                             | handle_async_request             |              
+                             |                                  |              
+                             |   390             content=reques |              
+                             |   391             extensions=req |              
+                             |   392         )                  |              
+                             | > 393         with map_httpcore_ |              
+                             |   394             resp = await s |              
+                             |   395                            |              
+                             |   396         assert isinstance( |              
+                             |                                  |              
+                             | C:\Users\ASUS\AppData\Local\Prog |              
+                             | rams\Python\Python312\Lib\contex |              
+                             | tlib.py:155 in __exit__          |              
+                             |                                  |              
+                             |   152                 # tell if  |              
+                             |   153                 value = ty |              
+                             |   154             try:           |              
+                             | > 155                 self.gen.t |              
+                             |   156             except StopIte |              
+                             |   157                 # Suppress |              
+                             |   158                 # was pass |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\httpx\_ |              
+                             | transports\default.py:118 in     |              
+                             | map_httpcore_exceptions          |              
+                             |                                  |              
+                             |   115             raise          |              
+                             |   116                            |              
+                             |   117         message = str(exc) |              
+                             | > 118         raise mapped_exc(m |              
+                             |   119                            |              
+                             |   120                            |              
+                             |   121 class ResponseStream(SyncB |              
+                             +----------------------------------+              
+                             ReadTimeout                                       
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:427 in   |              
+                             | _handle_call_tool                |              
+                             |                                  |              
+                             |    424     ) -> CallToolResult | |              
+                             |    425         context = Context |              
+                             |        subscriptions=self._subsc |              
+                             |    426         try:              |              
+                             | >  427             return await  |              
+                             |    428         except MCPError:  |              
+                             |    429             raise         |              
+                             |    430         except Exception  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:533 in   |              
+                             | call_tool                        |              
+                             |                                  |              
+                             |    530         """               |              
+                             |    531         if context is Non |              
+                             |    532             context = Con |              
+                             | >  533         return await self |              
+                             |        convert_result=True)      |              
+                             |    534                           |              
+                             |    535     async def list_resour |              
+                             |    536         """List all avail |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\tool_manager |              
+                             | .py:87 in call_tool              |              
+                             |                                  |              
+                             |   84         if not tool:        |              
+                             |   85             raise ToolError |              
+                             |   86                             |              
+                             | > 87         return await tool.r |              
+                             |   88                             |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:210  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   207             raise ToolErro |              
+                             |   208         except Exception a |              
+                             |   209             # A crash: the |              
+                             | > 210             raise Unexpect |              
+                             |   211                            |              
+                             +----------------------------------+              
+                             UnexpectedToolError: Error executing              
+                             tool search_papers                                
+[08/27/26 22:27:01] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/projects                
+                             "HTTP/1.1 201 Created"                            
+                    INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/workspac                
+                             e/export "HTTP/1.1 200 OK"                        
+[08/27/26 22:27:03] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/workspac                
+                             e/export "HTTP/1.1 200 OK"                        
+[08/27/26 22:27:05] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/search/p                
+                             apers "HTTP/1.1 200 OK"                           
+[08/27/26 22:27:06] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/papers/8                
+                             7/content-status "HTTP/1.1 200 OK"                
+[08/27/26 22:27:09] INFO     HTTP Request: DELETE               _client.py:1740
+                             http://127.0.0.1:8000/api/document                
+                             s/1 "HTTP/1.1 204 No Content"                     
+[08/27/26 22:27:10] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/papers/1                
+                             /content-status "HTTP/1.1 200 OK"                 
+                    ERROR    Tool 'resolve_doi' raised an         server.py:440
+                             unexpected exception                              
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:176  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   173                     return |              
+                             |       else resolved              |              
+                             |   174                 pass_direc |              
+                             |   175                            |              
+                             | > 176             result = await |              
+                             |       pass_directly)             |              
+                             |   177                            |              
+                             |   178             # Registration |              
+                             |   179             # a body that  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\utilities\func_met |              
+                             | adata.py:163 in call_fn          |              
+                             |                                  |              
+                             |   160         """                |              
+                             |   161         kwargs = arguments |              
+                             |   162         if fn_is_async:    |              
+                             | > 163             return await f |              
+                             |   164         return await anyio |              
+                             |   165                            |              
+                             |   166     @deprecated(           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\paper_access\server |              
+                             | .py:20 in resolve_doi            |              
+                             |                                  |              
+                             |   17     normalized = doi.strip( |              
+                             |   18     normalized = re.sub(r"^ |              
+                             |   19     if not normalized.start |              
+                             | > 20         raise ValueError("I |              
+                             |   21     return {"doi": normaliz |              
+                             |      False}                      |              
+                             |   22                             |              
+                             |   23                             |              
+                             +----------------------------------+              
+                             ValueError: Invalid DOI                           
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:427 in   |              
+                             | _handle_call_tool                |              
+                             |                                  |              
+                             |    424     ) -> CallToolResult | |              
+                             |    425         context = Context |              
+                             |        subscriptions=self._subsc |              
+                             |    426         try:              |              
+                             | >  427             return await  |              
+                             |    428         except MCPError:  |              
+                             |    429             raise         |              
+                             |    430         except Exception  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:533 in   |              
+                             | call_tool                        |              
+                             |                                  |              
+                             |    530         """               |              
+                             |    531         if context is Non |              
+                             |    532             context = Con |              
+                             | >  533         return await self |              
+                             |        convert_result=True)      |              
+                             |    534                           |              
+                             |    535     async def list_resour |              
+                             |    536         """List all avail |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\tool_manager |              
+                             | .py:87 in call_tool              |              
+                             |                                  |              
+                             |   84         if not tool:        |              
+                             |   85             raise ToolError |              
+                             |   86                             |              
+                             | > 87         return await tool.r |              
+                             |   88                             |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:210  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   207             raise ToolErro |              
+                             |   208         except Exception a |              
+                             |   209             # A crash: the |              
+                             | > 210             raise Unexpect |              
+                             |   211                            |              
+                             +----------------------------------+              
+                             UnexpectedToolError: Error executing              
+                             tool resolve_doi                                  
+[08/27/26 22:27:12] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/projects                
+                             "HTTP/1.1 201 Created"                            
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/library/                
+                             notes "HTTP/1.1 201 Created"                      
+[08/27/26 22:27:13] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/workspac                
+                             e/export "HTTP/1.1 200 OK"                        
+START module=mcp_servers.scholarly_search.server protocol=2025-11-25
+PASS module=mcp_servers.scholarly_search.server tools=8 calls=search_papers,source_health_check
+START module=mcp_servers.research_workspace.server protocol=2025-11-25
+PASS auth_missing=user_scoped_tool_rejected
+START module=mcp_servers.scholarly_search.server protocol=2025-11-25
+PASS api_unavailable=error explicit_unavailable=provenance_preserved
+START module=mcp_servers.scholarly_search.server protocol=2025-11-25
+PASS timeout=bounded elapsed_seconds=1.45
+START module=mcp_servers.research_workspace.server protocol=2025-11-25
+START module=mcp_servers.research_workspace.server protocol=2025-11-25
+PASS user_isolation=two_tokens export_workspace=real_endpoint
+START module=mcp_servers.scholarly_search.server protocol=2025-11-25
+START module=mcp_servers.paper_access.server protocol=2025-11-25
+PASS provenance=explicit fixture_disclosed=true paywall_bypass=false
+START module=mcp_servers.paper_access.server protocol=2025-11-25
+PASS delete_local_document=real_endpoint cross_user_document_isolation=verified
+START module=mcp_servers.paper_access.server protocol=2025-11-25
+PASS module=mcp_servers.paper_access.server tools=7 calls=resolve_arxiv,get_content_status
+START module=mcp_servers.research_workspace.server protocol=2025-11-25
+PASS module=mcp_servers.research_workspace.server tools=10 calls=create_research_project,add_note,export_workspace

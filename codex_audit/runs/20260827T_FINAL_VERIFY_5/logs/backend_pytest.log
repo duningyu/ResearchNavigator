@@ -1,0 +1,12 @@
+name=backend_pytest
+status=PASS
+command=/opt/pyvenv/bin/python -m pytest -q
+exit_code=0
+duration_seconds=35.492
+--- stdout ---
+........................................................................ [ 75%]
+.......................                                                  [100%]
+95 passed in 19.69s
+
+--- stderr/blocker ---
+(empty)

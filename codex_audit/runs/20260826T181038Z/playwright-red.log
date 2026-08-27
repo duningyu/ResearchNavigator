@@ -1,0 +1,60 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+(node:40832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login (1ms)
+(node:40012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data (1ms)
+
+
+  1) tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ASUS\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     pnpm exec playwright install                           ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-p-ac246-earch-workflow-across-login\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\ASUS\AppData\Local\ms-playwright\chromium_headless_shell-1234\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     pnpm exec playwright install                           ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-user-B-c-34c88-er-A-private-workspace-data\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\research-workflow.spec.ts:18:1 › golden path persists a legal research workflow across login 
+    tests\e2e\research-workflow.spec.ts:67:1 › user B cannot observe user A private workspace data ─
+[ELIFECYCLE] Command failed with exit code 1.

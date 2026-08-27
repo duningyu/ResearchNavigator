@@ -1,0 +1,215 @@
+..............F......................................................... [ 75%]
+.......................                                                  [100%]
+================================== FAILURES ===================================
+_________ test_admin_can_create_stage_and_apply_backup_on_next_start __________
+
+path = 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9'
+onexc = <function TemporaryDirectory._rmtree.<locals>.onexc at 0x0000022D3BEE49A0>
+
+    def _rmtree_unsafe(path, onexc):
+        try:
+            with os.scandir(path) as scandir_it:
+                entries = list(scandir_it)
+        except OSError as err:
+            onexc(os.scandir, path, err)
+            entries = []
+        for entry in entries:
+            fullname = entry.path
+            try:
+                is_dir = entry.is_dir(follow_symlinks=False)
+            except OSError:
+                is_dir = False
+    
+            if is_dir and not entry.is_junction():
+                try:
+                    if entry.is_symlink():
+                        # This can only happen if someone replaces
+                        # a directory with a symlink after the call to
+                        # os.scandir or entry.is_dir above.
+                        raise OSError("Cannot call rmtree on a symbolic link")
+                except OSError as err:
+                    onexc(os.path.islink, fullname, err)
+                    continue
+                _rmtree_unsafe(fullname, onexc)
+            else:
+                try:
+>                   os.unlink(fullname)
+E                   PermissionError: [WinError 32] 另一个程序正在使用此文件，进程无法访问。: 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9\\research_navigator.db'
+
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:634: PermissionError
+
+During handling of the above exception, another exception occurred:
+
+func = <built-in function unlink>
+path = 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9\\research_navigator.db'
+exc = PermissionError(13, '另一个程序正在使用此文件，进程无法访问。')
+
+    def onexc(func, path, exc):
+        if isinstance(exc, PermissionError):
+            def resetperms(path):
+                try:
+                    _os.chflags(path, 0)
+                except AttributeError:
+                    pass
+                _os.chmod(path, 0o700)
+    
+            try:
+                if path != name:
+                    resetperms(_os.path.dirname(path))
+                resetperms(path)
+    
+                try:
+>                   _os.unlink(path)
+E                   PermissionError: [WinError 32] 另一个程序正在使用此文件，进程无法访问。: 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9\\research_navigator.db'
+
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:891: PermissionError
+
+During handling of the above exception, another exception occurred:
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-445/test_admin_can_create_stage_an0')
+
+    def test_admin_can_create_stage_and_apply_backup_on_next_start(tmp_path: Path) -> None:
+        settings = settings_for(tmp_path)
+        app = create_app(settings)
+        backup_name: str
+        with TestClient(app) as client:
+            headers = register_admin(client, app)
+            project = client.post(
+                "/api/projects",
+                headers=headers,
+                json={"name": "Original direction", "description": "before backup", "broad_direction": "TSAD"},
+            ).json()
+>           created = client.post("/api/admin/backups", headers=headers)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\integration\test_backup_restore.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\starlette\testclient.py:556: in post
+    return super().post(
+.venv\Lib\site-packages\httpx2\_client.py:1204: in post
+    return self.request(
+.venv\Lib\site-packages\starlette\testclient.py:455: in request
+    return super().request(
+.venv\Lib\site-packages\httpx2\_client.py:797: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx2\_client.py:980: in send
+    response = self._send_handling_auth(
+.venv\Lib\site-packages\httpx2\_client.py:1008: in _send_handling_auth
+    response = self._send_handling_redirects(
+.venv\Lib\site-packages\httpx2\_client.py:1043: in _send_handling_redirects
+    response = self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\httpx2\_client.py:1076: in _send_single_request
+    response = transport.handle_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\testclient.py:354: in handle_request
+    raise exc
+.venv\Lib\site-packages\starlette\testclient.py:351: in handle_request
+    portal.call(self.app, scope, receive, send)
+.venv\Lib\site-packages\anyio\from_thread.py:338: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+.venv\Lib\site-packages\anyio\from_thread.py:263: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\fastapi\applications.py:1163: in __call__
+    await super().__call__(scope, receive, send)
+.venv\Lib\site-packages\starlette\applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\errors.py:186: in __call__
+    raise exc
+.venv\Lib\site-packages\starlette\middleware\errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+.venv\Lib\site-packages\starlette\middleware\cors.py:88: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\middleware\exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv\Lib\site-packages\starlette\routing.py:670: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:2734: in app
+    await route.handle(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:1780: in handle
+    await self.original_router.handle(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:2789: in handle
+    await included_router._handle_selected(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:1800: in _handle_selected
+    await original_route.handle(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:1279: in handle
+    await app(scope, receive, send)
+.venv\Lib\site-packages\fastapi\routing.py:158: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv\Lib\site-packages\starlette\_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv\Lib\site-packages\starlette\_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv\Lib\site-packages\fastapi\routing.py:144: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\fastapi\routing.py:706: in app
+    raw_response = await run_endpoint_function(
+.venv\Lib\site-packages\fastapi\routing.py:354: in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\starlette\concurrency.py:34: in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\anyio\to_thread.py:65: in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+.venv\Lib\site-packages\anyio\_backends\_asyncio.py:2641: in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+.venv\Lib\site-packages\anyio\_backends\_asyncio.py:1033: in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\research_navigator\routes\backups.py:31: in backup
+    return BackupRead.model_validate(create_backup(request.app.state.settings))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+apps\api\research_navigator\backups\service.py:52: in create_backup
+    with tempfile.TemporaryDirectory() as temp_dir:
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:919: in __exit__
+    self.cleanup()
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:923: in cleanup
+    self._rmtree(self.name, ignore_errors=self._ignore_cleanup_errors)
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:903: in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:796: in rmtree
+    return _rmtree_unsafe(path, onexc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:636: in _rmtree_unsafe
+    onexc(os.unlink, fullname, err)
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:894: in onexc
+    cls._rmtree(path, ignore_errors=ignore_errors)
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\tempfile.py:903: in _rmtree
+    _shutil.rmtree(name, onexc=onexc)
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:796: in rmtree
+    return _rmtree_unsafe(path, onexc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:612: in _rmtree_unsafe
+    onexc(os.scandir, path, err)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9\\research_navigator.db'
+onexc = <function TemporaryDirectory._rmtree.<locals>.onexc at 0x0000022D3BEE4AE0>
+
+    def _rmtree_unsafe(path, onexc):
+        try:
+>           with os.scandir(path) as scandir_it:
+                 ^^^^^^^^^^^^^^^^
+E           NotADirectoryError: [WinError 267] 目录名称无效。: 'C:\\Users\\ASUS\\AppData\\Local\\Temp\\tmp4sqbl_l9\\research_navigator.db'
+
+C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\shutil.py:609: NotADirectoryError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_backup_restore.py::test_admin_can_create_stage_and_apply_backup_on_next_start
+1 failed, 94 passed in 54.12s

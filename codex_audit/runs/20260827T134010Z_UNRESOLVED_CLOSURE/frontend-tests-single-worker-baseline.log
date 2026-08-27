@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+stderr | src/app/workspaceExperience.test.tsx > research workspace experience > keeps every workflow destination reachable through a drawer on a narrow viewport
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at window.getComputedStyle (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:895:7)
+    at measureScrollbarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:35:34)
+    at getTargetScrollBarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:87:10)
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+portal@2.2.1__3abc72f1327aa534ec0d12241e2770a7\node_modules\@rc-component\portal\lib\useScrollLocker.js:22:62
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\hooks\useLayoutEffect.js:19:12
+    at Object.react_stack_bottom_frame (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11) undefined
+
+stderr | src/pages/paperSelectionExperience.test.tsx > selection-first paper workflow > restores a persisted Top50 search session and paginates ten papers per page
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+··········
+
+ Test Files  4 passed (4)
+      Tests  10 passed (10)
+   Start at  21:43:38
+   Duration  9.09s (transform 115ms, setup 670ms, collect 4.62s, tests 1.26s, environment 1.60s, prepare 322ms)
+

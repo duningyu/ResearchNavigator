@@ -1,0 +1,52 @@
+F.                                                                       [100%]
+================================== FAILURES ===================================
+___ test_admin_config_status_enforces_permission_and_never_returns_secrets ____
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-405/test_admin_config_status_enfor0')
+
+    def test_admin_config_status_enforces_permission_and_never_returns_secrets(tmp_path: Path) -> None:
+        data_dir = tmp_path / "state"
+        app = create_app(
+            Settings(
+                data_dir=data_dir,
+                database_url=f"sqlite+pysqlite:///{(data_dir / 'test.db').as_posix()}",
+                upload_dir=data_dir / "uploads",
+                vector_dir=data_dir / "vectors",
+                backup_dir=data_dir / "backups",
+                allowed_origins=("http://localhost:5173",),
+                enable_fixture_source=True,
+                enable_openalex=False,
+                enable_crossref=False,
+                enable_arxiv=False,
+                enable_semantic_scholar=True,
+                semantic_scholar_api_key="never-return-this-key",
+                unpaywall_email=None,
+                crossref_mailto=None,
+                llm_base_url="https://llm.example/v1",
+                llm_api_key="never-return-this-llm-key",
+                llm_model="audit-model",
+                max_pdf_bytes=100,
+                session_ttl_hours=24,
+                environment="test",
+            )
+        )
+        with TestClient(app) as client:
+            registration = client.post(
+                "/api/auth/register",
+                json={
+                    "email": "admin-audit@example.com",
+                    "password": "research-pass-123",
+                    "display_name": "Admin Audit",
+                },
+            ).json()
+            headers = {"Authorization": f"Bearer {registration['access_token']}"}
+>           assert client.get("/api/admin/config-status", headers=headers).status_code == 403
+E           AssertionError: assert 404 == 403
+E            +  where 404 = <Response [404 Not Found]>.status_code
+E            +    where <Response [404 Not Found]> = get('/api/admin/config-status', headers={'Authorization': 'Bearer h4ECcNA_hL1C9zQY95DuWgubjvAk9E2uMGBwwCg9qqc'})
+E            +      where get = <starlette.testclient.TestClient object at 0x0000023F6630CEF0>.get
+
+tests\integration\test_security_regression.py:48: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/integration/test_security_regression.py::test_admin_config_status_enforces_permission_and_never_returns_secrets
+1 failed, 1 passed in 5.92s

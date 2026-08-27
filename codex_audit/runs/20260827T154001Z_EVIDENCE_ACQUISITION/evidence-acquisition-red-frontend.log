@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+ ❯ src/pages/PaperPage.test.tsx (1 test | 1 failed) 292ms
+   × paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence 291ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  无
+Received:
+  缺失字段
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  无
+Received:
+  缺失字段
+ ❯ src/pages/PaperPage.test.tsx:100:52
+     98|     expect(await screen.findByText('证据等级：metadata_only')).toBeInTheDoc…
+     99|     expect(screen.getAllByText('未在当前可访问文本中找到。').length).toBeGreaterTha…
+    100|     expect(screen.getByText('缺失字段').parentElement).toHaveTextContent('…
+       |                                                    ^
+    101| 
+    102|     fireEvent.click(screen.getByRole('button', { name: '获取更多证据并重新分析' }…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:50:11
+   Duration  2.68s (transform 72ms, setup 163ms, collect 1.51s, tests 292ms, environment 367ms, prepare 119ms)
+

@@ -1,0 +1,8 @@
+category,count,example_files,resolution
+actual type/interface bug,20,"mcp_servers/client.py;mcp_servers/*/server.py;scholarly/service.py","Added explicit JSON-object validation; handled BaseException results; typed MCP factory boundary"
+SQLAlchemy typing,12,"workspace/export.py;routes/library.py;services/worker/main.py","Separated heterogeneous ORM collections and job-result variables; typed Session boundary"
+Optional/None handling,1,routes/library.py,"Separated newly-created and recovered Tag variables"
+third-party missing stub,0,,"No exception required"
+serialization/schema mismatch,1,analysis/service.py,"Use CitationLocator values and covariant Sequence input"
+justified exception,0,,"No mypy ignores or overrides added"
+configuration/interface typing,10,"routes/system.py;main.py;scholarly/arxiv.py;scholarly/semantic_scholar.py;security.py","Typed Settings/lifespan/query mappings and imported binascii from its owning module"

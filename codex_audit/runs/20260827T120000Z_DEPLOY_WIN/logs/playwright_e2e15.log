@@ -1,0 +1,79 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\research-workflow.spec.ts:32:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (15.5s)
+  x  2 tests\e2e\research-workflow.spec.ts:121:1 › user B cannot observe user A private project or library data (5.8s)
+
+
+  1) tests\e2e\research-workflow.spec.ts:32:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('awaiting_human_confirmation').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('awaiting_human_confirmation').first()
+
+
+      105 |   await challengeButton.waitFor({ state: 'attached' });
+      106 |   await challengeButton.dispatchEvent('click');
+    > 107 |   await expect(page.getByText('awaiting_human_confirmation').first()).toBeVisible();
+          |                                                                       ^
+      108 |   await page.getByRole('button', { name: '我已人工审阅并确认' }).first().dispatchEvent('click');
+      109 |   await page.getByRole('button', { name: '创建研究计划' }).first().dispatchEvent('click');
+      110 |
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:107:71
+
+    Error Context: test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\research-workflow.spec.ts:121:1 › user B cannot observe user A private project or library data 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: '今日研究起点' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByRole('heading', { name: '今日研究起点' })
+
+
+       8 |   await page.getByLabel('密码').fill('e2e-research-pass-123');
+       9 |   await page.getByRole('button', { name: '创建账户' }).click();
+    > 10 |   await expect(page.getByRole('heading', { name: '今日研究起点' })).toBeVisible();
+         |                                                               ^
+      11 | }
+      12 |
+      13 | async function pickOptionByKeyboard(page: Page, name: string) {
+        at register (E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:10:63)
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:123:3
+
+    Error Context: test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\research-workflow.spec.ts:32:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+    tests\e2e\research-workflow.spec.ts:121:1 › user B cannot observe user A private project or library data 
+[ELIFECYCLE] Command failed with exit code 1.

@@ -1,0 +1,261 @@
+{
+  "query": "\"Attention Is All You Need\"",
+  "requested_limit_per_source": 5,
+  "started_at": "2026-08-27T14:17:09.463695+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T14:17:11.218882+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T14:17:14.249339+00:00",
+      "result_count": 5,
+      "identifiers": [
+        {
+          "doi": "10.1007/978-3-031-84300-6_13",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.1007/978-3-031-84300-6_13"
+          },
+          "source_urls": [
+            "https://doi.org/10.1007/978-3-031-84300-6_13"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.1007/978-3-031-84300-6_13",
+              "source_url": "https://doi.org/10.1007/978-3-031-84300-6_13",
+              "fetched_at": "2026-08-27T14:17:14.249339+00:00",
+              "raw_hash": "b99cf32c82cdb91358457618e97e61a205d1e335b29e35d292a6bb8059258cf8",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2139/ssrn.4993784",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2139/ssrn.4993784"
+          },
+          "source_urls": [
+            "https://doi.org/10.2139/ssrn.4993784"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2139/ssrn.4993784",
+              "source_url": "https://doi.org/10.2139/ssrn.4993784",
+              "fetched_at": "2026-08-27T14:17:14.249339+00:00",
+              "raw_hash": "66ef5d87d0a351addcc32f81d1941d0498c223bd713732483a4ecfb5d25ee874",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2139/ssrn.5967774",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2139/ssrn.5967774"
+          },
+          "source_urls": [
+            "https://doi.org/10.2139/ssrn.5967774"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2139/ssrn.5967774",
+              "source_url": "https://doi.org/10.2139/ssrn.5967774",
+              "fetched_at": "2026-08-27T14:17:14.249339+00:00",
+              "raw_hash": "ab078873bcaa4845ab915bfc0ce70685d90ee81f7c8a8dbe1e4e878bd49deac3",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.5040/9781350101272.00000005",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.5040/9781350101272.00000005"
+          },
+          "source_urls": [
+            "https://doi.org/10.5040/9781350101272.00000005"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.5040/9781350101272.00000005",
+              "source_url": "https://doi.org/10.5040/9781350101272.00000005",
+              "fetched_at": "2026-08-27T14:17:14.249339+00:00",
+              "raw_hash": "7de0390e388926b7579fceee89021d00d6dbec53b601b433be392eed4e1e00d7",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2139/ssrn.7137418",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2139/ssrn.7137418"
+          },
+          "source_urls": [
+            "https://doi.org/10.2139/ssrn.7137418"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2139/ssrn.7137418",
+              "source_url": "https://doi.org/10.2139/ssrn.7137418",
+              "fetched_at": "2026-08-27T14:17:14.249339+00:00",
+              "raw_hash": "f28c55afc67914cb5bfab6050b5b1b138a10e2de73bac38f297cbe8a98d04235",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T14:17:16.431640+00:00",
+      "result_count": 5,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "2604.21816v1",
+          "external_ids": {
+            "arxiv": "2604.21816v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2604.21816v1",
+            "https://arxiv.org/abs/2604.21816v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2604.21816v1",
+              "source_url": "http://arxiv.org/abs/2604.21816v1",
+              "fetched_at": "2026-08-27T14:17:16.431640+00:00",
+              "raw_hash": "86751b92d759c3ca90eb8c6af89a2b01b94bb6d2330a1a71c117c53455744605",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "1706.03762v7",
+          "external_ids": {
+            "arxiv": "1706.03762v7"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/1706.03762v7",
+            "https://arxiv.org/abs/1706.03762v7"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "1706.03762v7",
+              "source_url": "http://arxiv.org/abs/1706.03762v7",
+              "fetched_at": "2026-08-27T14:17:16.431640+00:00",
+              "raw_hash": "e1ff3afbcd13732d3eaddbf48ed5ee81289e20947193484c3032ca24ca392432",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2104.04692v3",
+          "external_ids": {
+            "arxiv": "2104.04692v3"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2104.04692v3",
+            "https://arxiv.org/abs/2104.04692v3"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2104.04692v3",
+              "source_url": "http://arxiv.org/abs/2104.04692v3",
+              "fetched_at": "2026-08-27T14:17:16.431640+00:00",
+              "raw_hash": "8e56f88b9cba396ef36b184f396a62a6eb9bf8f5e8624c48f9ecd39ae2625512",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2501.05730v1",
+          "external_ids": {
+            "arxiv": "2501.05730v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2501.05730v1",
+            "https://arxiv.org/abs/2501.05730v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2501.05730v1",
+              "source_url": "http://arxiv.org/abs/2501.05730v1",
+              "fetched_at": "2026-08-27T14:17:16.431640+00:00",
+              "raw_hash": "235066472f68c7a54c9e72ef5ef8eeee80c36dd622af2e4a7b62f0c4a6d70cc8",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2510.19861v1",
+          "external_ids": {
+            "arxiv": "2510.19861v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2510.19861v1",
+            "https://arxiv.org/abs/2510.19861v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2510.19861v1",
+              "source_url": "http://arxiv.org/abs/2510.19861v1",
+              "fetched_at": "2026-08-27T14:17:16.431640+00:00",
+              "raw_hash": "c40d2cdb4f4625d926d749428025d9194e4e7649812045c03d41d9ff84194dd2",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-27T14:17:17.422027+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 10,
+    "output_count": 10
+  },
+  "finished_at": "2026-08-27T14:17:17.425515+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "semantic_scholar"
+  ]
+}

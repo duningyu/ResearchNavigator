@@ -1,0 +1,18 @@
+$ vitest run --exclude tests/e2e/**
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+ ✓ src/components/scoreMath.test.ts (2 tests) 2ms
+ ✓ src/api/client.test.ts (2 tests) 6ms
+stderr | src/pages/paperSelectionExperience.test.tsx > selection-first paper workflow > restores a persisted Top50 search session and paginates ten papers per page
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+ ✓ src/pages/paperSelectionExperience.test.tsx (3 tests) 487ms
+ ✓ src/app/workspaceExperience.test.tsx (3 tests) 926ms
+   ✓ research workspace experience > explains the evidence-driven workflow before a researcher signs in  507ms
+
+ Test Files  4 passed (4)
+      Tests  10 passed (10)
+   Start at  23:14:54
+   Duration  4.22s (transform 138ms, setup 676ms, collect 3.80s, tests 1.42s, environment 1.60s, prepare 487ms)
+

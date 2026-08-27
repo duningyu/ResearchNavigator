@@ -1,0 +1,118 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.0, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0, cov-7.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 3 items
+
+tests/integration/test_migrations.py::test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts FAILED [ 33%]
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it FAILED [ 66%]
+tests/integration/test_migrations.py::test_historical_migration_ignores_tables_added_to_runtime_metadata FAILED [100%]
+
+================================== FAILURES ===================================
+__ test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts __
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-389/test_empty_database_upgrade_ha0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB13045E50>
+
+    def test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts(
+        tmp_path: Path, monkeypatch,
+    ) -> None:
+        monkeypatch.delenv("RN_DATABASE_URL", raising=False)
+        database_path = tmp_path / "migration.db"
+        config = alembic_config(database_path)
+    
+        command.upgrade(config, "head")
+    
+        engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+        inspector = inspect(engine)
+        tables = set(inspector.get_table_names())
+        assert EXPECTED_TABLES <= tables
+>       assert "paper_chunks_fts" in tables
+E       AssertionError: assert 'paper_chunks_fts' in {'agent_runs', 'alembic_version', 'favorites', 'gap_candidates', 'gap_evidence', 'job_events', ...}
+
+tests\integration\test_migrations.py:59: AssertionError
+---------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial ResearchNavigator schema bootstrap.
+_________ test_downgrade_base_removes_schema_and_upgrade_recreates_it _________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-389/test_downgrade_base_removes_sc0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB130C6000>
+
+    def test_downgrade_base_removes_schema_and_upgrade_recreates_it(
+        tmp_path: Path, monkeypatch,
+    ) -> None:
+        monkeypatch.delenv("RN_DATABASE_URL", raising=False)
+        database_path = tmp_path / "roundtrip.db"
+        config = alembic_config(database_path)
+        command.upgrade(config, "head")
+        command.downgrade(config, "base")
+    
+        engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+>       assert set(inspect(engine).get_table_names()) == set()
+E       AssertionError: assert {'alembic_version'} == set()
+E         
+E         Extra items in the left set:
+E         'alembic_version'
+E         
+E         Full diff:
+E         - set()
+E         + {
+E         +     'alembic_version',
+E         + }
+
+tests\integration\test_migrations.py:85: AssertionError
+---------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial ResearchNavigator schema bootstrap.
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0001 -> , Initial ResearchNavigator schema bootstrap.
+_____ test_historical_migration_ignores_tables_added_to_runtime_metadata ______
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-389/test_historical_migration_igno0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001BB1313BB60>
+
+    def test_historical_migration_ignores_tables_added_to_runtime_metadata(
+        tmp_path: Path, monkeypatch,
+    ) -> None:
+        monkeypatch.delenv("RN_DATABASE_URL", raising=False)
+        sentinel = sa.Table(
+            "future_runtime_only_table",
+            Base.metadata,
+            sa.Column("id", sa.Integer, primary_key=True),
+        )
+        try:
+            database_path = tmp_path / "frozen.db"
+            command.upgrade(alembic_config(database_path), "head")
+            engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+>           assert "future_runtime_only_table" not in inspect(engine).get_table_names()
+E           AssertionError: assert 'future_runtime_only_table' not in ['agent_runs', 'alembic_version', 'favorites', 'future_runtime_only_table', 'gap_candidates', 'gap_evidence', ...]
+E            +  where ['agent_runs', 'alembic_version', 'favorites', 'future_runtime_only_table', 'gap_candidates', 'gap_evidence', ...] = get_table_names()
+E            +    where get_table_names = <sqlalchemy.engine.reflection.Inspector object at 0x000001BB1313B7D0>.get_table_names
+E            +      where <sqlalchemy.engine.reflection.Inspector object at 0x000001BB1313B7D0> = inspect(Engine(sqlite+pysqlite:///C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-389/test_historical_migration_igno0/frozen.db))
+
+tests\integration\test_migrations.py:108: AssertionError
+---------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial ResearchNavigator schema bootstrap.
+============================== warnings summary ===============================
+tests/integration/test_migrations.py::test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+tests/integration/test_migrations.py::test_historical_migration_ignores_tables_added_to_runtime_metadata
+  C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\alembic\config.py:604: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/integration/test_migrations.py::test_empty_database_upgrade_has_frozen_schema_constraints_indexes_and_fts
+FAILED tests/integration/test_migrations.py::test_downgrade_base_removes_schema_and_upgrade_recreates_it
+FAILED tests/integration/test_migrations.py::test_historical_migration_ignores_tables_added_to_runtime_metadata
+======================== 3 failed, 4 warnings in 2.31s ========================

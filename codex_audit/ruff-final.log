@@ -1,0 +1,2008 @@
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\alembic\env.py:1:1
+   |
+ 1 | / from __future__ import annotations
+ 2 | |
+ 3 | | import os
+ 4 | | from logging.config import fileConfig
+ 5 | |
+ 6 | | from alembic import context
+ 7 | | from sqlalchemy import engine_from_config, pool
+ 8 | |
+ 9 | | from research_navigator.models import Base
+   | |__________________________________________^
+10 |
+11 |   config = context.config
+   |
+help: Organize imports
+  |
+5 |
+  - from alembic import context
+6 | from sqlalchemy import engine_from_config, pool
+7 |
+8 + from alembic import context
+9 | from research_navigator.models import Base
+  |
+
+E501 Line too long (139 > 100)
+  --> apps\api\alembic\env.py:20:101
+   |
+19 | …
+20 | …alchemy.url"), target_metadata=target_metadata, literal_binds=True, compare_type=True)
+   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+21 | …
+22 | …
+   |
+
+E501 Line too long (134 > 100)
+  --> apps\api\alembic\env.py:26:101
+   |
+25 | def run_migrations_online() -> None:
+26 |     connectable = engine_from_config(config.get_section(config.config_ini_section, {}), prefix="sqlalchemy.", poolclass=pool.NullPool)
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+27 |     with connectable.connect() as connection:
+28 |         context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\analysis\matching.py:3:1
+   |
+ 1 |   """Explainable research-direction matching with missing-aware normalization."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import json
+ 6 | | import re
+ 7 | | from collections.abc import Mapping
+ 8 | |
+ 9 | | from pydantic import BaseModel
+10 | |
+11 | | from research_navigator.models import Paper, ResearchProfile
+12 | | from research_navigator.analysis.structured import PaperAnalysisOutput
+   | |______________________________________________________________________^
+help: Organize imports
+   |
+10 |
+11 + from research_navigator.analysis.structured import PaperAnalysisOutput
+12 | from research_navigator.models import Paper, ResearchProfile
+   - from research_navigator.analysis.structured import PaperAnalysisOutput
+13 |
+   |
+
+E501 Line too long (109 > 100)
+  --> apps\api\research_navigator\analysis\matching.py:87:101
+   |
+85 |         filter(
+86 |             None,
+87 |             [paper.title, paper.abstract or "", " ".join(analysis.methods), analysis.research_problem or ""],
+   |                                                                                                     ^^^^^^^^^
+88 |         )
+89 |     )
+   |
+
+E501 Line too long (108 > 100)
+  --> apps\api\research_navigator\analysis\matching.py:91:93
+   |
+89 |     )
+90 |     lower_profile, lower_paper = profile_text.lower(), paper_text.lower()
+91 |     task_terms = ("anomaly detection", "异常检测", "anomaly prediction", "异常预测", "risk ranking", "预警")
+   |                                                                                                     ^^^^^^^^
+92 |     data_terms = ("time series", "时序", "multivariate", "多变量", "industrial", "工业")
+93 |     output_terms = ("future", "horizon", "risk", "ranking", "prediction", "未来", "排序", "预测")
+   |
+
+E501 Line too long (106 > 100)
+  --> apps\api\research_navigator\analysis\reproduction.py:53:68
+   |
+51 |         blocking_reasons=blocking,
+52 |         recommended_first_step=(
+53 |             "先解决缺失的数据、代码或协议阻断项。" if blocking else "先运行作者基线或最小公开数据集实验。"
+   |                                                                                                      ^^^^^
+54 |         ),
+55 |     )
+   |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\analysis\reproduction.py:59:101
+   |
+58 | def assess_reproduction(paper: Paper, analysis: PaperAnalysisOutput) -> ReproductionAssessment:
+59 |     urls = " ".join([paper.publisher_url or "", paper.pdf_url or "", paper.source_urls_json]).lower()
+   |                                                                                                     ^
+60 |     has_repo = "github.com" in urls or "gitlab.com" in urls
+61 |     fulltext = analysis.evidence_level in {
+   |
+
+E501 Line too long (112 > 100)
+  --> apps\api\research_navigator\analysis\reproduction.py:79:77
+   |
+77 |             status="partial" if analysis.datasets else "unknown",
+78 |             score=0.5 if analysis.datasets else None,
+79 |             evidence="正文/摘要提及数据集，但未验证下载与许可。" if analysis.datasets else "未验证数据可用性。",
+   |                                                                                                     ^^^^^^^^^^^^
+80 |         ),
+81 |         ReproductionDimension(
+   |
+
+E501 Line too long (113 > 100)
+  --> apps\api\research_navigator\analysis\reproduction.py:84:101
+   |
+82 |             name="method_completeness",
+83 |             weight=0.15,
+84 |             status="verified" if fulltext and analysis.methods else "partial" if analysis.methods else "unknown",
+   |                                                                                                     ^^^^^^^^^^^^^
+85 |             score=0.9 if fulltext and analysis.methods else 0.45 if analysis.methods else None,
+86 |             evidence="已访问全文方法证据。" if fulltext else "仅依据摘要或元数据。",
+   |
+
+E501 Line too long (108 > 100)
+   --> apps\api\research_navigator\analysis\reproduction.py:100:72
+    |
+ 98 |             status="partial" if fulltext else "unknown",
+ 99 |             score=0.5 if fulltext else None,
+100 |             evidence="全文可访问，但尚未进行参数完整性逐项审计。" if fulltext else "摘要不能支持参数审计。",
+    |                                                                                                     ^^^^^^^^
+101 |         ),
+102 |         ReproductionDimension(
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\analysis\reproduction.py:114:76
+    |
+112 |             status="partial" if analysis.metrics else "unknown",
+113 |             score=0.5 if analysis.metrics else None,
+114 |             evidence="发现评价指标，但尚未核验切分和实现协议。" if analysis.metrics else "未找到评价协议信息。",
+    |                                                                                                     ^^^^^^^^^^^^
+115 |         ),
+116 |         ReproductionDimension(
+    |
+
+E501 Line too long (106 > 100)
+   --> apps\api\research_navigator\analysis\structured.py:141:101
+    |
+140 |     if evidence_level in _FULLTEXT_LEVELS:
+141 |         future_sentence = _first_matching(sentences, ("future work", "in future work", "future research"))
+    |                                                                                                     ^^^^^^
+142 |         if future_sentence:
+143 |             future.append(future_sentence)
+    |
+
+E501 Line too long (106 > 100)
+   --> apps\api\research_navigator\analysis\structured.py:167:101
+    |
+165 |         missing.append("datasets")
+166 |
+167 |     contribution_sentence = _first_matching(sentences, ("we propose", "we introduce", "our contribution"))
+    |                                                                                                     ^^^^^^
+168 |     novelty = [contribution_sentence] if contribution_sentence else []
+    |
+
+UP037 [*] Remove quotes from type annotation
+  --> apps\api\research_navigator\config.py:53:26
+   |
+52 |     @classmethod
+53 |     def from_env(cls) -> "Settings":
+   |                          ^^^^^^^^^^
+54 |         data_dir = Path(os.getenv("RN_DATA_DIR", "runtime")).expanduser().resolve()
+55 |         database_url = os.getenv(
+   |
+help: Remove quotes
+   |
+52 |     @classmethod
+   -     def from_env(cls) -> "Settings":
+53 +     def from_env(cls) -> Settings:
+54 |         data_dir = Path(os.getenv("RN_DATA_DIR", "runtime")).expanduser().resolve()
+   |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\config.py:62:101
+   |
+60 |             data_dir=data_dir,
+61 |             database_url=database_url,
+62 |             upload_dir=Path(os.getenv("RN_UPLOAD_DIR", data_dir / "uploads")).expanduser().resolve(),
+   |                                                                                                     ^
+63 |             vector_dir=Path(os.getenv("RN_VECTOR_DIR", data_dir / "vector_index")).expanduser().resolve(),
+64 |             backup_dir=Path(os.getenv("RN_BACKUP_DIR", data_dir / "backups")).expanduser().resolve(),
+   |
+
+E501 Line too long (106 > 100)
+  --> apps\api\research_navigator\config.py:63:101
+   |
+61 |             database_url=database_url,
+62 |             upload_dir=Path(os.getenv("RN_UPLOAD_DIR", data_dir / "uploads")).expanduser().resolve(),
+63 |             vector_dir=Path(os.getenv("RN_VECTOR_DIR", data_dir / "vector_index")).expanduser().resolve(),
+   |                                                                                                     ^^^^^^
+64 |             backup_dir=Path(os.getenv("RN_BACKUP_DIR", data_dir / "backups")).expanduser().resolve(),
+65 |             allowed_origins=_as_csv(
+   |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\config.py:64:101
+   |
+62 |             upload_dir=Path(os.getenv("RN_UPLOAD_DIR", data_dir / "uploads")).expanduser().resolve(),
+63 |             vector_dir=Path(os.getenv("RN_VECTOR_DIR", data_dir / "vector_index")).expanduser().resolve(),
+64 |             backup_dir=Path(os.getenv("RN_BACKUP_DIR", data_dir / "backups")).expanduser().resolve(),
+   |                                                                                                     ^
+65 |             allowed_origins=_as_csv(
+66 |                 os.getenv("RN_ALLOWED_ORIGINS"),
+   |
+
+UP037 [*] Remove quotes from type annotation
+  --> apps\api\research_navigator\db.py:22:59
+   |
+21 |     @classmethod
+22 |     def from_url(cls, url: str, *, echo: bool = False) -> "Database":
+   |                                                           ^^^^^^^^^^
+23 |         kwargs: dict[str, object] = {"future": True, "echo": echo}
+24 |         if url.startswith("sqlite"):
+   |
+help: Remove quotes
+   |
+21 |     @classmethod
+   -     def from_url(cls, url: str, *, echo: bool = False) -> "Database":
+22 +     def from_url(cls, url: str, *, echo: bool = False) -> Database:
+23 |         kwargs: dict[str, object] = {"future": True, "echo": echo}
+   |
+
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\deps.py:35:101
+   |
+33 | ) -> User:
+34 |     if credentials is None or credentials.scheme.lower() != "bearer":
+35 |         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+   |                                                                                                     ^^^
+36 |     token_record = session.scalar(
+37 |         select(SessionToken).where(SessionToken.token_hash == hash_token(credentials.credentials))
+   |
+
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\deps.py:58:101
+   |
+56 | ) -> SessionToken:
+57 |     if credentials is None:
+58 |         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+   |                                                                                                     ^^^
+59 |     record = session.scalar(
+60 |         select(SessionToken).where(SessionToken.token_hash == hash_token(credentials.credentials))
+   |
+
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:40:69
+   |
+38 |     else:
+39 |         claim = (
+40 |             f"在本次检索范围内，'{project_direction}' 的跨设备、误报约束与事件级评价联合证据仍不充分；"
+   |                                                                                                     ^^^
+41 |             "该结论仅构成候选研究空白。"
+42 |         )
+   |
+
+E501 Line too long (107 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:52:101
+   |
+50 |         coverage={
+51 |             "selected_paper_count": len(evidence_matrix),
+52 |             "future_horizon_coverage": sum(bool(row.get("prediction_horizon")) for row in evidence_matrix),
+   |                                                                                                     ^^^^^^^
+53 |             "risk_ranking_coverage": sum(row.get("task") == "risk ranking" for row in evidence_matrix),
+54 |         },
+   |
+
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:53:101
+   |
+51 |             "selected_paper_count": len(evidence_matrix),
+52 |             "future_horizon_coverage": sum(bool(row.get("prediction_horizon")) for row in evidence_matrix),
+53 |             "risk_ranking_coverage": sum(row.get("task") == "risk ranking" for row in evidence_matrix),
+   |                                                                                                     ^^^
+54 |         },
+55 |         confidence="low",
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:69:69
+   |
+67 |         ],
+68 |         suggested_research_question=(
+69 |             f"如何在 {project_direction} 中同时控制误报、保持事件覆盖率，并对跨设备外推进行严格验证？"
+   |                                                                                                      ^
+70 |         ),
+71 |         not_novelty_proof=True,
+   |
+
+E501 Line too long (136 > 100)
+  --> apps\api\research_navigator\gaps\matrix.py:54:101
+   |
+52 | …     "input": analysis.task_definition.input if analysis else None,
+53 | …     "output": analysis.task_definition.output if analysis else None,
+54 | …     "data_type": "multivariate time series" if "multivariate" in text else "time series" if "time series" in text else None,
+   |                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+55 | …     "datasets": analysis.datasets if analysis else [],
+56 | …     "supervision": None,
+   |
+
+E501 Line too long (150 > 100)
+  --> apps\api\research_navigator\gaps\matrix.py:57:101
+   |
+55 | …lse [],
+56 | …
+57 | …y(term in text for term in ("future horizon", "future-window", "future window")) else None,
+   |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+58 | …e [],
+59 | …"fixed alert budget", "high false positive", "online") if term in text],
+   |
+
+E501 Line too long (131 > 100)
+  --> apps\api\research_navigator\gaps\matrix.py:59:101
+   |
+57 | …     "prediction_horizon": "future window" if any(term in text for term in ("future horizon", "future-window", "future window")) else…
+58 | …     "methods": analysis.methods if analysis else [],
+59 | …     "business_constraints": [term for term in ("fixed alert budget", "high false positive", "online") if term in text],
+   |                                                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+60 | …     "handles_imbalance": "class imbalance" in text,
+61 | …     "evaluates_false_alarms": any(term in text for term in ("false alarm", "false positive", "precision")),
+   |
+
+E501 Line too long (119 > 100)
+  --> apps\api\research_navigator\gaps\matrix.py:61:101
+   |
+59 |                 "business_constraints": [term for term in ("fixed alert budget", "high false positive", "online") if term in text],
+60 |                 "handles_imbalance": "class imbalance" in text,
+61 |                 "evaluates_false_alarms": any(term in text for term in ("false alarm", "false positive", "precision")),
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+62 |                 "event_level_metrics": "event" in text,
+63 |                 "code_verified": False,
+   |
+
+E501 Line too long (123 > 100)
+  --> apps\api\research_navigator\main.py:64:101
+   |
+62 |         except Exception:
+63 |             database_status = "error"
+64 |         return {"status": "ok" if database_status == "ok" else "degraded", "version": "0.2.0", "database": database_status}
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+65 |
+66 |     app.include_router(auth.router, prefix="/api")
+   |
+
+UP037 [*] Remove quotes from type annotation
+  --> apps\api\research_navigator\models.py:38:27
+   |
+36 |     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+37 |
+38 |     projects: Mapped[list["ResearchProject"]] = relationship(
+   |                           ^^^^^^^^^^^^^^^^^
+39 |         back_populates="user", cascade="all, delete-orphan"
+40 |     )
+   |
+help: Remove quotes
+   |
+37 |
+   -     projects: Mapped[list["ResearchProject"]] = relationship(
+38 +     projects: Mapped[list[ResearchProject]] = relationship(
+39 |         back_populates="user", cascade="all, delete-orphan"
+   |
+
+E501 Line too long (101 > 100)
+   --> apps\api\research_navigator\models.py:107:101
+    |
+105 |     venue_type: Mapped[str | None] = mapped_column(String(120), nullable=True)
+106 |     doi: Mapped[str | None] = mapped_column(String(300), unique=True, nullable=True, index=True)
+107 |     arxiv_id: Mapped[str | None] = mapped_column(String(100), unique=True, nullable=True, index=True)
+    |                                                                                                     ^
+108 |     external_ids_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+109 |     source_urls_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
+    |
+
+E501 Line too long (105 > 100)
+   --> apps\api\research_navigator\models.py:135:101
+    |
+133 |     raw_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+134 |     is_fixture: Mapped[bool] = mapped_column(default=False, nullable=False)
+135 |     fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    |                                                                                                     ^^^^^
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:339:101
+    |
+338 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+339 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+340 |     project_id: Mapped[int] = mapped_column(ForeignKey("research_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+341 |     gap_type: Mapped[str] = mapped_column(String(120), nullable=False)
+    |
+
+E501 Line too long (127 > 100)
+   --> apps\api\research_navigator\models.py:340:101
+    |
+338 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+339 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+340 |     project_id: Mapped[int] = mapped_column(ForeignKey("research_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+341 |     gap_type: Mapped[str] = mapped_column(String(120), nullable=False)
+342 |     claim: Mapped[str] = mapped_column(Text, nullable=False)
+    |
+
+E501 Line too long (107 > 100)
+   --> apps\api\research_navigator\models.py:357:101
+    |
+355 |     suggested_research_question: Mapped[str] = mapped_column(Text, nullable=False)
+356 |     not_novelty_proof: Mapped[bool] = mapped_column(default=True, nullable=False)
+357 |     challenge_completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    |                                                                                                     ^^^^^^^
+358 |     confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+359 |     human_confirmation_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    |
+
+E501 Line too long (120 > 100)
+   --> apps\api\research_navigator\models.py:366:101
+    |
+365 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+366 |     gap_id: Mapped[int] = mapped_column(ForeignKey("gap_candidates.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+367 |     paper_id: Mapped[int | None] = mapped_column(ForeignKey("papers.id", ondelete="SET NULL"), nullable=True, index=True)
+368 |     evidence_role: Mapped[str] = mapped_column(String(40), nullable=False)
+    |
+
+E501 Line too long (121 > 100)
+   --> apps\api\research_navigator\models.py:367:101
+    |
+365 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+366 |     gap_id: Mapped[int] = mapped_column(ForeignKey("gap_candidates.id", ondelete="CASCADE"), nullable=False, index=True)
+367 |     paper_id: Mapped[int | None] = mapped_column(ForeignKey("papers.id", ondelete="SET NULL"), nullable=True, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+368 |     evidence_role: Mapped[str] = mapped_column(String(40), nullable=False)
+369 |     rationale: Mapped[str] = mapped_column(Text, nullable=False)
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:378:101
+    |
+377 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+378 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+379 |     project_id: Mapped[int] = mapped_column(ForeignKey("research_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+380 |     gap_id: Mapped[int | None] = mapped_column(ForeignKey("gap_candidates.id", ondelete="SET NULL"), nullable=True, index=True)
+    |
+
+E501 Line too long (127 > 100)
+   --> apps\api\research_navigator\models.py:379:101
+    |
+377 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+378 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+379 |     project_id: Mapped[int] = mapped_column(ForeignKey("research_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+380 |     gap_id: Mapped[int | None] = mapped_column(ForeignKey("gap_candidates.id", ondelete="SET NULL"), nullable=True, index=True)
+381 |     title: Mapped[str] = mapped_column(String(240), nullable=False)
+    |
+
+E501 Line too long (127 > 100)
+   --> apps\api\research_navigator\models.py:380:101
+    |
+378 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+379 |     project_id: Mapped[int] = mapped_column(ForeignKey("research_projects.id", ondelete="CASCADE"), nullable=False, index=True)
+380 |     gap_id: Mapped[int | None] = mapped_column(ForeignKey("gap_candidates.id", ondelete="SET NULL"), nullable=True, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+381 |     title: Mapped[str] = mapped_column(String(240), nullable=False)
+382 |     objective: Mapped[str] = mapped_column(Text, nullable=False)
+    |
+
+E501 Line too long (121 > 100)
+   --> apps\api\research_navigator\models.py:391:101
+    |
+390 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+391 |     plan_id: Mapped[int] = mapped_column(ForeignKey("research_plans.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+392 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+393 |     category: Mapped[str] = mapped_column(String(80), nullable=False)
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:392:101
+    |
+390 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+391 |     plan_id: Mapped[int] = mapped_column(ForeignKey("research_plans.id", ondelete="CASCADE"), nullable=False, index=True)
+392 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+393 |     category: Mapped[str] = mapped_column(String(80), nullable=False)
+394 |     title: Mapped[str] = mapped_column(String(240), nullable=False)
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:406:101
+    |
+404 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+405 |     run_id: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+406 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+407 |     project_id: Mapped[int | None] = mapped_column(ForeignKey("research_projects.id", ondelete="SET NULL"), nullable=True, index=True)
+408 |     workflow_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    |
+
+E501 Line too long (134 > 100)
+   --> apps\api\research_navigator\models.py:407:101
+    |
+405 |     run_id: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+406 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+407 |     project_id: Mapped[int | None] = mapped_column(ForeignKey("research_projects.id", ondelete="SET NULL"), nullable=True, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+408 |     workflow_type: Mapped[str] = mapped_column(String(80), nullable=False)
+409 |     workflow_version: Mapped[str] = mapped_column(String(80), nullable=False)
+    |
+
+E501 Line too long (105 > 100)
+   --> apps\api\research_navigator\models.py:417:101
+    |
+415 |     output_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+416 |     error: Mapped[str | None] = mapped_column(Text, nullable=True)
+417 |     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    |                                                                                                     ^^^^^
+418 |     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+419 |     output_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:427:101
+    |
+426 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+427 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+428 |     project_id: Mapped[int | None] = mapped_column(ForeignKey("research_projects.id", ondelete="SET NULL"), nullable=True, index=True)
+429 |     job_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    |
+
+E501 Line too long (134 > 100)
+   --> apps\api\research_navigator\models.py:428:101
+    |
+426 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+427 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+428 |     project_id: Mapped[int | None] = mapped_column(ForeignKey("research_projects.id", ondelete="SET NULL"), nullable=True, index=True)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+429 |     job_type: Mapped[str] = mapped_column(String(80), nullable=False)
+430 |     status: Mapped[str] = mapped_column(String(40), default="pending", nullable=False, index=True)
+    |
+
+E501 Line too long (110 > 100)
+   --> apps\api\research_navigator\models.py:447:101
+    |
+446 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+447 |     job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^
+448 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+449 |     event_type: Mapped[str] = mapped_column(String(60), nullable=False)
+    |
+
+E501 Line too long (112 > 100)
+   --> apps\api\research_navigator\models.py:448:101
+    |
+446 |     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+447 |     job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False, index=True)
+448 |     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    |                                                                                                     ^^^^^^^^^^^^
+449 |     event_type: Mapped[str] = mapped_column(String(60), nullable=False)
+450 |     detail_json: Mapped[str] = mapped_column(Text, default="{}", nullable=False)
+    |
+
+SIM105 Use `contextlib.suppress(TypeError, ValueError)` instead of `try`-`except`-`pass`
+  --> apps\api\research_navigator\recommendations\service.py:45:9
+   |
+43 |       if profile:
+44 |           values.extend([profile.broad_direction or "", profile.major or ""])
+45 | /         try:
+46 | |             values.extend(str(item) for item in json.loads(profile.keywords_json))
+47 | |         except (TypeError, ValueError):
+48 | |             pass
+   | |________________^
+49 |       if project:
+50 |           values.extend([project.name, project.broad_direction or "", project.description or ""])
+   |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(TypeError, ValueError): ...`
+
+E501 Line too long (110 > 100)
+  --> apps\api\research_navigator\routes\auth.py:35:101
+   |
+34 | @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
+35 | def register(payload: RegisterRequest, request: Request, session: Session = Depends(get_db)) -> TokenResponse:
+   |                                                                                                     ^^^^^^^^^^
+36 |     user = User(
+37 |         email=payload.email,
+   |
+
+E501 Line too long (104 > 100)
+  --> apps\api\research_navigator\routes\auth.py:51:101
+   |
+50 | @router.post("/login", response_model=TokenResponse)
+51 | def login(payload: LoginRequest, request: Request, session: Session = Depends(get_db)) -> TokenResponse:
+   |                                                                                                     ^^^^
+52 |     user = session.scalar(select(User).where(User.email == payload.email))
+53 |     if user is None or not verify_password(payload.password, user.password_hash):
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\routes\documents.py:3:1
+   |
+ 1 |   """User-authorized PDF upload and evidence retrieval endpoints."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | from pathlib import Path
+ 6 | |
+ 7 | | from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile, status
+ 8 | | from sqlalchemy import func, or_, select, text
+ 9 | | from sqlalchemy.orm import Session
+10 | |
+11 | | from research_navigator.deps import get_current_user, get_db
+12 | | from research_navigator.documents.index import index_document, search_document_chunks
+13 | | from research_navigator.documents.parser import parse_pdf
+14 | | from research_navigator.documents.security import DocumentSecurityError, validate_pdf_upload
+15 | | from research_navigator.models import Paper, PaperChunk, PaperDocument, User
+16 | | from research_navigator.schemas.documents import (
+17 | |     ContentStatus,
+18 | |     DocumentRead,
+19 | |     RetrievalHitRead,
+20 | |     RetrievalRequest,
+21 | |     RetrievalResponse,
+22 | | )
+   | |_^
+23 |
+24 |   router = APIRouter(tags=["documents"])
+   |
+help: Organize imports
+   |
+6  |
+   - from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile, status
+7  + from fastapi import (
+8  +     APIRouter,
+9  +     Depends,
+10 +     File,
+11 +     Form,
+12 +     HTTPException,
+13 +     Request,
+14 +     Response,
+15 +     UploadFile,
+16 +     status,
+17 + )
+18 | from sqlalchemy import func, or_, select, text
+   |
+
+E501 Line too long (104 > 100)
+ --> apps\api\research_navigator\routes\documents.py:7:101
+  |
+5 | from pathlib import Path
+6 |
+7 | from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile, status
+  |                                                                                                     ^^^^
+8 | from sqlalchemy import func, or_, select, text
+9 | from sqlalchemy.orm import Session
+  |
+
+E501 Line too long (105 > 100)
+  --> apps\api\research_navigator\routes\documents.py:78:101
+   |
+76 |         raise HTTPException(status_code=400, detail=str(exc)) from exc
+77 |     except Exception as exc:
+78 |         raise HTTPException(status_code=422, detail=f"PDF parsing failed: {type(exc).__name__}") from exc
+   |                                                                                                     ^^^^^
+79 |
+80 |     directory = Path(request.app.state.settings.upload_dir) / str(user.id) / str(paper_id)
+   |
+
+E501 Line too long (110 > 100)
+   --> apps\api\research_navigator\routes\documents.py:206:101
+    |
+204 |     except OSError as exc:
+205 |         raise HTTPException(
+206 |             status_code=500, detail=f"Document metadata deleted but file cleanup failed: {type(exc).__name__}"
+    |                                                                                                     ^^^^^^^^^^
+207 |         ) from exc
+208 |     return Response(status_code=status.HTTP_204_NO_CONTENT)
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\routes\gaps.py:3:1
+   |
+ 1 |   """Evidence-bounded candidate research-gap workflow."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import hashlib
+ 6 | | import json
+ 7 | | import uuid
+ 8 | | from datetime import UTC, datetime
+ 9 | |
+10 | | from fastapi import APIRouter, Depends, HTTPException, Request, status
+11 | | from sqlalchemy import select
+12 | | from sqlalchemy.orm import Session
+13 | |
+14 | | from research_navigator.deps import get_current_user, get_db
+15 | | from research_navigator.gaps.candidate import make_gap_candidate
+16 | | from research_navigator.gaps.service import run_gap_challenge
+17 | | from research_navigator.gaps.matrix import build_evidence_matrix
+18 | | from research_navigator.gaps.workflow import assert_confirmable
+19 | | from research_navigator.models import (
+20 | |     AgentRun,
+21 | |     GapCandidate,
+22 | |     GapEvidence,
+23 | |     Paper,
+24 | |     ResearchProject,
+25 | |     User,
+26 | | )
+27 | | from research_navigator.schemas.gaps import (
+28 | |     GapCandidateRead,
+29 | |     GapChallengeRequest,
+30 | |     GapConfirmRequest,
+31 | |     GapGenerateRequest,
+32 | | )
+33 | | from research_navigator.scholarly.service import FederatedSearchService
+   | |_______________________________________________________________________^
+34 |
+35 |   router = APIRouter(tags=["research-gaps"])
+   |
+help: Organize imports
+   |
+15 | from research_navigator.gaps.candidate import make_gap_candidate
+16 + from research_navigator.gaps.matrix import build_evidence_matrix
+17 | from research_navigator.gaps.service import run_gap_challenge
+   - from research_navigator.gaps.matrix import build_evidence_matrix
+18 | from research_navigator.gaps.workflow import assert_confirmable
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\routes\recommendations.py:3:1
+   |
+ 1 |   """Explainable recommendation endpoints."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import json
+ 6 | |
+ 7 | | from fastapi import APIRouter, Depends, HTTPException
+ 8 | | from sqlalchemy import select
+ 9 | | from sqlalchemy.orm import Session
+10 | |
+11 | | from research_navigator.deps import get_current_user, get_db
+12 | | from research_navigator.models import Paper, Recommendation, User
+13 | | from research_navigator.recommendations.service import refresh_recommendations
+14 | | from research_navigator.schemas.recommendations import RecommendationRead, RecommendationRefreshRequest
+15 | | from research_navigator.scholarly.repository import paper_to_read
+   | |_________________________________________________________________^
+16 |
+17 |   router = APIRouter(prefix="/recommendations", tags=["recommendations"])
+   |
+help: Organize imports
+   |
+13 | from research_navigator.recommendations.service import refresh_recommendations
+   - from research_navigator.schemas.recommendations import RecommendationRead, RecommendationRefreshRequest
+14 + from research_navigator.schemas.recommendations import (
+15 +     RecommendationRead,
+16 +     RecommendationRefreshRequest,
+17 + )
+18 | from research_navigator.scholarly.repository import paper_to_read
+   |
+
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\routes\recommendations.py:14:101
+   |
+12 | from research_navigator.models import Paper, Recommendation, User
+13 | from research_navigator.recommendations.service import refresh_recommendations
+14 | from research_navigator.schemas.recommendations import RecommendationRead, RecommendationRefreshRequest
+   |                                                                                                     ^^^
+15 | from research_navigator.scholarly.repository import paper_to_read
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\routes\search.py:3:1
+   |
+ 1 |   """Federated paper search, resolution, and conservative related-paper endpoints."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import json
+ 6 | | import re
+ 7 | |
+ 8 | | from fastapi import APIRouter, Depends, HTTPException, Query, Request
+ 9 | | from sqlalchemy import or_, select
+10 | | from sqlalchemy.orm import Session
+11 | |
+12 | | from research_navigator.deps import get_current_user, get_db
+13 | | from research_navigator.models import Paper, ResearchProject, SearchSession, User
+14 | | from research_navigator.schemas.search import (
+15 | |     PaperRead,
+16 | |     PaperResolveRequest,
+17 | |     RelatedPaperRead,
+18 | |     SearchPaperRequest,
+19 | |     SearchResponse,
+20 | |     SearchSessionRead,
+21 | | )
+22 | | from research_navigator.scholarly.base import SearchRequest
+23 | | from research_navigator.scholarly.normalize import normalize_arxiv_id, normalize_doi, normalize_title
+24 | | from research_navigator.scholarly.repository import paper_to_read, upsert_paper
+25 | | from research_navigator.scholarly.service import FederatedSearchService
+   | |_______________________________________________________________________^
+26 |
+27 |   router = APIRouter(tags=["search"])
+   |
+help: Organize imports
+   |
+22 | from research_navigator.scholarly.base import SearchRequest
+   - from research_navigator.scholarly.normalize import normalize_arxiv_id, normalize_doi, normalize_title
+23 + from research_navigator.scholarly.normalize import (
+24 +     normalize_arxiv_id,
+25 +     normalize_doi,
+26 +     normalize_title,
+27 + )
+28 | from research_navigator.scholarly.repository import paper_to_read, upsert_paper
+   |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\routes\search.py:23:101
+   |
+21 | )
+22 | from research_navigator.scholarly.base import SearchRequest
+23 | from research_navigator.scholarly.normalize import normalize_arxiv_id, normalize_doi, normalize_title
+   |                                                                                                     ^
+24 | from research_navigator.scholarly.repository import paper_to_read, upsert_paper
+25 | from research_navigator.scholarly.service import FederatedSearchService
+   |
+
+E501 Line too long (102 > 100)
+   --> apps\api\research_navigator\routes\search.py:217:101
+    |
+215 |             session.commit()
+216 |             return paper_to_read(session, paper)
+217 |     raise HTTPException(status_code=404, detail="Paper could not be resolved from configured sources")
+    |                                                                                                     ^^
+
+E501 Line too long (108 > 100)
+   --> apps\api\research_navigator\routes\system.py:159:101
+    |
+157 |         ),
+158 |         "web_of_science": (False, False, "requires licensed credentials; adapter not implemented"),
+159 |         "science_direct": (False, False, "requires licensed Elsevier credentials; adapter not implemented"),
+    |                                                                                                     ^^^^^^^^
+160 |     }
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> apps\api\research_navigator\schemas\search.py:1:1
+  |
+1 | / from __future__ import annotations
+2 | |
+3 | | from datetime import datetime
+4 | |
+5 | | from pydantic import BaseModel, Field, model_validator
+6 | |
+7 | | from research_navigator.scholarly.base import PaperAuthor, SearchRequest, SourceProvenance, SourceStatus
+  | |________________________________________________________________________________________________________^
+help: Organize imports
+   |
+6  |
+   - from research_navigator.scholarly.base import PaperAuthor, SearchRequest, SourceProvenance, SourceStatus
+7  + from research_navigator.scholarly.base import (
+8  +     PaperAuthor,
+9  +     SearchRequest,
+10 +     SourceProvenance,
+11 +     SourceStatus,
+12 + )
+13 |
+   |
+
+E501 Line too long (104 > 100)
+ --> apps\api\research_navigator\schemas\search.py:7:101
+  |
+5 | from pydantic import BaseModel, Field, model_validator
+6 |
+7 | from research_navigator.scholarly.base import PaperAuthor, SearchRequest, SourceProvenance, SourceStatus
+  |                                                                                                     ^^^^
+
+UP037 [*] Remove quotes from type annotation
+  --> apps\api\research_navigator\schemas\search.py:67:37
+   |
+66 |     @model_validator(mode="after")
+67 |     def require_identifier(self) -> "PaperResolveRequest":
+   |                                     ^^^^^^^^^^^^^^^^^^^^^
+68 |         if not any((self.doi, self.arxiv_id, self.title)):
+69 |             raise ValueError("At least one of doi, arxiv_id, or title is required")
+   |
+help: Remove quotes
+   |
+66 |     @model_validator(mode="after")
+   -     def require_identifier(self) -> "PaperResolveRequest":
+67 +     def require_identifier(self) -> PaperResolveRequest:
+68 |         if not any((self.doi, self.arxiv_id, self.title)):
+   |
+
+SIM105 Use `contextlib.suppress(ValueError)` instead of `try`-`except`-`pass`
+  --> apps\api\research_navigator\scholarly\arxiv.py:61:13
+   |
+59 |               published = (entry.findtext(f"{_ATOM}published") or "")[:10]
+60 |               publication_date = None
+61 | /             try:
+62 | |                 publication_date = date.fromisoformat(published)
+63 | |             except ValueError:
+64 | |                 pass
+   | |____________________^
+65 |               if request.year_from and publication_date and publication_date.year < request.year_from:
+66 |                   continue
+   |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(ValueError): ...`
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\scholarly\fixture.py:61:101
+   |
+59 |         title="Future-Window Risk Ranking for Industrial Time-Series Alerts",
+60 |         abstract=(
+61 |             "Synthetic fixture metadata for a historical-window to future-horizon risk ranking task "
+   |                                                                                                     ^
+62 |             "under a fixed alert budget. This is not a real publication."
+63 |         ),
+   |
+
+E501 Line too long (101 > 100)
+   --> apps\api\research_navigator\scholarly\normalize.py:131:101
+    |
+129 |             ),
+130 |             "reference_count": max(
+131 |                 [item for item in (left.reference_count, right.reference_count) if item is not None],
+    |                                                                                                     ^
+132 |                 default=None,
+133 |             ),
+    |
+
+E501 Line too long (106 > 100)
+   --> apps\api\research_navigator\scholarly\openalex.py:99:101
+    |
+ 97 |                     doi=ids.get("doi"),
+ 98 |                     external_ids={k: str(v) for k, v in ids.items() if v},
+ 99 |                     source_urls=[url for url in [item.get("id"), primary.get("landing_page_url")] if url],
+    |                                                                                                     ^^^^^^
+100 |                     publisher_url=primary.get("landing_page_url"),
+101 |                     pdf_url=primary.get("pdf_url"),
+    |
+
+E501 Line too long (107 > 100)
+  --> apps\api\research_navigator\scholarly\repository.py:50:101
+   |
+48 |             abstract=record.abstract,
+49 |             publication_year=record.publication_year,
+50 |             publication_date_text=record.publication_date.isoformat() if record.publication_date else None,
+   |                                                                                                     ^^^^^^^
+51 |             authors_json=_json(authors),
+52 |             venue=record.venue,
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\scholarly\repository.py:89:101
+   |
+87 |         )
+88 |         existing_urls = json.loads(paper.source_urls_json)
+89 |         paper.source_urls_json = _json(list(OrderedDict.fromkeys(existing_urls + record.source_urls)))
+   |                                                                                                     ^^
+90 |
+91 |     for provenance in record.source_provenance:
+   |
+
+E501 Line too long (106 > 100)
+  --> apps\api\research_navigator\scholarly\semantic_scholar.py:44:101
+   |
+42 |                 if response.status_code == 429:
+43 |                     return AdapterSearchResult(
+44 |                         status=SourceStatus(status="rate_limited", detail="Semantic Scholar returned 429")
+   |                                                                                                     ^^^^^^
+45 |                     )
+46 |                 response.raise_for_status()
+   |
+
+E501 Line too long (114 > 100)
+  --> apps\api\research_navigator\scholarly\semantic_scholar.py:65:101
+   |
+63 |                     publication_year=item.get("year"),
+64 |                     authors=[
+65 |                         PaperAuthor(name=author.get("name") or "Unknown", source_author_id=author.get("authorId"))
+   |                                                                                                     ^^^^^^^^^^^^^^
+66 |                         for author in item.get("authors", [])
+67 |                     ],
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\scholarly\service.py:3:1
+   |
+ 1 |   """Federated search orchestration."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import asyncio
+ 6 | | from dataclasses import dataclass
+ 7 | |
+ 8 | | from research_navigator.config import Settings
+ 9 | | from research_navigator.scholarly.arxiv import ArxivAdapter
+10 | | from research_navigator.scholarly.base import PaperRecord, ScholarlyAdapter, SearchRequest, SourceStatus
+11 | | from research_navigator.scholarly.crossref import CrossrefAdapter
+12 | | from research_navigator.scholarly.fixture import FixtureAdapter
+13 | | from research_navigator.scholarly.normalize import deduplicate_records
+14 | | from research_navigator.scholarly.openalex import OpenAlexAdapter
+15 | | from research_navigator.scholarly.semantic_scholar import SemanticScholarAdapter
+   | |________________________________________________________________________________^
+help: Organize imports
+   |
+9  | from research_navigator.scholarly.arxiv import ArxivAdapter
+   - from research_navigator.scholarly.base import PaperRecord, ScholarlyAdapter, SearchRequest, SourceStatus
+10 + from research_navigator.scholarly.base import (
+11 +     PaperRecord,
+12 +     ScholarlyAdapter,
+13 +     SearchRequest,
+14 +     SourceStatus,
+15 + )
+16 | from research_navigator.scholarly.crossref import CrossrefAdapter
+   |
+
+E501 Line too long (104 > 100)
+  --> apps\api\research_navigator\scholarly\service.py:10:101
+   |
+ 8 | from research_navigator.config import Settings
+ 9 | from research_navigator.scholarly.arxiv import ArxivAdapter
+10 | from research_navigator.scholarly.base import PaperRecord, ScholarlyAdapter, SearchRequest, SourceStatus
+   |                                                                                                     ^^^^
+11 | from research_navigator.scholarly.crossref import CrossrefAdapter
+12 | from research_navigator.scholarly.fixture import FixtureAdapter
+   |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\scholarly\service.py:37:101
+   |
+35 |         records: list[PaperRecord] = []
+36 |         statuses: dict[str, SourceStatus] = {
+37 |             name: SourceStatus(status="disabled", detail="Source is not enabled") for name in unknown
+   |                                                                                                     ^
+38 |         }
+39 |         for adapter, result in zip(selected, results, strict=True):
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\workspace\export.py:72:101
+   |
+70 |                 "favorite": any(row.paper_id == paper_id for row in favorites),
+71 |                 "notes": [
+72 |                     {"content": row.content, "note_type": row.note_type, "updated_at": row.updated_at}
+   |                                                                                                     ^^
+73 |                     for row in notes
+74 |                     if row.paper_id == paper_id
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\workspace\export.py:78:101
+   |
+76 |                 "reading_status": next(
+77 |                     (
+78 |                         {"status": row.status, "progress": row.progress, "updated_at": row.updated_at}
+   |                                                                                                     ^^
+79 |                         for row in statuses
+80 |                         if row.paper_id == paper_id
+   |
+
+E501 Line too long (140 > 100)
+  --> mcp_servers\paper_access\server.py:28:101
+   |
+26 | …{7})(?:v\d+)?", normalized, re.IGNORECASE):
+27 | …
+28 | …https://arxiv.org/abs/{normalized}", "pdf_url": f"https://arxiv.org/pdf/{normalized}"}
+   |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (172 > 100)
+  --> mcp_servers\paper_access\server.py:34:101
+   |
+32 | …
+33 | …paper_id}")
+34 | …n_access_status"), "pdf_url": paper.get("pdf_url"), "verified_by": paper.get("source_provenance", [])}
+   |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (101 > 100)
+  --> mcp_servers\paper_access\server.py:39:101
+   |
+37 | @register_tool(mcp, "fetch_open_fulltext")
+38 | async def fetch_open_fulltext(paper_id: int) -> dict[str, Any]:
+39 |     """Report accessible content; downloading arbitrary publisher URLs is intentionally forbidden."""
+   |                                                                                                     ^
+40 |     status = await ResearchNavigatorClient().request("GET", f"/papers/{paper_id}/content-status")
+41 |     return {"status": "available" if status.get("documents") else "not_ingested", "content": status, "paywall_bypass": False}
+   |
+
+E501 Line too long (125 > 100)
+  --> mcp_servers\paper_access\server.py:41:101
+   |
+39 |     """Report accessible content; downloading arbitrary publisher URLs is intentionally forbidden."""
+40 |     status = await ResearchNavigatorClient().request("GET", f"/papers/{paper_id}/content-status")
+41 |     return {"status": "available" if status.get("documents") else "not_ingested", "content": status, "paywall_bypass": False}
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (102 > 100)
+  --> mcp_servers\paper_access\server.py:45:101
+   |
+44 | @register_tool(mcp, "parse_uploaded_pdf")
+45 | async def parse_uploaded_pdf(paper_id: int, file_path: str, rights_confirmed: bool) -> dict[str, Any]:
+   |                                                                                                     ^^
+46 |     return await ResearchNavigatorClient().upload_pdf(paper_id, file_path, rights_confirmed=rights_confirmed)
+   |
+
+E501 Line too long (109 > 100)
+  --> mcp_servers\paper_access\server.py:46:101
+   |
+44 | @register_tool(mcp, "parse_uploaded_pdf")
+45 | async def parse_uploaded_pdf(paper_id: int, file_path: str, rights_confirmed: bool) -> dict[str, Any]:
+46 |     return await ResearchNavigatorClient().upload_pdf(paper_id, file_path, rights_confirmed=rights_confirmed)
+   |                                                                                                     ^^^^^^^^^
+
+E501 Line too long (131 > 100)
+  --> mcp_servers\research_workspace\server.py:14:101
+   |
+13 | …
+14 | …d_direction: str | None = None, description: str | None = None) -> dict[str, Any]:
+   |                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+15 | …t("POST", "/projects", json={"name": name, "broad_direction": broad_direction, "description": description})
+   |
+
+E501 Line too long (156 > 100)
+  --> mcp_servers\research_workspace\server.py:15:101
+   |
+13 | …
+14 | …str | None = None, description: str | None = None) -> dict[str, Any]:
+15 | …rojects", json={"name": name, "broad_direction": broad_direction, "description": description})
+   |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (109 > 100)
+  --> mcp_servers\research_workspace\server.py:25:101
+   |
+23 | @register_tool(mcp, "save_paper")
+24 | async def save_paper(paper_id: int) -> dict[str, Any]:
+25 |     return await ResearchNavigatorClient().request("POST", "/library/favorites", json={"paper_id": paper_id})
+   |                                                                                                     ^^^^^^^^^
+
+E501 Line too long (149 > 100)
+  --> mcp_servers\research_workspace\server.py:30:101
+   |
+28 | …
+29 | … str = "user_note") -> dict[str, Any]:
+30 | … "/library/notes", json={"paper_id": paper_id, "content": content, "note_type": note_type})
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (150 > 100)
+  --> mcp_servers\research_workspace\server.py:35:101
+   |
+33 | …
+34 | … progress: int = 0) -> dict[str, Any]:
+35 | …"/library/papers/{paper_id}/reading-status", json={"status": status, "progress": progress})
+   |                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (133 > 100)
+  --> mcp_servers\research_workspace\server.py:40:101
+   |
+38 | @register_tool(mcp, "create_gap_candidate")
+39 | async def create_gap_candidate(project_id: int, paper_ids: list[int]) -> dict[str, Any]:
+40 |     return await ResearchNavigatorClient().request("POST", "/gaps/generate", json={"project_id": project_id, "paper_ids": paper_ids})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (105 > 100)
+  --> mcp_servers\research_workspace\server.py:44:101
+   |
+43 | @register_tool(mcp, "confirm_gap_candidate")
+44 | async def confirm_gap_candidate(gap_id: int, confirmed: bool, note: str | None = None) -> dict[str, Any]:
+   |                                                                                                     ^^^^^
+45 |     return await ResearchNavigatorClient().request("POST", f"/gaps/{gap_id}/confirm", json={"confirmed": confirmed, "note": note})
+   |
+
+E501 Line too long (130 > 100)
+  --> mcp_servers\research_workspace\server.py:45:101
+   |
+43 | @register_tool(mcp, "confirm_gap_candidate")
+44 | async def confirm_gap_candidate(gap_id: int, confirmed: bool, note: str | None = None) -> dict[str, Any]:
+45 |     return await ResearchNavigatorClient().request("POST", f"/gaps/{gap_id}/confirm", json={"confirmed": confirmed, "note": note})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (105 > 100)
+  --> mcp_servers\research_workspace\server.py:49:101
+   |
+48 | @register_tool(mcp, "create_research_plan")
+49 | async def create_research_plan(project_id: int, gap_id: int, title: str | None = None) -> dict[str, Any]:
+   |                                                                                                     ^^^^^
+50 |     return await ResearchNavigatorClient().request("POST", "/plans", json={"project_id": project_id, "gap_id": gap_id, "title": title})
+   |
+
+E501 Line too long (135 > 100)
+  --> mcp_servers\research_workspace\server.py:50:101
+   |
+48 | @register_tool(mcp, "create_research_plan")
+49 | async def create_research_plan(project_id: int, gap_id: int, title: str | None = None) -> dict[str, Any]:
+50 |     return await ResearchNavigatorClient().request("POST", "/plans", json={"project_id": project_id, "gap_id": gap_id, "title": title})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (112 > 100)
+  --> mcp_servers\research_workspace\server.py:54:101
+   |
+53 | @register_tool(mcp, "update_plan_item")
+54 | async def update_plan_item(item_id: int, status: str | None = None, notes: str | None = None) -> dict[str, Any]:
+   |                                                                                                     ^^^^^^^^^^^^
+55 |     return await ResearchNavigatorClient().request("PUT", f"/plan-items/{item_id}", json={"status": status, "notes": notes})
+   |
+
+E501 Line too long (124 > 100)
+  --> mcp_servers\research_workspace\server.py:55:101
+   |
+53 | @register_tool(mcp, "update_plan_item")
+54 | async def update_plan_item(item_id: int, status: str | None = None, notes: str | None = None) -> dict[str, Any]:
+55 |     return await ResearchNavigatorClient().request("PUT", f"/plan-items/{item_id}", json={"status": status, "notes": notes})
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (109 > 100)
+  --> mcp_servers\scholarly_search\server.py:41:101
+   |
+39 |         return await client.request("GET", f"/papers/{paper_id}/related", params={"limit": limit})
+40 |     except Exception as exc:
+41 |         return {"status": "unavailable", "paper_id": paper_id, "detail": str(exc), "provenance": "local_api"}
+   |                                                                                                     ^^^^^^^^^
+
+E501 Line too long (101 > 100)
+  --> mcp_servers\scholarly_search\server.py:47:101
+   |
+45 |     client = ResearchNavigatorClient()
+46 |     try:
+47 |         return await client.request("GET", f"/papers/{paper_id}/{relation}", params={"limit": limit})
+   |                                                                                                     ^
+48 |     except Exception as exc:
+49 |         return {"status": "unavailable", "paper_id": paper_id, "relation": relation, "detail": str(exc), "provenance": "local_api"}
+   |
+
+E501 Line too long (131 > 100)
+  --> mcp_servers\scholarly_search\server.py:49:101
+   |
+47 |         return await client.request("GET", f"/papers/{paper_id}/{relation}", params={"limit": limit})
+48 |     except Exception as exc:
+49 |         return {"status": "unavailable", "paper_id": paper_id, "relation": relation, "detail": str(exc), "provenance": "local_api"}
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (116 > 100)
+  --> mcp_servers\scholarly_search\server.py:71:101
+   |
+69 |         return await client.request("GET", "/authors", params={"query": query, "limit": limit})
+70 |     except Exception as exc:
+71 |         return {"status": "unavailable", "query": query, "detail": str(exc), "author_disambiguation_required": True}
+   |                                                                                                     ^^^^^^^^^^^^^^^^
+
+E501 Line too long (117 > 100)
+  --> mcp_servers\scholarly_search\server.py:81:101
+   |
+79 |         return await client.request("GET", f"/authors/{author_id}")
+80 |     except Exception as exc:
+81 |         return {"status": "unavailable", "author_id": author_id, "detail": str(exc), "contributions_inferred": False}
+   |                                                                                                     ^^^^^^^^^^^^^^^^^
+
+F401 [*] `shutil` imported but unused
+  --> scripts\backup.py:8:8
+   |
+ 6 | import argparse
+ 7 | import json
+ 8 | import shutil
+   |        ^^^^^^
+ 9 | import sqlite3
+10 | import tempfile
+   |
+help: Remove unused import: `shutil`
+  |
+7 | import json
+  - import shutil
+8 | import sqlite3
+  |
+
+E501 Line too long (104 > 100)
+  --> scripts\backup.py:39:101
+   |
+37 |         with ZipFile(output, "w", compression=ZIP_DEFLATED) as archive:
+38 |             archive.write(snapshot, "research_navigator.db")
+39 |             archive.writestr("backup-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
+   |                                                                                                     ^^^^
+40 |             for directory in ("uploads", "vector_index"):
+41 |                 root = runtime / directory
+   |
+
+E501 Line too long (107 > 100)
+  --> scripts\export_workspace.py:41:101
+   |
+39 |             raise SystemExit("User not found")
+40 |         profile = session.scalar(select(ResearchProfile).where(ResearchProfile.user_id == user.id))
+41 |         projects = list(session.scalars(select(ResearchProject).where(ResearchProject.user_id == user.id)))
+   |                                                                                                     ^^^^^^^
+42 |         plans = list(session.scalars(select(ResearchPlan).where(ResearchPlan.user_id == user.id)))
+43 |         payload = {
+   |
+
+E501 Line too long (192 > 100)
+  --> scripts\export_workspace.py:46:101
+   |
+44 | …
+45 | …
+46 | …"major", "broad_direction", "keywords_json", "excluded_terms_json", "preferences_json", "compute_constraints")),
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+47 | …ction", "status", "created_at", "updated_at")) for row in projects],
+48 | …ession.scalars(select(Favorite).where(Favorite.user_id == user.id))],
+   |
+
+E501 Line too long (148 > 100)
+  --> scripts\export_workspace.py:47:101
+   |
+45 | …y_name")),
+46 | …ct(profile, ("stage", "major", "broad_direction", "keywords_json", "excluded_terms_json", "preferences_json", "compute_constraints")),
+47 | …cription", "broad_direction", "status", "created_at", "updated_at")) for row in projects],
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+48 | …ted_at")) for row in session.scalars(select(Favorite).where(Favorite.user_id == user.id))],
+49 | …, "note_type", "created_at", "updated_at")) for row in session.scalars(select(Note).where(Note.user_id == user.id))],
+   |
+
+E501 Line too long (149 > 100)
+  --> scripts\export_workspace.py:48:101
+   |
+46 | …ct(profile, ("stage", "major", "broad_direction", "keywords_json", "excluded_terms_json", "preferences_json", "compute_constraints")),
+47 | …cription", "broad_direction", "status", "created_at", "updated_at")) for row in projects],
+48 | …ted_at")) for row in session.scalars(select(Favorite).where(Favorite.user_id == user.id))],
+   |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+49 | …, "note_type", "created_at", "updated_at")) for row in session.scalars(select(Note).where(Note.user_id == user.id))],
+50 | …laim", "status", "evidence_matrix_json", "counter_evidence_json", "challenge_queries_json", "not_novelty_proof", "created_at")) for r…
+   |
+
+E501 Line too long (175 > 100)
+  --> scripts\export_workspace.py:49:101
+   |
+47 | …road_direction", "status", "created_at", "updated_at")) for row in projects],
+48 | … row in session.scalars(select(Favorite).where(Favorite.user_id == user.id))],
+49 | …, "created_at", "updated_at")) for row in session.scalars(select(Note).where(Note.user_id == user.id))],
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+50 | …s", "evidence_matrix_json", "counter_evidence_json", "challenge_queries_json", "not_novelty_proof", "created_at")) for row in session…
+51 | …
+   |
+
+E501 Line too long (275 > 100)
+  --> scripts\export_workspace.py:50:101
+   |
+48 | …select(Favorite).where(Favorite.user_id == user.id))],
+49 | …_at")) for row in session.scalars(select(Note).where(Note.user_id == user.id))],
+50 | …n", "counter_evidence_json", "challenge_queries_json", "not_novelty_proof", "created_at")) for row in session.scalars(select(GapCandidate).where(GapCandidate.user_id == user.id))],
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+51 | …
+52 | …
+   |
+
+E501 Line too long (115 > 100)
+  --> scripts\export_workspace.py:53:101
+   |
+51 | …     "plans": [
+52 | …         {
+53 | …             **row_dict(plan, ("id", "project_id", "gap_id", "title", "objective", "status", "created_at")),
+   |                                                                                               ^^^^^^^^^^^^^^^
+54 | …             "items": [row_dict(item, ("id", "category", "title", "description", "sequence", "status", "notes")) for item in session.…
+55 | …         }
+   |
+
+E501 Line too long (230 > 100)
+  --> scripts\export_workspace.py:54:101
+   |
+52 | …
+53 | …us", "created_at")),
+54 | …ce", "status", "notes")) for item in session.scalars(select(PlanItem).where(PlanItem.plan_id == plan.id).order_by(PlanItem.sequence))],
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+55 | …
+56 | …
+   |
+
+F401 [*] `os` imported but unused
+  --> scripts\package_release.py:9:8
+   |
+ 7 | import hashlib
+ 8 | import json
+ 9 | import os
+   |        ^^
+10 | import shutil
+11 | import subprocess
+   |
+help: Remove unused import: `os`
+  |
+8 | import json
+  - import os
+9 | import shutil
+  |
+
+SIM103 Return the condition `relative.suffix in {".db", ".sqlite3"}` directly
+  --> scripts\package_release.py:54:5
+   |
+52 |       if relative.parts and relative.parts[0] in {"uploads", "vector_index", "backups"}:
+53 |           return True
+54 | /     if relative.suffix in {".db", ".sqlite3"}:
+55 | |         return True
+56 | |     return False
+   | |________________^
+help: Replace with `return relative.suffix in {".db", ".sqlite3"}`
+
+E501 Line too long (106 > 100)
+   --> scripts\package_release.py:102:101
+    |
+100 |     git_log = (
+101 |         f"HEAD: {commit}\nBRANCH: {branch}\nWORKING_TREE_AT_PACKAGE_TIME:\n"
+102 |         f"{status or '(clean)'}\n\nRECENT_COMMITS:\n{git_output('--no-pager', 'log', '--oneline', '-25')}"
+    |                                                                                                     ^^^^^^
+103 |     )
+104 |     (delivery / "GIT_LOG.txt").write_text(git_log)
+    |
+
+E501 Line too long (102 > 100)
+  --> scripts\restore.py:24:101
+   |
+22 |     database = runtime / "research_navigator.db"
+23 |     if database.exists() and not args.force:
+24 |         raise SystemExit("Destination database exists. Stop services and pass --force to replace it.")
+   |                                                                                                     ^^
+25 |     if args.force and runtime.exists():
+26 |         for item in (database, runtime / "uploads", runtime / "vector_index"):
+   |
+
+E501 Line too long (117 > 100)
+  --> scripts\seed_demo.py:28:101
+   |
+26 |         user = session.scalar(select(User).where(User.email == args.email))
+27 |         if user is None:
+28 |             user = User(email=args.email, password_hash=hash_password(args.password), display_name="Demo Researcher")
+   |                                                                                                     ^^^^^^^^^^^^^^^^^
+29 |             session.add(user)
+30 |             session.flush()
+   |
+
+E501 Line too long (299 > 100)
+  --> scripts\seed_demo.py:31:88
+   |
+29 | …
+30 | …
+31 | … 工程", broad_direction="多变量时序异常检测", keywords_json='["future horizon","alert ranking","false alarms"]', preferences_json='["复现优先"]', excluded_terms_json="[]", compute_constraints="单卡 GPU"))
+   |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+32 | …ection="未来窗口异常风险排序", description="仅为本地产品流程演示；论文 fixture 均明确标记。"))
+33 | …
+   |
+
+E501 Line too long (189 > 100)
+  --> scripts\seed_demo.py:32:91
+   |
+30 | …
+31 | …ajor="大数据技术与工程", broad_direction="多变量时序异常检测", keywords_json='["future horizon","alert ranking","false alarms"]', pre…
+32 | … 项目", broad_direction="未来窗口异常风险排序", description="仅为本地产品流程演示；论文 fixture 均明确标记。"))
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+33 | …
+34 | …
+   |
+
+F401 [*] `textwrap` imported but unused
+  --> scripts\verify_delivery.py:15:8
+   |
+13 | import sys
+14 | import tempfile
+15 | import textwrap
+   |        ^^^^^^^^
+16 | import time
+17 | from datetime import UTC, datetime
+   |
+help: Remove unused import: `textwrap`
+   |
+14 | import tempfile
+   - import textwrap
+15 | import time
+   |
+
+E501 Line too long (106 > 100)
+   --> scripts\verify_delivery.py:115:101
+    |
+113 |                     )
+114 |                 }
+115 |             required = {"users", "papers", "recommendations", "gap_candidates", "jobs", "alembic_version"}
+    |                                                                                                     ^^^^^^
+116 |             missing = sorted(required - tables)
+117 |             result["table_count"] = len(tables)
+    |
+
+E501 Line too long (208 > 100)
+   --> scripts\verify_delivery.py:222:101
+    |
+220 | …
+221 | …
+222 | …nd lockfile absent because offline resolution failed", "Run uv lock and package-manager lock in networked environment"),
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+223 | …t environment", "Install dev dependencies and fix all findings"),
+224 | …node_modules unavailable", "npm ci then typecheck/test/build"),
+    |
+
+E501 Line too long (153 > 100)
+   --> scripts\verify_delivery.py:223:101
+    |
+221 | …
+222 | …ENTED", "uv.lock and frontend lockfile absent because offline resolution failed", "Run uv lock and package-manager lock in networked…
+223 | …tools unavailable in current environment", "Install dev dependencies and fix all findings"),
+    |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+224 | …/build", "P0", "NOT_RUN", "node_modules unavailable", "npm ci then typecheck/test/build"),
+225 | …, "full stack and browser dependencies unavailable", "Run API-backed E2E including restart persistence"),
+    |
+
+E501 Line too long (151 > 100)
+   --> scripts\verify_delivery.py:224:101
+    |
+222 | …MENTED", "uv.lock and frontend lockfile absent because offline resolution failed", "Run uv lock and package-manager lock in networke…
+223 | …"tools unavailable in current environment", "Install dev dependencies and fix all findings"),
+224 | …t/build", "P0", "NOT_RUN", "node_modules unavailable", "npm ci then typecheck/test/build"),
+    |                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+225 | …", "full stack and browser dependencies unavailable", "Run API-backed E2E including restart persistence"),
+226 | …ce", "P0", "NOT_RUN", "docker executable unavailable", "Build, cold-start, restart and verify mounted state"),
+    |
+
+E501 Line too long (166 > 100)
+   --> scripts\verify_delivery.py:225:101
+    |
+223 | …unavailable in current environment", "Install dev dependencies and fix all findings"),
+224 | …", "P0", "NOT_RUN", "node_modules unavailable", "npm ci then typecheck/test/build"),
+225 | …l stack and browser dependencies unavailable", "Run API-backed E2E including restart persistence"),
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+226 | …0", "NOT_RUN", "docker executable unavailable", "Build, cold-start, restart and verify mounted state"),
+227 | …mcp package unavailable", "Install SDK and execute inspector/tool transcripts"),
+    |
+
+E501 Line too long (170 > 100)
+   --> scripts\verify_delivery.py:226:101
+    |
+224 | … "P0", "NOT_RUN", "node_modules unavailable", "npm ci then typecheck/test/build"),
+225 | …stack and browser dependencies unavailable", "Run API-backed E2E including restart persistence"),
+226 | …, "NOT_RUN", "docker executable unavailable", "Build, cold-start, restart and verify mounted state"),
+    |                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+227 | …p package unavailable", "Install SDK and execute inspector/tool transcripts"),
+228 | …"P0", "NOT_RUN", "network integration intentionally not executed", "Run isolated live tests with provenance and rate limits"),
+    |
+
+E501 Line too long (147 > 100)
+   --> scripts\verify_delivery.py:227:101
+    |
+225 | …UN", "full stack and browser dependencies unavailable", "Run API-backed E2E including restart persistence"),
+226 | …ence", "P0", "NOT_RUN", "docker executable unavailable", "Build, cold-start, restart and verify mounted state"),
+227 | …T_RUN", "mcp package unavailable", "Install SDK and execute inspector/tool transcripts"),
+    |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+228 | … Scholar", "P0", "NOT_RUN", "network integration intentionally not executed", "Run isolated live tests with provenance and rate limi…
+229 | …P1", "NOT_IMPLEMENTED", "status/config only", "Implement only with valid email and legal access checks"),
+    |
+
+E501 Line too long (195 > 100)
+   --> scripts\verify_delivery.py:228:101
+    |
+226 | …"docker executable unavailable", "Build, cold-start, restart and verify mounted state"),
+227 | …vailable", "Install SDK and execute inspector/tool transcripts"),
+228 | …N", "network integration intentionally not executed", "Run isolated live tests with provenance and rate limits"),
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+229 | …"status/config only", "Implement only with valid email and legal access checks"),
+230 | …censed credentials unavailable", "Keep not_configured until legal credentials exist"),
+    |
+
+E501 Line too long (163 > 100)
+   --> scripts\verify_delivery.py:229:101
+    |
+227 | …"mcp package unavailable", "Install SDK and execute inspector/tool transcripts"),
+228 | …", "P0", "NOT_RUN", "network integration intentionally not executed", "Run isolated live tests with provenance and rate limits"),
+229 | …T_IMPLEMENTED", "status/config only", "Implement only with valid email and legal access checks"),
+    |                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+230 | …MPLEMENTED", "licensed credentials unavailable", "Keep not_configured until legal credentials exist"),
+231 | …local related-paper similarity exists; source-backed relations absent", "Add relation-specific source adapters"),
+    |
+
+E501 Line too long (168 > 100)
+   --> scripts\verify_delivery.py:230:101
+    |
+228 | … "P0", "NOT_RUN", "network integration intentionally not executed", "Run isolated live tests with provenance and rate limits"),
+229 | …IMPLEMENTED", "status/config only", "Implement only with valid email and legal access checks"),
+230 | …LEMENTED", "licensed credentials unavailable", "Keep not_configured until legal credentials exist"),
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+231 | …cal related-paper similarity exists; source-backed relations absent", "Add relation-specific source adapters"),
+232 | …on", "P1", "PARTIAL", "deterministic extraction only", "Add provider abstraction, abstention and RAG evaluation"),
+    |
+
+E501 Line too long (179 > 100)
+   --> scripts\verify_delivery.py:231:101
+    |
+229 | …ENTED", "status/config only", "Implement only with valid email and legal access checks"),
+230 | …ED", "licensed credentials unavailable", "Keep not_configured until legal credentials exist"),
+231 | …lated-paper similarity exists; source-backed relations absent", "Add relation-specific source adapters"),
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+232 | …P1", "PARTIAL", "deterministic extraction only", "Add provider abstraction, abstention and RAG evaluation"),
+233 | …metadata/analysis fields exist but dedicated cards do not", "Add source-ID disambiguation and evidence-aware cards"),
+    |
+
+E501 Line too long (182 > 100)
+   --> scripts\verify_delivery.py:232:101
+    |
+230 | …D", "licensed credentials unavailable", "Keep not_configured until legal credentials exist"),
+231 | …ated-paper similarity exists; source-backed relations absent", "Add relation-specific source adapters"),
+232 | …1", "PARTIAL", "deterministic extraction only", "Add provider abstraction, abstention and RAG evaluation"),
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+233 | …etadata/analysis fields exist but dedicated cards do not", "Add source-ID disambiguation and evidence-aware cards"),
+234 | …profile/gap matrix exists; editable map and clustering absent", "Implement versioned dimensions and corpus-visible clustering"),
+    |
+
+E501 Line too long (191 > 100)
+   --> scripts\verify_delivery.py:233:101
+    |
+231 | …paper similarity exists; source-backed relations absent", "Add relation-specific source adapters"),
+232 | …PARTIAL", "deterministic extraction only", "Add provider abstraction, abstention and RAG evaluation"),
+233 | …ta/analysis fields exist but dedicated cards do not", "Add source-ID disambiguation and evidence-aware cards"),
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+234 | …le/gap matrix exists; editable map and clustering absent", "Implement versioned dimensions and corpus-visible clustering"),
+235 | …ARTIAL", "minimal domain schema omits invitation/tool-call/config tables", "Add only behavior-bearing tables or document normalized …
+    |
+
+E501 Line too long (203 > 100)
+   --> scripts\verify_delivery.py:234:101
+    |
+232 | …L", "deterministic extraction only", "Add provider abstraction, abstention and RAG evaluation"),
+233 | …lysis fields exist but dedicated cards do not", "Add source-ID disambiguation and evidence-aware cards"),
+234 | … matrix exists; editable map and clustering absent", "Implement versioned dimensions and corpus-visible clustering"),
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+235 | …", "minimal domain schema omits invitation/tool-call/config tables", "Add only behavior-bearing tables or document normalized replac…
+236 | …rade passes but initial migration uses Base.metadata", "Replace bootstrap with explicit historical operations"),
+    |
+
+E501 Line too long (227 > 100)
+   --> scripts\verify_delivery.py:235:101
+    |
+233 | …lds exist but dedicated cards do not", "Add source-ID disambiguation and evidence-aware cards"),
+234 | …xists; editable map and clustering absent", "Implement versioned dimensions and corpus-visible clustering"),
+235 | …al domain schema omits invitation/tool-call/config tables", "Add only behavior-bearing tables or document normalized replacements"),
+    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+236 | …es but initial migration uses Base.metadata", "Replace bootstrap with explicit historical operations"),
+237 | …set or user trial", "Run preregistered evaluation; do not invent quality gains"),
+    |
+
+E501 Line too long (198 > 100)
+   --> scripts\verify_delivery.py:236:101
+    |
+234 | …gap matrix exists; editable map and clustering absent", "Implement versioned dimensions and corpus-visible clustering"),
+235 | …IAL", "minimal domain schema omits invitation/tool-call/config tables", "Add only behavior-bearing tables or document normalized rep…
+236 | …upgrade passes but initial migration uses Base.metadata", "Replace bootstrap with explicit historical operations"),
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+237 | …t relevance set or user trial", "Run preregistered evaluation; do not invent quality gains"),
+238 | …
+    |
+
+E501 Line too long (176 > 100)
+   --> scripts\verify_delivery.py:237:101
+    |
+235 | …"P1", "PARTIAL", "minimal domain schema omits invitation/tool-call/config tables", "Add only behavior-bearing tables or document nor…
+236 | …PARTIAL", "upgrade passes but initial migration uses Base.metadata", "Replace bootstrap with explicit historical operations"),
+237 | …, "no expert relevance set or user trial", "Run preregistered evaluation; do not invent quality gains"),
+    |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+238 | …
+239 | …
+    |
+
+E501 Line too long (109 > 100)
+   --> scripts\verify_delivery.py:253:101
+    |
+251 |     source_branch = git_value("branch", "--show-current")
+252 |     source_working_tree = git_value("status", "--short")
+253 |     output_dir = (ROOT / args.output_dir).resolve() if not args.output_dir.is_absolute() else args.output_dir
+    |                                                                                                     ^^^^^^^^^
+254 |     output_dir.mkdir(parents=True, exist_ok=True)
+255 |     env = os.environ.copy()
+    |
+
+E501 Line too long (105 > 100)
+   --> scripts\verify_delivery.py:263:101
+    |
+261 |         run(
+262 |             "python_compileall",
+263 |             [sys.executable, "-m", "compileall", "-q", "apps/api", "services", "mcp_servers", "scripts"],
+    |                                                                                                     ^^^^^
+264 |             env=env,
+265 |         )
+    |
+
+E501 Line too long (104 > 100)
+   --> scripts\verify_delivery.py:270:101
+    |
+268 |         run(
+269 |             "openapi_export",
+270 |             [sys.executable, "scripts/export_openapi.py", "--output", str(output_dir / "OPENAPI.json")],
+    |                                                                                                     ^^^^
+271 |             env=env,
+272 |         )
+    |
+
+E501 Line too long (121 > 100)
+   --> scripts\verify_delivery.py:278:101
+    |
+277 |     if command_exists("ruff"):
+278 |         checks.append(run("ruff", ["ruff", "check", "apps/api", "services", "mcp_servers", "scripts", "tests"], env=env))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+279 |     else:
+280 |         checks.append(not_run("ruff", "ruff check ...", "ruff executable is unavailable"))
+    |
+
+E501 Line too long (111 > 100)
+   --> scripts\verify_delivery.py:282:101
+    |
+280 |         checks.append(not_run("ruff", "ruff check ...", "ruff executable is unavailable"))
+281 |     if command_exists("mypy"):
+282 |         checks.append(run("mypy", ["mypy", "apps/api/research_navigator", "services", "mcp_servers"], env=env))
+    |                                                                                                     ^^^^^^^^^^^
+283 |     else:
+284 |         checks.append(not_run("mypy", "mypy ...", "mypy executable is unavailable"))
+    |
+
+E501 Line too long (112 > 100)
+   --> scripts\verify_delivery.py:286:101
+    |
+284 |         checks.append(not_run("mypy", "mypy ...", "mypy executable is unavailable"))
+285 |
+286 |     npm_root = subprocess.run(["npm", "root", "-g"], text=True, capture_output=True, check=False).stdout.strip()
+    |                                                                                                     ^^^^^^^^^^^^
+287 |     node_env = os.environ.copy()
+288 |     if npm_root:
+    |
+
+E501 Line too long (121 > 100)
+   --> scripts\verify_delivery.py:299:101
+    |
+297 |         )
+298 |     else:
+299 |         checks.append(not_run("frontend_syntax_transpile", "node scripts/check_frontend_syntax.cjs", "node unavailable"))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+300 |
+301 |     node_modules = ROOT / "apps/web/node_modules"
+    |
+
+E501 Line too long (118 > 100)
+   --> scripts\verify_delivery.py:322:101
+    |
+321 |     if command_exists("docker"):
+322 |         checks.append(run("docker_compose_config", ["docker", "compose", "-f", "infra/docker-compose.yml", "config"]))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^
+323 |         checks.append(not_run("docker_cold_start", "docker compose up --build", "not run automatically by verification script; Codex …
+324 |     else:
+    |
+
+E501 Line too long (180 > 100)
+   --> scripts\verify_delivery.py:323:101
+    |
+321 | …
+322 | …-f", "infra/docker-compose.yml", "config"]))
+323 | …ild", "not run automatically by verification script; Codex must execute controlled persistence scenario"))
+    |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+324 | …
+325 | … config", "docker executable is unavailable"))
+    |
+
+E501 Line too long (120 > 100)
+   --> scripts\verify_delivery.py:325:101
+    |
+323 |         checks.append(not_run("docker_cold_start", "docker compose up --build", "not run automatically by verification script; Codex …
+324 |     else:
+325 |         checks.append(not_run("docker_compose_config", "docker compose ... config", "docker executable is unavailable"))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^
+326 |         checks.append(not_run("docker_cold_start", "docker compose up --build", "docker executable is unavailable"))
+    |
+
+E501 Line too long (116 > 100)
+   --> scripts\verify_delivery.py:326:101
+    |
+324 |     else:
+325 |         checks.append(not_run("docker_compose_config", "docker compose ... config", "docker executable is unavailable"))
+326 |         checks.append(not_run("docker_cold_start", "docker compose up --build", "docker executable is unavailable"))
+    |                                                                                                     ^^^^^^^^^^^^^^^^
+327 |
+328 |     mcp_probe = run(
+    |
+
+E501 Line too long (146 > 100)
+   --> scripts\verify_delivery.py:336:101
+    |
+334 | …
+335 | …
+336 | … tests/live", "network/live suite is not executed in the constrained build environment"))
+    |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+337 | …ence / Elsevier / Scopus", "licensed credentials are not available"))
+338 | …dependency cache did not contain all declared packages"))
+    |
+
+E501 Line too long (126 > 100)
+   --> scripts\verify_delivery.py:337:101
+    |
+335 |     checks.append(mcp_probe)
+336 |     checks.append(not_run("live_open_sources", "pytest -q tests/live", "network/live suite is not executed in the constrained build e…
+337 |     checks.append(not_run("licensed_sources", "Web of Science / Elsevier / Scopus", "licensed credentials are not available"))
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+338 |     checks.append(not_run("uv_lock", "uv lock", "offline dependency cache did not contain all declared packages"))
+    |
+
+E501 Line too long (114 > 100)
+   --> scripts\verify_delivery.py:338:101
+    |
+336 |     checks.append(not_run("live_open_sources", "pytest -q tests/live", "network/live suite is not executed in the constrained build e…
+337 |     checks.append(not_run("licensed_sources", "Web of Science / Elsevier / Scopus", "licensed credentials are not available"))
+338 |     checks.append(not_run("uv_lock", "uv lock", "offline dependency cache did not contain all declared packages"))
+    |                                                                                                     ^^^^^^^^^^^^^^
+339 |
+340 |     failed = [check for check in checks if check["status"] == "FAIL"]
+    |
+
+E501 Line too long (118 > 100)
+   --> scripts\verify_delivery.py:362:101
+    |
+360 |             "Candidate research gaps are not proof of novelty.",
+361 |             "Fixture papers are synthetic/offline records and not scholarly evidence.",
+362 |             "Abstract-only analysis does not support full-text method, parameter, Future Work, or limitation claims.",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^
+363 |             "Local related-paper scores are content similarity, not citation relations.",
+364 |             "Hashing dense vectors are a deterministic local fallback, not a state-of-the-art semantic embedding claim.",
+    |
+
+E501 Line too long (121 > 100)
+   --> scripts\verify_delivery.py:364:101
+    |
+362 |             "Abstract-only analysis does not support full-text method, parameter, Future Work, or limitation claims.",
+363 |             "Local related-paper scores are content similarity, not citation relations.",
+364 |             "Hashing dense vectors are a deterministic local fallback, not a state-of-the-art semantic embedding claim.",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+365 |             "The package is a local/LAN release candidate, not a verified public SaaS deployment.",
+366 |         ],
+    |
+
+E501 Line too long (174 > 100)
+   --> scripts\verify_delivery.py:378:101
+    |
+376 | …
+377 | …
+378 | …tes passed, while environment-dependent gates remain unexecuted. It is not production-ready evidence.",
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+379 | …
+380 | …
+    |
+
+E501 Line too long (143 > 100)
+   --> scripts\verify_delivery.py:390:101
+    |
+388 | …" else check["stderr"]
+389 | …
+390 | …* | {check['exit_code']} | {check['duration_seconds']}s | {detail.replace('|', '/')} |"
+    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+391 | …
+392 | …
+    |
+
+E501 Line too long (172 > 100)
+   --> scripts\verify_delivery.py:412:101
+    |
+410 | …
+411 | …
+412 | …produce this matrix and may only upgrade a status after executing the corresponding acceptance gate.",
+    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+413 | …
+414 | …
+    |
+
+E501 Line too long (146 > 100)
+   --> scripts\verify_delivery.py:417:101
+    |
+415 | …
+416 | …lines))
+417 | …: len(checks), "failed": len(failed), "not_run": len(not_executed)}, ensure_ascii=False))
+    |                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+418 | …
+419 | …
+    |
+
+E501 Line too long (108 > 100)
+   --> tests\integration\test_extended_workflows.py:128:85
+    |
+126 |         assert all(0.0 <= record["score"] <= 1.0 for record in records)
+127 |         assert all(record["evidence"]["rule_version"] == "recommendation-v1" for record in records)
+128 |         assert any(record["category"] in {"入门综述", "高相关近期论文", "最适合复现"} for record in records)
+    |                                                                                                     ^^^^^^^^
+129 |
+130 |         persisted = client.get(
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests\integration\test_health_sources_jobs.py:1:1
+  |
+1 | / from pathlib import Path
+2 | |
+3 | | from fastapi.testclient import TestClient
+4 | |
+5 | | from research_navigator.config import Settings
+6 | | from research_navigator.main import create_app
+7 | | from services.worker.main import run_once
+  | |_________________________________________^
+help: Organize imports
+  |
+3 | from fastapi.testclient import TestClient
+4 + from services.worker.main import run_once
+5 |
+6 | from research_navigator.config import Settings
+7 | from research_navigator.main import create_app
+  - from services.worker.main import run_once
+8 |
+  |
+
+E501 Line too long (101 > 100)
+  --> tests\integration\test_plans.py:35:101
+   |
+35 | def test_plan_can_only_be_created_from_confirmed_gap_and_items_are_persisted(tmp_path: Path) -> None:
+   |                                                                                                     ^
+36 |     with TestClient(create_app(settings_for(tmp_path))) as client:
+37 |         auth = client.post(
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests\integration\test_worker_claim.py:1:1
+  |
+1 | / from concurrent.futures import ThreadPoolExecutor
+2 | | from pathlib import Path
+3 | |
+4 | | from research_navigator.config import Settings
+5 | | from research_navigator.db import Database
+6 | | from research_navigator.models import Job, User
+7 | |
+8 | | from services.worker.main import _claim_job, run_once
+  | |_____________________________________________________^
+help: Organize imports
+  |
+3 |
+4 + from services.worker.main import _claim_job, run_once
+5 +
+6 | from research_navigator.config import Settings
+7 | from research_navigator.db import Database
+8 | from research_navigator.models import Job, User
+  -
+  - from services.worker.main import _claim_job, run_once
+9 |
+  |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests\integration\test_worker_handlers.py:1:1
+  |
+1 | / from pathlib import Path
+2 | |
+3 | | from fastapi.testclient import TestClient
+4 | |
+5 | | from research_navigator.config import Settings
+6 | | from research_navigator.main import create_app
+7 | | from services.worker.main import run_once
+  | |_________________________________________^
+help: Organize imports
+  |
+3 | from fastapi.testclient import TestClient
+4 + from services.worker.main import run_once
+5 |
+6 | from research_navigator.config import Settings
+7 | from research_navigator.main import create_app
+  - from services.worker.main import run_once
+8 |
+  |
+
+E501 Line too long (107 > 100)
+  --> tests\unit\test_deduplication.py:22:101
+   |
+20 |         doi="10.1000/abc",
+21 |         source_urls=["https://source-b.example/paper"],
+22 |         source_provenance=[SourceProvenance(source="crossref", source_id="10.1000/abc", is_fixture=False)],
+   |                                                                                                     ^^^^^^^
+23 |     )
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+ --> tests\unit\test_migrations.py:1:1
+  |
+1 | from pathlib import Path
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+help: Organize imports
+  |
+2 |
+  -
+3 | ROOT = Path(__file__).resolve().parents[2]
+  |
+
+Found 165 errors.
+[*] 19 fixable with the `--fix` option (3 hidden fixes can be enabled with the `--unsafe-fixes` option).

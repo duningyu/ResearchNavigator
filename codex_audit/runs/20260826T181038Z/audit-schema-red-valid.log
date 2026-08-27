@@ -1,0 +1,30 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+____________________ test_minimum_audit_schema_is_migrated ____________________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-397/test_minimum_audit_schema_is_m0')
+
+    def test_minimum_audit_schema_is_migrated(tmp_path: Path) -> None:
+        database_path = tmp_path / "audit.db"
+        config = Config(str(ROOT / "alembic.ini"))
+        config.set_main_option("sqlalchemy.url", f"sqlite+pysqlite:///{database_path.as_posix()}")
+        command.upgrade(config, "head")
+        engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+        inspector = inspect(engine)
+        tables = set(inspector.get_table_names())
+>       assert {"agent_runs", "tool_calls", "prompt_versions", "source_requests"} <= tables
+E       AssertionError: assert {'agent_runs'... 'tool_calls'} <= {'agent_runs'..._events', ...}
+E         
+E         Extra items in the left set:
+E         'prompt_versions'
+E         'source_requests'
+E         'tool_calls'
+
+tests\integration\test_audit_schema.py:21: AssertionError
+---------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Frozen explicit initial ResearchNavigator schema.
+=========================== short test summary info ===========================
+FAILED tests/integration/test_audit_schema.py::test_minimum_audit_schema_is_migrated
+1 failed in 1.04s

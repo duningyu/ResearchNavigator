@@ -1,0 +1,44 @@
+  + Exception Group Traceback (most recent call last):
+  |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\verify_mcp_stdio.py", line 100, in <module>
+  |     asyncio.run(main())
+  |   File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 194, in run
+  |     return runner.run(main)
+  |            ^^^^^^^^^^^^^^^^
+  |   File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\runners.py", line 118, in run
+  |     return self._loop.run_until_complete(task)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 664, in run_until_complete
+  |     return future.result()
+  |            ^^^^^^^^^^^^^^^
+  |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\verify_mcp_stdio.py", line 68, in main
+  |     await verify_server(
+  |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\verify_mcp_stdio.py", line 46, in verify_server
+  |     async with stdio_client(parameters) as (reader, writer):
+  |   File "C:\Users\ASUS\AppData\Local\Programs\Python\Python312\Lib\contextlib.py", line 222, in __aexit__
+  |     await self.gen.athrow(value)
+  |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\mcp\client\stdio.py", line 200, in stdio_client
+  |     async with anyio.create_task_group() as tg:
+  |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 815, in __aexit__
+  |     raise BaseExceptionGroup(
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Exception Group Traceback (most recent call last):
+    |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\mcp\client\stdio.py", line 204, in stdio_client
+    |     yield read_stream, write_stream
+    |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\verify_mcp_stdio.py", line 47, in verify_server
+    |     async with ClientSession(reader, writer) as session:
+    |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\mcp\client\session.py", line 521, in __aexit__
+    |     result = await self._task_group.__aexit__(exc_type, exc_val, exc_tb)
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 815, in __aexit__
+    |     raise BaseExceptionGroup(
+    | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+    +-+---------------- 1 ----------------
+      | Traceback (most recent call last):
+      |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\verify_mcp_stdio.py", line 53, in verify_server
+      |     assert by_name[name].inputSchema.get("type") == "object"
+      |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+      |   File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Lib\site-packages\pydantic\main.py", line 1042, in __getattr__
+      |     raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+      | AttributeError: 'Tool' object has no attribute 'inputSchema'. Did you mean: 'input_schema'?
+      +------------------------------------

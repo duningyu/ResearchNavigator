@@ -1,0 +1,9 @@
+✓ Lockfile passes supply-chain policies (verified 21h ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+[WARN] Failed to create bin at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vite@7.3.6\node_modules\vite\node_modules\.bin\rollup. ENOENT: no such file or directory, chmod 'E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vite@7.3.6\node_modules\vite\node_modules\.bin\rollup.CMD'
+[WARN] Failed to create bin at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vite@7.3.6\node_modules\vite\node_modules\.bin\esbuild. ENOENT: no such file or directory, chmod 'E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vite@7.3.6\node_modules\vite\node_modules\.bin\esbuild'
+[WARN] Failed to create bin at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vitest@3.2.7_jsdom@26.1.0\node_modules\vitest\node_modules\.bin\vite-node. EPERM: operation not permitted, chmod 'E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\vitest@3.2.7_jsdom@26.1.0\node_modules\vitest\node_modules\.bin\vite-node'
+
+Done in 893ms using pnpm v11.7.0
+$ tsc -b --pretty false

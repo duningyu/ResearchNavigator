@@ -1,0 +1,40 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (1.5m)
+  ok 2 tests\e2e\research-workflow.spec.ts:105:1 › user B cannot observe user A private project or library data (2.1s)
+
+
+  1) tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByPlaceholder('数据源（留空=全部）')
+
+
+      41 |   await page.getByText('Top 50').click();
+      42 |   const sourceSelect = page.getByPlaceholder('数据源（留空=全部）');
+    > 43 |   await sourceSelect.click();
+         |                      ^
+      44 |   await page.getByText('fixture', { exact: true }).last().click();
+      45 |   await page.getByRole('button', { name: /^搜\s*索$/ }).click();
+      46 |   await expect(page.getByText(/mode=discovery/)).toBeVisible();
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:43:22
+
+    Error Context: test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+  1 passed (1.6m)
+[ELIFECYCLE] Command failed with exit code 1.

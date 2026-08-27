@@ -1,0 +1,3 @@
+command: ruff check apps/api services mcp_servers scripts tests
+bash: line 6: ruff: command not found
+exit_code=127

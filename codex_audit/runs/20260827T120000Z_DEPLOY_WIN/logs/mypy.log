@@ -1,0 +1,22 @@
+apps\api\research_navigator\backups\service.py:154: error: Returning Any from function declared to return "dict[str, object] | None"  [no-any-return]
+apps\api\research_navigator\idempotency.py:52: error: Returning Any from function declared to return "dict[str, Any] | None"  [no-any-return]
+apps\api\research_navigator\routes\search.py:95: error: No overload variant of "dict" matches argument type "object"  [call-overload]
+apps\api\research_navigator\routes\search.py:95: note: Possible overload variants:
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict() -> dict[_KT, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(**kwargs: _VT) -> dict[str, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(SupportsKeysAndGetItem[_KT, _VT], /) -> dict[_KT, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(SupportsKeysAndGetItem[str, _VT], /, **kwargs: _VT) -> dict[str, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(Iterable[tuple[_KT, _VT]], /) -> dict[_KT, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(Iterable[tuple[str, _VT]], /, **kwargs: _VT) -> dict[str, _VT]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(Iterable[list[str]], /) -> dict[str, str]
+apps\api\research_navigator\routes\search.py:95: note:     def [_KT, _VT] dict(Iterable[list[bytes]], /) -> dict[bytes, bytes]
+apps\api\research_navigator\routes\search.py:162: error: Argument "source_status" to "_persist_source_requests" has incompatible type "dict[str, SourceStatus]"; expected "dict[str, object]"  [arg-type]
+apps\api\research_navigator\routes\search.py:162: note: "dict" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+apps\api\research_navigator\routes\search.py:162: note: Consider using "Mapping" instead, which is covariant in the value type
+apps\api\research_navigator\routes\search.py:163: error: Argument "papers" to "_persist_source_requests" has incompatible type "list[PaperRecord]"; expected "list[object]"  [arg-type]
+apps\api\research_navigator\routes\search.py:163: note: "list" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+apps\api\research_navigator\routes\search.py:163: note: Consider using "Sequence" instead, which is covariant
+apps\api\research_navigator\routes\search.py:170: error: Incompatible types in assignment (expression has type "dict[str, int | str]", variable has type "dict[str, object]")  [assignment]
+apps\api\research_navigator\routes\search.py:170: note: "dict" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+apps\api\research_navigator\routes\search.py:170: note: Consider using "Mapping" instead, which is covariant in the value type
+Found 6 errors in 3 files (checked 89 source files)

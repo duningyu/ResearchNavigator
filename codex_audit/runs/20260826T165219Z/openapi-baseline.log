@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\scripts\export_openapi.py", line 11, in <module>
+    from research_navigator.config import Settings
+  File "C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\apps\api\research_navigator\config.py", line 27, in <module>
+    @dataclass(frozen=True, slots=True)
+TypeError: dataclass() got an unexpected keyword argument 'slots'

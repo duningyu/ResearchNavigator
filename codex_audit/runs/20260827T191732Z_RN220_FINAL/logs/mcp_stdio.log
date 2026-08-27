@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/data/researchnavigator_220_work/EvidenceAcquisitionPatch/scripts/verify_mcp_stdio.py", line 17, in <module>
+    from mcp import ClientSession, StdioServerParameters
+ModuleNotFoundError: No module named 'mcp'
+exit_code=1

@@ -1,0 +1,35 @@
+$ vitest run --exclude tests/e2e/**
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mE:/AI_Projects/ResearchNavigator/apps/web[39m
+
+ [32m✓[39m src/components/scoreMath.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/api/client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+[90mstderr[2m | src/pages/paperSelectionExperience.test.tsx[2m > [22m[2mselection-first paper workflow[2m > [22m[2mrestores a persisted Top50 search session and paginates ten papers per page
+[22m[39mWarning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+ [32m✓[39m src/pages/paperSelectionExperience.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 814[2mms[22m[39m
+   [33m[2m✓[22m[39m selection-first paper workflow[2m > [22mrestores a persisted Top50 search session and paginates ten papers per page [33m 328[2mms[22m[39m
+[90mstderr[2m | src/app/workspaceExperience.test.tsx[2m > [22m[2mresearch workspace experience[2m > [22m[2mkeeps every workflow destination reachable through a drawer on a narrow viewport
+[22m[39mWarning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at window.getComputedStyle (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:895:7)
+    at measureScrollbarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:35:34)
+    at getTargetScrollBarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:87:10)
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+portal@2.2.1__3abc72f1327aa534ec0d12241e2770a7\node_modules\@rc-component\portal\lib\useScrollLocker.js:22:62
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\hooks\useLayoutEffect.js:19:12
+    at Object.react_stack_bottom_frame (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11) [90mundefined[39m
+
+ [32m✓[39m src/app/workspaceExperience.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 996[2mms[22m[39m
+   [33m[2m✓[22m[39m research workspace experience[2m > [22mexplains the evidence-driven workflow before a researcher signs in [33m 514[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 19:56:49
+[2m   Duration [22m 6.28s[2m (transform 217ms, setup 1.17s, collect 6.35s, tests 1.82s, environment 2.70s, prepare 791ms)[22m
+

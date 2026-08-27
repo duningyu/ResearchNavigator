@@ -1,0 +1,8 @@
+{
+  "health": "ok",
+  "version": "2.1.0",
+  "web": 200,
+  "analysis_version": "structured-v3",
+  "citation_granularity": "sentence_to_chunk",
+  "worker_processes": 3
+}

@@ -1,0 +1,28 @@
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:50796', '2026-08-27 12:17:41.585096', '2026-08-27 12:17:41.585096', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:50796', '2026-08-27 12:17:49.112443', '2026-08-27 12:17:49.113964', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:50796', '2026-08-27 12:19:00.915824', '2026-08-27 12:19:00.916622', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:50796', '2026-08-27 12:19:08.374365', '2026-08-27 12:19:08.374365', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

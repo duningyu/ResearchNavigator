@@ -1,0 +1,63 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (1.5m)
+  ok 2 tests\e2e\research-workflow.spec.ts:104:1 › user B cannot observe user A private project or library data (2.0s)
+
+
+  1) tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByText('数据源（留空=全部）')
+        - locator resolved to <div class="ant-select-placeholder">数据源（留空=全部）</div>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="ant-select-content">…</div> intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="ant-select-content">…</div> intercepts pointer events
+        - retrying click action
+          - waiting 100ms
+        170 × waiting for element to be visible, enabled and stable
+            - element is visible, enabled and stable
+            - scrolling into view if needed
+            - done scrolling
+            - <div class="ant-select-content">…</div> intercepts pointer events
+          - retrying click action
+            - waiting 500ms
+
+
+      40 |   await page.getByPlaceholder(/关键词、题目、DOI/).fill('time series anomaly detection');
+      41 |   await page.getByText('Top 50').click();
+    > 42 |   await page.getByText('数据源（留空=全部）').click();
+         |                                      ^
+      43 |   await page.getByText('fixture', { exact: true }).last().click();
+      44 |   await page.getByRole('button', { name: /^搜\s*索$/ }).click();
+      45 |   await expect(page.getByText(/mode=discovery/)).toBeVisible();
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:42:38
+
+    Error Context: test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+  1 passed (1.6m)
+[ELIFECYCLE] Command failed with exit code 1.

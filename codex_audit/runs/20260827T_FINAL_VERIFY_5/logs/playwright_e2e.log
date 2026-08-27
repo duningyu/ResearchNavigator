@@ -1,0 +1,9 @@
+name=playwright_e2e
+status=BLOCKED
+command=corepack pnpm run test:e2e
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+apps/web/node_modules is absent and dependency installation cannot be completed in the current offline/DNS-constrained environment

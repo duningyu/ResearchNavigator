@@ -1,0 +1,56 @@
+{
+  "package": "ResearchNavigator",
+  "package_version": "2.2.0",
+  "release_label": "evidence-platform",
+  "current_run": "codex_audit/runs/20260827T191732Z_RN220_FINAL",
+  "audit_time_utc": "2026-08-27T19:42:56Z",
+  "overall_status": "PARTIAL",
+  "audited_implementation_commit": "a786c5b5359077b4fb63e7794cbb03bbc9d61f78",
+  "audited_branch": "main",
+  "pass": {
+    "backend_pytest": "184 passed in 68.30s",
+    "evidence_platform_focused": "42 passed in 14.89s",
+    "security_and_rag": "16 passed in 2.08s",
+    "alembic": "0001 -> 0005; 53 tables; integrity=ok",
+    "openapi": "2.2.0; 83 paths; required 2.2 paths present",
+    "python_compileall": "PASS",
+    "frontend_syntax": "41 TS/TSX files transpiled; syntax-only scope",
+    "uv_lock_check": "PASS",
+    "backup_restore": "4 passed in 2.51s",
+    "docker_harness_contract": "3 passed in 1.00s",
+    "admin_backfill_contract": "7 passed in 4.65s"
+  },
+  "partial": {
+    "frontend": "2.2 source and syntax contracts pass; dependency-aware typecheck, Vitest, Vite build and Playwright were not executable in the current environment.",
+    "live_integrations": "OA, OpenAlex cooldown/fallback and LLM provider integration pass deterministic tests; current live network/provider gates are blocked.",
+    "expert_evaluation": "Blinded-study infrastructure and simulated-boundary tests pass; no real expert outcome exists."
+  },
+  "blocked": {
+    "uv_sync_frozen": "DNS prevented download of locked httpx2 dependency.",
+    "ruff": "Executable unavailable because frozen dev dependency sync could not complete.",
+    "mypy": "Executable unavailable because frozen dev dependency sync could not complete.",
+    "frontend_dependency_gates": "Corepack could not download pnpm 10.15.1; node_modules absent.",
+    "playwright": "Current 2.2 browser dependencies unavailable.",
+    "docker_cold_start_restart": "docker executable unavailable; machine-readable BLOCKED receipt generated.",
+    "mcp_official_stdio": "mcp SDK unavailable; dependency sync blocked.",
+    "live_scholarly_sources": "OpenAlex, Crossref, arXiv and Semantic Scholar all failed DNS resolution in the current smoke run.",
+    "live_oa_ingestion": "No current lawful live OA response could be retrieved in this environment.",
+    "live_llm_provider": "Provider/base URL/key/model not configured.",
+    "real_expert_outcomes": "Requires real external expert ratings.",
+    "historical_backfill_outcome": "Implementation verified, but no real historical runtime was mutated."
+  },
+  "skipped": {
+    "licensed_sources": "No lawful Web of Science, Elsevier or Scopus credentials/contract scope."
+  },
+  "not_implemented": [],
+  "claim_boundary": [
+    "OA resolver implementation does not authorize downloading every reachable PDF.",
+    "OpenAlex fallback tests do not prove current OpenAlex live availability.",
+    "LLM mocked/contract tests do not prove a live provider result.",
+    "Expert evaluation infrastructure is not real expert outcome validation.",
+    "Historical backfill code does not mean historical records were actually upgraded.",
+    "Gap candidates remain not_novelty_proof=true.",
+    "Citation alignment is not semantic entailment proof.",
+    "Overall PARTIAL is not production readiness."
+  ]
+}

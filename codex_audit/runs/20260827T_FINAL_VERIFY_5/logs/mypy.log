@@ -1,0 +1,9 @@
+name=mypy
+status=BLOCKED
+command=mypy ...
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+mypy executable is unavailable

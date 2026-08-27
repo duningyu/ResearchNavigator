@@ -1,0 +1,12 @@
+database=sqlite+pysqlite:////tmp/tmp.lbvRYRjASp/migration.db
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Frozen explicit initial ResearchNavigator schema.
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Add minimum traceable audit infrastructure.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Add feedback-closure search, selection, comparison, settings, and idempotency schema.
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Bind a persisted abstract to the source that supplied it.
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Add evidence platform, research map, and expert evaluation persistence.
+alembic_version 0005
+table_count 53
+missing []
+integrity ok

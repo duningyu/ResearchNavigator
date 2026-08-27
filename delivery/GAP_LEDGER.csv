@@ -1,0 +1,20 @@
+gap_id,requirement,priority,status,evidence,next_action
+GAP-001,"Frontend dependency-aware typecheck, Vitest and Vite build",P0,BLOCKED,Corepack DNS failure; pnpm 10.15.1 and node_modules unavailable,"Restore npm registry access; run corepack pnpm install --frozen-lockfile, then typecheck/test/build."
+GAP-002,Browser Playwright closed loop for 2.2 pages,P0,BLOCKED,Current frontend dependencies unavailable,Run Playwright against current API/Web build.
+GAP-003,"Docker cold start, restart, down-up and restore persistence",P0,BLOCKED,docker executable absent; BLOCKED JSON receipt generated,Run scripts/verify_docker_persistence.py on a Docker-capable host.
+GAP-004,Official MCP SDK stdio integration,P0,BLOCKED,mcp module unavailable; frozen sync blocked by DNS,Install locked dependencies and run scripts/verify_mcp_stdio.py.
+GAP-005,"Live OpenAlex, Crossref, arXiv and Semantic Scholar smoke",P0,BLOCKED,Current live smoke returned DNS ConnectError for all four sources,Rerun with network and lawful keys where applicable.
+GAP-006,"Licensed Web of Science, Elsevier and Scopus adapters",P1,SKIPPED,No lawful credentials or contract scope,Implement only after authorized access is supplied.
+GAP-007,Real expert outcome validation,P1,BLOCKED,Blind-study infrastructure exists; no external expert ratings,"Run a frozen, blinded real-expert study; do not simulate."
+GAP-008,Sentence and field citation attribution,P1,PASS,Security/RAG and analysis tests in current backend suite,Do not describe citation alignment as entailment proof.
+GAP-009,Frozen uv dependency sync,P0,BLOCKED,uv lock check PASS; uv sync failed DNS fetching locked httpx2,Restore package registry access and rerun uv sync --frozen --extra dev.
+GAP-010,LLM provider analysis API and audit persistence,P1,PASS,Provider merge/fallback/citation/audit tests in focused 42-test matrix,Validate a live provider separately with lawful credentials.
+GAP-011,Lawful OA full-text resolution and secure ingestion,P1,PASS,OA policy/resolver/fetcher/ingestion/workflow tests,Run a live lawful OA acquisition separately.
+GAP-012,"Author cards, dataset cards and direction clustering",P1,PASS,"Author/dataset/cluster API, evidence and user-scope tests",Run current browser E2E when dependencies are available.
+GAP-013,Bounded summary evidence acquisition compatibility,P0,PASS,Existing /acquire-evidence provenance tests remain green,Keep legacy endpoint semantics backward compatible.
+GAP-014,Historical abstract provenance backfill implementation,P1,PASS,Admin dry-run/exact identity/idempotency/cancellation tests,Run dry-run against a real backup before mutation.
+GAP-015,OpenAlex persistent 429 cooldown and fallback,P0,PASS,Source runtime state and rate-limit tests,Treat OpenAlex live availability as a separate gate.
+GAP-016,Evidence workflow terminal and worker semantics,P0,PASS,Workflow/worker tests include partial terminal and cancellation,Monitor real worker execution after deployment.
+GAP-017,Docker persistence acceptance tooling,P0,PASS,3 contract tests and machine-readable missing-Docker receipt,Tooling PASS does not replace GAP-003.
+GAP-018,Live LLM provider connectivity and stability,P1,BLOCKED,Provider/base URL/key/model not configured,Run a lawful live provider smoke and preserve secret-free audit.
+GAP-019,Real historical abstract backfill outcome,P1,BLOCKED,No real historical runtime was mutated,"Dry-run, review, back up and explicitly execute on authorized data."

@@ -1,0 +1,25 @@
+........................................................................ [ 39%]
+........................................................................ [ 78%]
+................F......................                                  [100%]
+=================================== FAILURES ===================================
+___ test_release_metadata_is_consistent_across_generated_delivery_artifacts ____
+
+    def test_release_metadata_is_consistent_across_generated_delivery_artifacts() -> None:
+        from scripts.package_release import PACKAGE_VERSION, RELEASE_LABEL
+    
+        package_info = json.loads((Path("delivery") / "PACKAGE_INFO.json").read_text())
+        status = json.loads((Path("delivery") / "STATUS.json").read_text())
+    
+>       assert package_info["package_version"] == PACKAGE_VERSION
+E       AssertionError: assert '2.1.1' == '2.2.0'
+E         
+E         - 2.2.0
+E         + 2.1.1
+
+tests/unit/test_package_release.py:36: AssertionError
+=========================== short test summary info ============================
+FAILED tests/unit/test_package_release.py::test_release_metadata_is_consistent_across_generated_delivery_artifacts - AssertionError: assert '2.1.1' == '2.2.0'
+  
+  - 2.2.0
+  + 2.1.1
+1 failed, 182 passed in 60.34s (0:01:00)

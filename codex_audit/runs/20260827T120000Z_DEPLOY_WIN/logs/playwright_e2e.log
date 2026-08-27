@@ -1,0 +1,68 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (1.5m)
+  x  2 tests\e2e\research-workflow.spec.ts:105:1 › user B cannot observe user A private project or library data (1.5m)
+
+
+  1) tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /^创建$/ })
+
+
+      34 |   await page.getByLabel('项目名称').fill(projectName);
+      35 |   await page.getByLabel('研究方向').fill('未来窗口异常风险排序');
+    > 36 |   await page.getByRole('button', { name: /^创建$/ }).click();
+         |                                                    ^
+      37 |   await expect(page.getByText(projectName)).toBeVisible();
+      38 |
+      39 |   await page.getByRole('menuitem', { name: /论文搜索$/ }).click();
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:36:52
+
+    Error Context: test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\e2e\research-workflow.spec.ts:105:1 › user B cannot observe user A private project or library data 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /^创建$/ })
+
+
+      109 |   await page.getByRole('button', { name: '新建研究项目' }).click();
+      110 |   await page.getByLabel('项目名称').fill(`A private project ${suffix}`);
+    > 111 |   await page.getByRole('button', { name: /^创建$/ }).click();
+          |                                                    ^
+      112 |   await page.getByRole('button', { name: '退出' }).click();
+      113 |
+      114 |   await page.getByText('注册').click();
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:111:52
+
+    Error Context: test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-user-B-c-ce884-ate-project-or-library-data\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+    tests\e2e\research-workflow.spec.ts:105:1 › user B cannot observe user A private project or library data 
+[ELIFECYCLE] Command failed with exit code 1.

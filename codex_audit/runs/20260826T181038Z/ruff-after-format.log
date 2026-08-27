@@ -1,0 +1,199 @@
+E501 Line too long (103 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:40:69
+   |
+38 |     else:
+39 |         claim = (
+40 |             f"在本次检索范围内，'{project_direction}' 的跨设备、误报约束与事件级评价联合证据仍不充分；"
+   |                                                                                                     ^^^
+41 |             "该结论仅构成候选研究空白。"
+42 |         )
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\gaps\candidate.py:73:69
+   |
+71 |         ],
+72 |         suggested_research_question=(
+73 |             f"如何在 {project_direction} 中同时控制误报、保持事件覆盖率，并对跨设备外推进行严格验证？"
+   |                                                                                                      ^
+74 |         ),
+75 |         not_novelty_proof=True,
+   |
+
+SIM105 Use `contextlib.suppress(TypeError, ValueError)` instead of `try`-`except`-`pass`
+  --> apps\api\research_navigator\recommendations\service.py:56:9
+   |
+54 |       if profile:
+55 |           values.extend([profile.broad_direction or "", profile.major or ""])
+56 | /         try:
+57 | |             values.extend(str(item) for item in json.loads(profile.keywords_json))
+58 | |         except (TypeError, ValueError):
+59 | |             pass
+   | |________________^
+60 |       if project:
+61 |           values.extend([project.name, project.broad_direction or "", project.description or ""])
+   |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(TypeError, ValueError): ...`
+
+SIM105 Use `contextlib.suppress(ValueError)` instead of `try`-`except`-`pass`
+  --> apps\api\research_navigator\scholarly\arxiv.py:61:13
+   |
+59 |               published = (entry.findtext(f"{_ATOM}published") or "")[:10]
+60 |               publication_date = None
+61 | /             try:
+62 | |                 publication_date = date.fromisoformat(published)
+63 | |             except ValueError:
+64 | |                 pass
+   | |____________________^
+65 |               if request.year_from and publication_date and publication_date.year < request.year_from:
+66 |                   continue
+   |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(ValueError): ...`
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\scholarly\fixture.py:61:101
+   |
+59 |         title="Future-Window Risk Ranking for Industrial Time-Series Alerts",
+60 |         abstract=(
+61 |             "Synthetic fixture metadata for a historical-window to future-horizon risk ranking task "
+   |                                                                                                     ^
+62 |             "under a fixed alert budget. This is not a real publication."
+63 |         ),
+   |
+
+E501 Line too long (101 > 100)
+  --> mcp_servers\paper_access\server.py:48:101
+   |
+46 | @register_tool(mcp, "fetch_open_fulltext")
+47 | async def fetch_open_fulltext(paper_id: int) -> dict[str, Any]:
+48 |     """Report accessible content; downloading arbitrary publisher URLs is intentionally forbidden."""
+   |                                                                                                     ^
+49 |     status = await ResearchNavigatorClient().request("GET", f"/papers/{paper_id}/content-status")
+50 |     return {
+   |
+
+SIM103 Return the condition `relative.suffix in {".db", ".sqlite3"}` directly
+  --> scripts\package_release.py:53:5
+   |
+51 |       if relative.parts and relative.parts[0] in {"uploads", "vector_index", "backups"}:
+52 |           return True
+53 | /     if relative.suffix in {".db", ".sqlite3"}:
+54 | |         return True
+55 | |     return False
+   | |________________^
+help: Replace with `return relative.suffix in {".db", ".sqlite3"}`
+
+E501 Line too long (106 > 100)
+   --> scripts\package_release.py:99:101
+    |
+ 97 |     git_log = (
+ 98 |         f"HEAD: {commit}\nBRANCH: {branch}\nWORKING_TREE_AT_PACKAGE_TIME:\n"
+ 99 |         f"{status or '(clean)'}\n\nRECENT_COMMITS:\n{git_output('--no-pager', 'log', '--oneline', '-25')}"
+    |                                                                                                     ^^^^^^
+100 |     )
+101 |     (delivery / "GIT_LOG.txt").write_text(git_log)
+    |
+
+E501 Line too long (115 > 100)
+   --> scripts\verify_delivery.py:482:101
+    |
+480 |                 "docker_cold_start",
+481 |                 "docker compose up --build",
+482 |                 "not run automatically by verification script; Codex must execute controlled persistence scenario",
+    |                                                                                                     ^^^^^^^^^^^^^^^
+483 |             )
+484 |         )
+    |
+
+E501 Line too long (118 > 100)
+   --> scripts\verify_delivery.py:549:101
+    |
+547 |             "Candidate research gaps are not proof of novelty.",
+548 |             "Fixture papers are synthetic/offline records and not scholarly evidence.",
+549 |             "Abstract-only analysis does not support full-text method, parameter, Future Work, or limitation claims.",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^
+550 |             "Local related-paper scores are content similarity, not citation relations.",
+551 |             "Hashing dense vectors are a deterministic local fallback, not a state-of-the-art semantic embedding claim.",
+    |
+
+E501 Line too long (121 > 100)
+   --> scripts\verify_delivery.py:551:101
+    |
+549 |             "Abstract-only analysis does not support full-text method, parameter, Future Work, or limitation claims.",
+550 |             "Local related-paper scores are content similarity, not citation relations.",
+551 |             "Hashing dense vectors are a deterministic local fallback, not a state-of-the-art semantic embedding claim.",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^
+552 |             "The package is a local/LAN release candidate, not a verified public SaaS deployment.",
+553 |         ],
+    |
+
+E501 Line too long (174 > 100)
+   --> scripts\verify_delivery.py:565:101
+    |
+563 | …
+564 | …
+565 | …tes passed, while environment-dependent gates remain unexecuted. It is not production-ready evidence.",
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+566 | …
+567 | …
+    |
+
+E501 Line too long (143 > 100)
+   --> scripts\verify_delivery.py:577:101
+    |
+575 | …" else check["stderr"]
+576 | …
+577 | …* | {check['exit_code']} | {check['duration_seconds']}s | {detail.replace('|', '/')} |"
+    |                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+578 | …
+579 | …
+    |
+
+E501 Line too long (172 > 100)
+   --> scripts\verify_delivery.py:599:101
+    |
+597 | …
+598 | …
+599 | …produce this matrix and may only upgrade a status after executing the corresponding acceptance gate.",
+    |                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+600 | …
+601 | …
+    |
+
+SIM300 [*] Yoda condition detected
+  --> tests\integration\test_migrations.py:57:12
+   |
+55 |     inspector = inspect(engine)
+56 |     tables = set(inspector.get_table_names())
+57 |     assert EXPECTED_TABLES <= tables
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+58 |     assert "paper_chunks_fts" in tables
+59 |     assert "ix_jobs_status_created" in {item["name"] for item in inspector.get_indexes("jobs")}
+   |
+help: Rewrite as `tables >= EXPECTED_TABLES`
+   |
+56 |     tables = set(inspector.get_table_names())
+   -     assert EXPECTED_TABLES <= tables
+57 +     assert tables >= EXPECTED_TABLES
+58 |     assert "paper_chunks_fts" in tables
+   |
+
+SIM300 [*] Yoda condition detected
+  --> tests\integration\test_migrations.py:90:12
+   |
+88 |     command.upgrade(config, "head")
+89 |     engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+90 |     assert EXPECTED_TABLES <= set(inspect(engine).get_table_names())
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+91 |     assert "paper_chunks_fts" in inspect(engine).get_table_names()
+92 |     engine.dispose()
+   |
+   |
+89 |     engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+   -     assert EXPECTED_TABLES <= set(inspect(engine).get_table_names())
+90 +     assert set(inspect(engine).get_table_names()) >= EXPECTED_TABLES
+91 |     assert "paper_chunks_fts" in inspect(engine).get_table_names()
+   |
+
+Found 16 errors.
+[*] 2 fixable with the `--fix` option (3 hidden fixes can be enabled with the `--unsafe-fixes` option).

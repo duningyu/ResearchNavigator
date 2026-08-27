@@ -1,0 +1,85 @@
+{
+  "scenario_version": "audit-completion-v2.1.1",
+  "execution_mode": "http_api_only_after_bootstrap",
+  "user_id": 102,
+  "project_id": 57,
+  "search": {
+    "session_id": 79,
+    "mode": "discovery",
+    "requested_limit": 50,
+    "actual_count": 5,
+    "diversity_seed": "f10890017b9a20e937d7c2f4b04fb605",
+    "composition": {
+      "requested_limit": 50,
+      "classic_target": 10,
+      "frontier_target": 40,
+      "classic_count": 0,
+      "frontier_count": 5,
+      "fill_count": 0,
+      "classic_shortfall": 10,
+      "frontier_shortfall": 35,
+      "candidate_pool_count": 5,
+      "rule_version": "discovery-ranking-v1",
+      "rankings": {
+        "59": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 1
+        },
+        "87": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 2
+        },
+        "88": {
+          "label": "frontier_candidate",
+          "relevance": 4.0,
+          "rank_score": 4.0,
+          "relevance_band": 400,
+          "position": 3
+        },
+        "54": {
+          "label": "frontier_candidate",
+          "relevance": 3.0,
+          "rank_score": 3.0,
+          "relevance_band": 300,
+          "position": 4
+        },
+        "91": {
+          "label": "frontier_candidate",
+          "relevance": 2.0,
+          "rank_score": 2.0,
+          "relevance_band": 200,
+          "position": 5
+        }
+      },
+      "mode_rule_version": "search-mode-v1"
+    }
+  },
+  "paper_set": {
+    "id": 47,
+    "paper_ids": [
+      59,
+      87
+    ]
+  },
+  "comparison": {
+    "id": 15,
+    "row_count": 19,
+    "evidence_hash": "869b4c94150b81e320e39c463fd7d7b8f42f2e9c6988a1fe3daa24494400db9a"
+  },
+  "gap": {
+    "id": 15,
+    "status": "pending_confirmation",
+    "workflow_stage": "awaiting_human_confirmation",
+    "paper_set_id": 48,
+    "explanation_version": 2,
+    "not_novelty_proof": true
+  },
+  "human_confirmation": "not_performed",
+  "plan": null
+}

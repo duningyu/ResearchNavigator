@@ -1,0 +1,5 @@
+date_utc=2026-08-26T18:11:59.3565678Z
+pwd=C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+python=Python 3.12.0
+python_executable=C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Scripts\python.exe
+note=environment.txt python was captured from the parent directory before repo-local .venv discovery; this corrected record is authoritative for repo commands

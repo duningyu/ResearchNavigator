@@ -1,0 +1,15 @@
+name=frontend_syntax_transpile
+status=PASS
+command=node scripts/check_frontend_syntax.cjs apps/web
+exit_code=0
+duration_seconds=0.435
+--- stdout ---
+{
+  "status": "PASS",
+  "fileCount": 32,
+  "typescriptVersion": "5.8.3",
+  "scope": "syntax transpile only; not dependency-aware typecheck or production build"
+}
+
+--- stderr/blocker ---
+(empty)

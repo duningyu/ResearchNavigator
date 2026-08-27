@@ -1,0 +1,54 @@
+$ playwright test
+
+Running 2 tests using 1 worker
+
+  x  1 tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate (1.5m)
+  ok 2 tests\e2e\research-workflow.spec.ts:106:1 › user B cannot observe user A private project or library data (2.1s)
+
+
+  1) tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.click: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('option', { name: 'fixture' })
+        - locator resolved to <div role="option" id="sources_list_0" aria-selected="false">fixture</div>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is not stable
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is not stable
+        - retrying click action
+          - waiting 100ms
+        169 × waiting for element to be visible, enabled and stable
+            - element is not visible
+          - retrying click action
+            - waiting 500ms
+
+
+      41 |   await page.getByText('Top 50').click();
+      42 |   await page.locator('#sources').click();
+    > 43 |   await page.getByRole('option', { name: 'fixture' }).click();
+         |                                                       ^
+      44 |   await page.getByRole('button', { name: /^搜\s*索$/ }).click();
+      45 |   await expect(page.getByText(/mode=discovery/)).toBeVisible();
+      46 |   await expect(page.getByText(/shortfall=/)).toBeVisible();
+        at E:\AI_Projects\ResearchNavigator\apps\web\tests\e2e\research-workflow.spec.ts:43:55
+
+    Error Context: test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\research-workflow-golden-b-e2d19-ap-challenge-and-human-gate\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\e2e\research-workflow.spec.ts:19:1 › golden browser loop: explicit search corpus, analysis, favourites, compare, gap, challenge and human gate 
+  1 passed (1.6m)
+[ELIFECYCLE] Command failed with exit code 1.

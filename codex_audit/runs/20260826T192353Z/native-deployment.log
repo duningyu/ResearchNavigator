@@ -1,0 +1,24 @@
+Execution: 20260826T192353Z
+Target: E:\AI_Projects\ResearchNavigator
+Docker Desktop package: official winget Docker.DockerDesktop 4.88.1
+Docker installer download/hash verification: PASS
+Docker installer elevation: CANCELLED_BY_USER_UAC
+Docker installer exit code: 4294967291
+Docker installed after attempt: false
+Native production frontend build with VITE_API_BASE_URL=http://127.0.0.1:8000/api: PASS
+Native API start: PASS, localhost port 8000
+Native worker start: PASS
+Native frontend static start: PASS, localhost port 8080
+API health before restart: status ok, database ok
+Frontend before restart: HTTP 200, root present, bundle contains target API URL
+Fixture source in deployment: disabled
+Business smoke: register PASS; profile PASS; project PASS; live OpenAlex PASS/is_fixture=false; favorite PASS; note PASS; library readback PASS
+Native process stop: PASS
+Native process restart: PASS
+Post-restart login: PASS
+Post-restart persistence: project=1, library_items=1, favorite=true, notes=1
+Post-restart API/database health: PASS
+Post-restart frontend: HTTP 200
+Current runtime: API, worker, and web left running
+LLM API key used: no
+DeepSeek provider execution: NOT_IMPLEMENTED / P1-A DEFERRED

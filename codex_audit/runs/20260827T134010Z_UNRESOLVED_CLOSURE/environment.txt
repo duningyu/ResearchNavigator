@@ -1,0 +1,9 @@
+utc=2026-08-27T13:40:10.8067973Z
+pwd=E:\AI_Projects\ResearchNavigator
+git=NOT_AVAILABLE_TARGET_NOT_REPOSITORY
+python=Python 3.12.0
+uv=
+node=v24.19.0
+pnpm=11.7.0
+docker=
+docker_compose=

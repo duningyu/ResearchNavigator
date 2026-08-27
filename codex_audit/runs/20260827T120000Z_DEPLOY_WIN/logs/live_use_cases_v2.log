@@ -1,0 +1,359 @@
+[PASS] UC1 服务健康检查: GET /api/health -> {'status': 'ok', 'version': '2.1.0', 'database': 'ok'}
+[PASS] UC2 用户注册与身份读取: 注册 alice/bob 并回读 /auth/me
+[PASS] UC3 研究档案保存: PUT /research-profiles/me 写入并回读
+[PASS] UC4 创建研究项目: POST /projects -> id=39
+[PASS] UC5 Discovery 检索(Top20): mode=discovery seed=4a235079772755a9d631e0a2e8965f98 rule=discovery-ranking-v1 n=20 composition={'requested_limit': 20, 'classic_target': 4, 'frontier_target': 16, 'classic_count': 0, 'frontier_count': 16, 'fill_count': 4, 'classic_shortfall': 4, 'frontier_shortfall': 0, 'candidate_pool_count': 39, 'rule_version': 'discovery-ranking-v1', 'rankings': {'54': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 1}, '71': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 2}, '70': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 3}, '72': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 4}, '55': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 5}, '74': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 6}, '56': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 7}, '73': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 8}, '59': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 9}, '58': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 10}, '60': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 11}, '75': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 12}, '76': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 13}, '57': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 14}, '78': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 15}, '77': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 16}, '62': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 17}, '63': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 18}, '79': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 19}, '61': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 20}}, 'mode_rule_version': 'search-mode-v1'}
+[PASS] UC6 可复现多样性(seed 规则): rerun 复用 seed=4a235079772755a9d631e0a2e8965f98; 新搜索新 seed=5275233f169be14eb2da50f5136f38c8
+[PASS] UC7 Precise 模式识别: query="Attention Is All You Need" -> precise; 三词概念串 -> precise
+[PASS] UC8 会话恢复与固化语料(UI 每页10条切片): 恢复 20 篇与 session.result_count=20 一致、顺序与 result_ids 固化一致、排名元数据齐全；UI 第一页/第二页切片无重叠
+[PASS] UC9 论文详情与执行摘要级分析: paper=54 分析字段(executive_summary,method_innovation,datasets,limitations_inferred,missing_fields)齐全且有值; warnings=['摘要级证据不足', '当前为摘要级证据，不抽取正文中的 Future Work、作者局限、参数或实验协议细节。']; GET analysis 复读 HTTP 200
+[PASS] UC10 收藏库(幂等收藏/笔记/标签/阅读状态): 两次同 Idempotency-Key 收藏均返回 201; library 聚合包含 favorite/tag/note/reading_status
+[PASS] UC11 显式论文集合(PaperSet): gap集合 id=29(4篇) 对比集合 id=30(3篇), 集合内容与选择完全一致
+[PASS] UC12 深度论文对比(证据态矩阵): comparison id=10 行数=19(如 method/datasets/results 维度), 单元格均含 evidence_state/citations; direction_snapshot 已快照
+[PASS] UC13 Gap 候选与挑战检索: generate→challenge_required; challenge→pending_confirmation(awaiting_human_confirmation); 反证文献数=3
+[PASS] UC13a 解释结构完整(证据/推断分离): gap.explanation 含全部解释字段; 缺失字段=无; not_novelty_proof=true; confidence_rationale=当前置信度为 medium：直接证据来自 4 篇显式选择论文；Challenge Search 返回 9 篇潜在反例/邻近论文。
+[PASS] UC14 真实人工确认门(操作者API确认): 确认前创建计划被拒(HTTP 409); 确认后 status=confirmed 
+[PASS] UC15 研究计划生成与条目推进: plan id=5 条目数=7; 首个条目已置为 in_progress(HTTP 200)
+[PASS] UC16 用户数据隔离(跨用户拒绝): Bob 访问 Alice 的资源全部 403/404: {'search_session': 404, 'session_papers': 404, 'paper_set': 404, 'comparison': 404, 'gap': 404, 'plan': 404}; Bob 更新自己的档案 HTTP 200
+[PASS] UC17 合法PDF文档生命周期(权利确认强制): 上传+1(201); 未确认权利被拒(400); 列表 1 份; 检索 HTTP 200; 删除 204
+[PASS] UC18 后台任务(worker处理至终态): job id=5 终态=succeeded attempts=1; events顺序=['created', 'started', 'succeeded']; result={"analysis_id": 36, "paper_id": 54, "project_id": 39, "evidence_level": "abstract_only"}; error=None
+[PASS] UC19 来源状态与主动测试: 各来源状态={'fixture': 'ok', 'openalex': 'ok', 'crossref': 'ok', 'arxiv': 'ok', 'semantic_scholar': 'ok', 'unpaywall': 'disabled', 'web_of_science': 'disabled', 'science_direct': 'disabled'}; fixture主动测试 HTTP 200 响应={"name":"fixture","status":"ok","enabled":true,"configured":true,"detail":"offline fixture; never real evidence","checked_at":"2026-08-27T13:29:54.927068Z"}
+[PASS] UC20 个人设置读写: PUT/GET settings: default_result_count=50 display_language=zh-CN analysis_execution_preference=synchronous preferred_sources=['fixture']
+[PASS] UC21 权限边界与工作区导出: 非管理员访问 admin/config-status=403, admin/backups=403; 导出字节=12017
+[
+  {
+    "step": "UC1 服务健康检查",
+    "ok": true,
+    "detail": "GET /api/health -> {'status': 'ok', 'version': '2.1.0', 'database': 'ok'}",
+    "evidence": {}
+  },
+  {
+    "step": "UC2 用户注册与身份读取",
+    "ok": true,
+    "detail": "注册 alice/bob 并回读 /auth/me",
+    "evidence": {
+      "alice_user_id": 72,
+      "bob_user_id": 73
+    }
+  },
+  {
+    "step": "UC3 研究档案保存",
+    "ok": true,
+    "detail": "PUT /research-profiles/me 写入并回读",
+    "evidence": {}
+  },
+  {
+    "step": "UC4 创建研究项目",
+    "ok": true,
+    "detail": "POST /projects -> id=39",
+    "evidence": {}
+  },
+  {
+    "step": "UC5 Discovery 检索(Top20)",
+    "ok": true,
+    "detail": "mode=discovery seed=4a235079772755a9d631e0a2e8965f98 rule=discovery-ranking-v1 n=20 composition={'requested_limit': 20, 'classic_target': 4, 'frontier_target': 16, 'classic_count': 0, 'frontier_count': 16, 'fill_count': 4, 'classic_shortfall': 4, 'frontier_shortfall': 0, 'candidate_pool_count': 39, 'rule_version': 'discovery-ranking-v1', 'rankings': {'54': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 1}, '71': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 2}, '70': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 3}, '72': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 4}, '55': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 5}, '74': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 6}, '56': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 7}, '73': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 8}, '59': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 9}, '58': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 10}, '60': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 11}, '75': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 12}, '76': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 13}, '57': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 14}, '78': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 15}, '77': {'label': 'frontier_candidate', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 16}, '62': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 17}, '63': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 18}, '79': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 19}, '61': {'label': 'relevance_fill', 'relevance': 1.0, 'rank_score': 1.0, 'relevance_band': 100, 'position': 20}}, 'mode_rule_version': 'search-mode-v1'}",
+    "evidence": {
+      "session_id": 55,
+      "composition": {
+        "requested_limit": 20,
+        "classic_target": 4,
+        "frontier_target": 16,
+        "classic_count": 0,
+        "frontier_count": 16,
+        "fill_count": 4,
+        "classic_shortfall": 4,
+        "frontier_shortfall": 0,
+        "candidate_pool_count": 39,
+        "rule_version": "discovery-ranking-v1",
+        "rankings": {
+          "54": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 1
+          },
+          "71": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 2
+          },
+          "70": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 3
+          },
+          "72": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 4
+          },
+          "55": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 5
+          },
+          "74": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 6
+          },
+          "56": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 7
+          },
+          "73": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 8
+          },
+          "59": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 9
+          },
+          "58": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 10
+          },
+          "60": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 11
+          },
+          "75": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 12
+          },
+          "76": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 13
+          },
+          "57": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 14
+          },
+          "78": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 15
+          },
+          "77": {
+            "label": "frontier_candidate",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 16
+          },
+          "62": {
+            "label": "relevance_fill",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 17
+          },
+          "63": {
+            "label": "relevance_fill",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 18
+          },
+          "79": {
+            "label": "relevance_fill",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 19
+          },
+          "61": {
+            "label": "relevance_fill",
+            "relevance": 1.0,
+            "rank_score": 1.0,
+            "relevance_band": 100,
+            "position": 20
+          }
+        },
+        "mode_rule_version": "search-mode-v1"
+      }
+    }
+  },
+  {
+    "step": "UC6 可复现多样性(seed 规则)",
+    "ok": true,
+    "detail": "rerun 复用 seed=4a235079772755a9d631e0a2e8965f98; 新搜索新 seed=5275233f169be14eb2da50f5136f38c8",
+    "evidence": {}
+  },
+  {
+    "step": "UC7 Precise 模式识别",
+    "ok": true,
+    "detail": "query=\"Attention Is All You Need\" -> precise; 三词概念串 -> precise",
+    "evidence": {}
+  },
+  {
+    "step": "UC8 会话恢复与固化语料(UI 每页10条切片)",
+    "ok": true,
+    "detail": "恢复 20 篇与 session.result_count=20 一致、顺序与 result_ids 固化一致、排名元数据齐全；UI 第一页/第二页切片无重叠",
+    "evidence": {
+      "ui_page1_first": [
+        54,
+        71,
+        70
+      ],
+      "ui_page2_first": [
+        60,
+        75,
+        76
+      ]
+    }
+  },
+  {
+    "step": "UC9 论文详情与执行摘要级分析",
+    "ok": true,
+    "detail": "paper=54 分析字段(executive_summary,method_innovation,datasets,limitations_inferred,missing_fields)齐全且有值; warnings=['摘要级证据不足', '当前为摘要级证据，不抽取正文中的 Future Work、作者局限、参数或实验协议细节。']; GET analysis 复读 HTTP 200",
+    "evidence": {
+      "warnings": [
+        "摘要级证据不足",
+        "当前为摘要级证据，不抽取正文中的 Future Work、作者局限、参数或实验协议细节。"
+      ],
+      "missing_fields_count": 6
+    }
+  },
+  {
+    "step": "UC10 收藏库(幂等收藏/笔记/标签/阅读状态)",
+    "ok": true,
+    "detail": "两次同 Idempotency-Key 收藏均返回 201; library 聚合包含 favorite/tag/note/reading_status",
+    "evidence": {}
+  },
+  {
+    "step": "UC11 显式论文集合(PaperSet)",
+    "ok": true,
+    "detail": "gap集合 id=29(4篇) 对比集合 id=30(3篇), 集合内容与选择完全一致",
+    "evidence": {}
+  },
+  {
+    "step": "UC12 深度论文对比(证据态矩阵)",
+    "ok": true,
+    "detail": "comparison id=10 行数=19(如 method/datasets/results 维度), 单元格均含 evidence_state/citations; direction_snapshot 已快照",
+    "evidence": {
+      "row_keys": [
+        "research_problem",
+        "task_definition",
+        "core_methods",
+        "method_innovation",
+        "theoretical_contribution",
+        "research_route",
+        "new_modules",
+        "datasets"
+      ]
+    }
+  },
+  {
+    "step": "UC13 Gap 候选与挑战检索",
+    "ok": true,
+    "detail": "generate→challenge_required; challenge→pending_confirmation(awaiting_human_confirmation); 反证文献数=3",
+    "evidence": {
+      "challenge_queries": [
+        "\"异常风险排序\"",
+        "\"异常风险排序\" early warning",
+        "\"异常风险排序\" failure prediction"
+      ],
+      "not_novelty_proof": true
+    }
+  },
+  {
+    "step": "UC13a 解释结构完整(证据/推断分离)",
+    "ok": true,
+    "detail": "gap.explanation 含全部解释字段; 缺失字段=无; not_novelty_proof=true; confidence_rationale=当前置信度为 medium：直接证据来自 4 篇显式选择论文；Challenge Search 返回 9 篇潜在反例/邻近论文。",
+    "evidence": {}
+  },
+  {
+    "step": "UC14 真实人工确认门(操作者API确认)",
+    "ok": true,
+    "detail": "确认前创建计划被拒(HTTP 409); 确认后 status=confirmed ",
+    "evidence": {
+      "plan_creation_before_confirm_http": 409
+    }
+  },
+  {
+    "step": "UC15 研究计划生成与条目推进",
+    "ok": true,
+    "detail": "plan id=5 条目数=7; 首个条目已置为 in_progress(HTTP 200)",
+    "evidence": {}
+  },
+  {
+    "step": "UC16 用户数据隔离(跨用户拒绝)",
+    "ok": true,
+    "detail": "Bob 访问 Alice 的资源全部 403/404: {'search_session': 404, 'session_papers': 404, 'paper_set': 404, 'comparison': 404, 'gap': 404, 'plan': 404}; Bob 更新自己的档案 HTTP 200",
+    "evidence": {}
+  },
+  {
+    "step": "UC17 合法PDF文档生命周期(权利确认强制)",
+    "ok": true,
+    "detail": "上传+1(201); 未确认权利被拒(400); 列表 1 份; 检索 HTTP 200; 删除 204",
+    "evidence": {
+      "retrieval_hits": []
+    }
+  },
+  {
+    "step": "UC18 后台任务(worker处理至终态)",
+    "ok": true,
+    "detail": "job id=5 终态=succeeded attempts=1; events顺序=['created', 'started', 'succeeded']; result={\"analysis_id\": 36, \"paper_id\": 54, \"project_id\": 39, \"evidence_level\": \"abstract_only\"}; error=None",
+    "evidence": {
+      "jobs_in_list": 1
+    }
+  },
+  {
+    "step": "UC19 来源状态与主动测试",
+    "ok": true,
+    "detail": "各来源状态={'fixture': 'ok', 'openalex': 'ok', 'crossref': 'ok', 'arxiv': 'ok', 'semantic_scholar': 'ok', 'unpaywall': 'disabled', 'web_of_science': 'disabled', 'science_direct': 'disabled'}; fixture主动测试 HTTP 200 响应={\"name\":\"fixture\",\"status\":\"ok\",\"enabled\":true,\"configured\":true,\"detail\":\"offline fixture; never real evidence\",\"checked_at\":\"2026-08-27T13:29:54.927068Z\"}",
+    "evidence": {}
+  },
+  {
+    "step": "UC20 个人设置读写",
+    "ok": true,
+    "detail": "PUT/GET settings: default_result_count=50 display_language=zh-CN analysis_execution_preference=synchronous preferred_sources=['fixture']",
+    "evidence": {}
+  },
+  {
+    "step": "UC21 权限边界与工作区导出",
+    "ok": true,
+    "detail": "非管理员访问 admin/config-status=403, admin/backups=403; 导出字节=12017",
+    "evidence": {}
+  }
+]
+
+ALL_USE_CASES_PASSED

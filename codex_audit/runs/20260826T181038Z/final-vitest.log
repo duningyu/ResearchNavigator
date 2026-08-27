@@ -1,0 +1,12 @@
+$ vitest run --exclude tests/e2e/**
+
+ RUN  v3.2.7 C:/Users/ASUS/Documents/ChatGPT/New project/ResearchNavigator_2.0.0-rc1_full_package_2026-08-26/apps/web
+
+ ✓ src/components/scoreMath.test.ts (2 tests) 6ms
+ ✓ src/api/client.test.ts (2 tests) 13ms
+
+ Test Files  2 passed (2)
+      Tests  4 passed (4)
+   Start at  02:55:52
+   Duration  5.26s (transform 341ms, setup 2.26s, collect 261ms, tests 19ms, environment 5.13s, prepare 810ms)
+

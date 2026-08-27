@@ -1,0 +1,8 @@
+# Environment baseline 2026-08-27T11:48:16Z
+python=Python 3.12.0
+node=v24.19.0
+uv=uv 0.12.6 (7938ca5d5 2026-08-25 x86_64-pc-windows-msvc)
+pnpm=11.7.0
+git_status:
+fatal: not a git repository (or any of the parent directories): .git
+package_sha256=dd7fe849b3903d512657c73752df5919b36a4b47d0e5ba632c5c767c0b73432f (verified against .sha256 sidecar)

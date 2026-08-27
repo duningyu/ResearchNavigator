@@ -1,0 +1,12 @@
+{
+  "audit_time_utc": "2026-08-27T19:42:56Z",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+  "python": "3.13.5",
+  "node": "v22.16.0",
+  "uv": "uv 0.10.0",
+  "pnpm": "unavailable; Corepack download blocked by DNS",
+  "docker": "unavailable",
+  "implementation_commit": "a786c5b5359077b4fb63e7794cbb03bbc9d61f78",
+  "branch": "main",
+  "network": "DNS unavailable for Python package, npm registry and live scholarly source checks"
+}

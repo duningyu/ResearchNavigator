@@ -1,0 +1,41 @@
+...F                                                                     [100%]
+================================== FAILURES ===================================
+_ test_field_citations_align_each_claim_to_its_supporting_sentence_and_chunk __
+
+    def test_field_citations_align_each_claim_to_its_supporting_sentence_and_chunk() -> None:
+        method_sentence = "We propose a Transformer model for multivariate anomaly detection."
+        future_sentence = "Future work will evaluate cross-device generalization."
+>       analysis = analyze_accessible_text(
+            paper_id=4,
+            text=f"{method_sentence} {future_sentence}",
+            evidence_level="user_uploaded_fulltext",
+            citations=[],
+            evidence_spans=[
+                {
+                    "text": method_sentence,
+                    "citation": {
+                        "source_type": "user_upload",
+                        "section": "Method",
+                        "page_start": 2,
+                        "page_end": 2,
+                        "chunk_id": 21,
+                    },
+                },
+                {
+                    "text": future_sentence,
+                    "citation": {
+                        "source_type": "user_upload",
+                        "section": "Conclusion",
+                        "page_start": 8,
+                        "page_end": 8,
+                        "chunk_id": 22,
+                    },
+                },
+            ],
+        )
+E       TypeError: analyze_accessible_text() got an unexpected keyword argument 'evidence_spans'
+
+tests\unit\test_evidence_boundaries.py:82: TypeError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_evidence_boundaries.py::test_field_citations_align_each_claim_to_its_supporting_sentence_and_chunk
+1 failed, 3 passed in 0.18s

@@ -1,0 +1,72 @@
+name: rn-acceptance
+
+x-runtime-environment: &runtime-environment
+  RN_ENVIRONMENT: acceptance
+  RN_DATA_DIR: /app/runtime
+  RN_DATABASE_URL: sqlite+pysqlite:////app/runtime/research_navigator.db
+  RN_UPLOAD_DIR: /app/runtime/uploads
+  RN_VECTOR_DIR: /app/runtime/vector_index
+  RN_BACKUP_DIR: /app/runtime/backups
+  RN_ALLOWED_ORIGINS: http://localhost:${RN_ACCEPTANCE_WEB_PORT:-18080},http://127.0.0.1:${RN_ACCEPTANCE_WEB_PORT:-18080}
+  RN_SESSION_TTL_HOURS: "24"
+  RN_ENABLE_FIXTURE_SOURCE: "true"
+  RN_ENABLE_OPENALEX: "false"
+  RN_ENABLE_CROSSREF: "false"
+  RN_ENABLE_ARXIV: "false"
+  RN_ENABLE_SEMANTIC_SCHOLAR: "false"
+  RN_ANALYSIS_PROVIDER: deterministic
+  OPENALEX_API_KEY: ""
+  CROSSREF_MAILTO: ""
+  SEMANTIC_SCHOLAR_API_KEY: ""
+  UNPAYWALL_EMAIL: ""
+  LLM_BASE_URL: ""
+  LLM_API_KEY: ""
+  LLM_MODEL: ""
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    environment: *runtime-environment
+    volumes:
+      - ${RN_ACCEPTANCE_RUNTIME_DIR:?Set RN_ACCEPTANCE_RUNTIME_DIR to a dedicated host directory}:/app/runtime
+    ports:
+      - "${RN_ACCEPTANCE_API_PORT:-18000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 5s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ..
+      dockerfile: infra/api.Dockerfile
+    command: ["python", "-m", "services.worker.main", "--poll-seconds", "0.5"]
+    environment: *runtime-environment
+    volumes:
+      - ${RN_ACCEPTANCE_RUNTIME_DIR:?Set RN_ACCEPTANCE_RUNTIME_DIR to a dedicated host directory}:/app/runtime
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ..
+      dockerfile: infra/web.Dockerfile
+    ports:
+      - "${RN_ACCEPTANCE_WEB_PORT:-18080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 5s
+    restart: unless-stopped

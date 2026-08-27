@@ -1,0 +1,26 @@
+
+ RUN  v3.2.7 E:/AI_Projects/ResearchNavigator/apps/web
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+stderr | src/pages/PaperPage.test.tsx > paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence
+Warning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+Warning: [antd: Space] `direction` is deprecated. Please use `orientation` instead.
+
+ ✓ src/pages/PaperPage.test.tsx (1 test) 462ms
+   ✓ paper evidence acquisition > shows abstention values, renders an empty missing-field set as none, and explicitly acquires evidence  461ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  23:53:54
+   Duration  2.73s (transform 63ms, setup 156ms, collect 1.41s, tests 462ms, environment 352ms, prepare 88ms)
+

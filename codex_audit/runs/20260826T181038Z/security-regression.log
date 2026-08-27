@@ -1,0 +1,21 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.0, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0, cov-7.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 10 items
+
+tests/integration/test_security_regression.py::test_admin_config_status_enforces_permission_and_never_returns_secrets PASSED [ 10%]
+tests/integration/test_security_regression.py::test_protected_routes_reject_unauthenticated_request PASSED [ 20%]
+tests/integration/test_auth_projects.py::test_register_login_profile_and_project_are_persistent PASSED [ 30%]
+tests/integration/test_auth_projects.py::test_projects_are_isolated_between_users PASSED [ 40%]
+tests/integration/test_auth_projects.py::test_logout_revokes_session PASSED [ 50%]
+tests/integration/test_library.py::test_library_favorite_note_tag_and_reading_status_persist PASSED [ 60%]
+tests/integration/test_pdf_ingestion.py::test_user_uploaded_pdf_is_persisted_chunked_and_retrievable PASSED [ 70%]
+tests/unit/test_document_security.py::test_pdf_validation_requires_extension_mime_magic_and_size PASSED [ 80%]
+tests/unit/test_document_security.py::test_external_url_rejects_private_and_non_http_destinations PASSED [ 90%]
+tests/unit/test_mcp_client.py::test_request_object_rejects_non_object_json PASSED [100%]
+
+============================= 10 passed in 10.77s =============================

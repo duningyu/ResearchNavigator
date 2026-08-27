@@ -1,0 +1,9 @@
+name=python_compileall
+status=PASS
+command=/opt/pyvenv/bin/python -m compileall -q apps/api services mcp_servers scripts
+exit_code=0
+duration_seconds=0.643
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+(empty)

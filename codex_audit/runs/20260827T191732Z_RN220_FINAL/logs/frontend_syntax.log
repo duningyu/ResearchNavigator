@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "fileCount": 41,
+  "typescriptVersion": "5.8.3",
+  "scope": "syntax transpile only; not dependency-aware typecheck or production build"
+}

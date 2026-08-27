@@ -1,0 +1,41 @@
+E501 Line too long (105 > 100)
+  --> apps\api\research_navigator\backups\service.py:73:101
+   |
+71 |         with ZipFile(output, "w", compression=ZIP_DEFLATED) as archive:
+72 |             archive.write(snapshot, "research_navigator.db")
+73 |             for label, root in (("uploads", settings.upload_dir), ("vector_index", settings.vector_dir)):
+   |                                                                                                     ^^^^^
+74 |                 if root.exists():
+75 |                     for path in sorted(root.rglob("*")):
+   |
+
+E501 Line too long (104 > 100)
+  --> apps\api\research_navigator\backups\service.py:78:101
+   |
+76 |                         if path.is_file():
+77 |                             archive.write(path, f"{label}/{path.relative_to(root).as_posix()}")
+78 |             archive.writestr("backup-manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
+   |                                                                                                     ^^^^
+79 |     return backup_info(output)
+   |
+
+E501 Line too long (139 > 100)
+  --> apps\api\research_navigator\backups\service.py:84:101
+   |
+82 | …, object]]:
+83 | …True)
+84 | …ings.backup_dir.glob("*.zip"), key=lambda value: value.stat().st_mtime, reverse=True)]
+   |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+E501 Line too long (110 > 100)
+   --> apps\api\research_navigator\backups\service.py:152:101
+    |
+150 |     shutil.copy2(staged_db, temp_db)
+151 |     temp_db.replace(destination_db)
+152 |     for source_name, destination in (("uploads", settings.upload_dir), ("vector_index", settings.vector_dir)):
+    |                                                                                                     ^^^^^^^^^^
+153 |         staged_dir = staging / source_name
+154 |         if destination.exists():
+    |
+
+Found 4 errors.

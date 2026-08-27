@@ -1,0 +1,14 @@
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:21904', '2026-08-27 12:54:12.110176', '2026-08-27 12:54:12.110176', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[worker] transient database error, will retry: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=?, attempt_count=(jobs.attempt_count + ?), locked_by=?, started_at=?, updated_at=? WHERE jobs.id = (SELECT jobs.id 
+FROM jobs 
+WHERE jobs.status = ? ORDER BY jobs.created_at, jobs.id
+ LIMIT ? OFFSET ?) AND jobs.status = ? RETURNING id]
+[parameters: ('running', 1, 'LAPTOP-GVIPQFSN:21904', '2026-08-27 13:00:47.989639', '2026-08-27 13:00:47.990156', 'pending', 1, 0, 'pending')]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

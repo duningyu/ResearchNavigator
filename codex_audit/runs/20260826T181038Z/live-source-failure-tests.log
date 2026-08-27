@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.0, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ASUS\Documents\ChatGPT\New project\ResearchNavigator_2.0.0-rc1_full_package_2026-08-26
+configfile: pyproject.toml
+plugins: anyio-4.14.2, asyncio-1.4.0, cov-7.1.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 6 items
+
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_rate_limit[adapter0] PASSED [ 16%]
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_rate_limit[adapter1] PASSED [ 33%]
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_rate_limit[adapter2] PASSED [ 50%]
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_timeout[adapter0] PASSED [ 66%]
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_timeout[adapter1] PASSED [ 83%]
+tests/unit/test_scholarly_adapter_failures.py::test_live_adapter_reports_timeout[adapter2] PASSED [100%]
+
+============================== 6 passed in 7.94s ==============================

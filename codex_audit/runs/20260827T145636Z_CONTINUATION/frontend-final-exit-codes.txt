@@ -1,0 +1,5 @@
+pnpm_install_exit=0
+typecheck_exit=0
+vitest_exit=0
+build_exit=0
+playwright_exit=0

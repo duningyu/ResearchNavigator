@@ -1,0 +1,31 @@
+HEAD: f2fab47aa39596af161d791338cb55f37f10718c
+BRANCH: main
+WORKING_TREE_AT_PACKAGE_TIME:
+(clean)
+
+RECENT_COMMITS:
+f2fab47 docs(audit): record ResearchNavigator 2.2 verification
+a786c5b docs(release): align 2.2 traceability and API contracts
+04830d3 test(release): audit 2.2 evidence platform gates
+51db44e docs(release): define ResearchNavigator 2.2 evidence platform
+4df3322 test(admin): cover expanded safe config status
+1f85199 fix(api): register evaluation routes once
+c8f8e7d test(docker): harden persistence acceptance scenario
+401bc41 feat(admin): expose provider status and safe abstract backfill
+53fe937 test(docker): add cold-start persistence acceptance harness
+fba4ffd fix(jobs): mark partial evidence workflows terminal
+551d65a feat(web): complete research map and expert evaluation workflows
+502d0ad feat(evals): list and reopen owned studies
+d3a956a feat(web): surface evidence workflows and research intelligence
+a12e575 feat(evidence): refresh derived research cards
+ef9bea3 feat(evals): add real-expert study workflow
+ef26b2d feat(map): add deterministic direction clustering
+0a1561b feat(datasets): add evidence-bounded dataset cards
+f903179 feat(authors): add provenance-aware author cards
+ab75b6a feat(evidence): backfill legacy abstract provenance safely
+fbb3f05 feat(analysis): integrate citation-validated LLM enrichment
+4b5bc3f feat(evidence): add resumable acquisition workflow
+79c3945 feat(oa): securely ingest permitted PDFs
+83b2c4c feat(oa): resolve lawful fulltext candidates
+416467a feat(search): persist OpenAlex cooldown and fallback state
+74e9c94 feat(db): add 2.2 evidence platform schema

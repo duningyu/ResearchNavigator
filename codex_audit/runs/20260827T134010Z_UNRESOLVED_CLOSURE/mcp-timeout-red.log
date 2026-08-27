@@ -1,0 +1,19 @@
+F.                                                                       [100%]
+================================== FAILURES ===================================
+______________ test_request_timeout_is_bounded_and_configurable _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001FC339D5FD0>
+
+    def test_request_timeout_is_bounded_and_configurable(monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("RN_MCP_TIMEOUT_SECONDS", "0.25")
+    
+        client = ResearchNavigatorClient(base_url="http://test/api", token="secret")
+    
+>       assert client.timeout.read == 0.25
+               ^^^^^^^^^^^^^^
+E       AttributeError: 'ResearchNavigatorClient' object has no attribute 'timeout'
+
+tests\unit\test_mcp_client.py:13: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_mcp_client.py::test_request_timeout_is_bounded_and_configurable
+1 failed, 1 passed in 0.55s

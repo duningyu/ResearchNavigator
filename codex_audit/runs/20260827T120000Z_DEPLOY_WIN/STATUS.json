@@ -1,0 +1,45 @@
+{
+  "run": "20260827T120000Z_DEPLOY_WIN",
+  "kind": "deployment-verification",
+  "package": {
+    "zip": "E:/downloads/ResearchNavigator_2.1.0_feedback_closure_2026-08-27.zip",
+    "sha256_verified": "dd7fe849b3903d512657c73752df5919b36a4b47d0e5ba632c5c767c0b73432f",
+    "version": "2.1.0",
+    "release_label": "feedback-closure"
+  },
+  "deploy_target": "E:/AI_Projects/ResearchNavigator (replaced in place; pre-deploy copy at E:/AI_Projects/_rn_backup_pre2.1.0_20260827)",
+  "gates": {
+    "pytest_full": { "status": "PASS", "detail": "95 passed", "log": "logs/backend_pytest_final.log" },
+    "pytest_worker_focused": { "status": "PASS", "detail": "5 passed", "log": "logs/worker_tests_focused.log" },
+    "pytest_integration_after_db_change": { "status": "PASS", "detail": "48 passed", "log": "logs/db_change_focused.log" },
+    "ruff_full": { "status": "FAIL", "detail": "160 pre-existing findings (packaged tree; upstream gate was BLOCKED before)", "log": "logs/ruff_check.log" },
+    "ruff_changed_files_only_new_findings": { "status": "PASS", "detail": "0 new; only 4 pre-existing E501 in packaged backups/service.py untouched lines", "log": "logs/ruff_changed_files.log" },
+    "mypy_strict_full": { "status": "FAIL", "detail": "6 pre-existing errors, identical set to first-run baseline", "log": "logs/mypy_after_changes.log" },
+    "openapi_export": { "status": "PASS", "log": "logs/openapi_export.log" },
+    "frontend_install_pnpm_frozen": { "status": "PASS", "log": "logs/frontend_install.log" },
+    "frontend_typecheck": { "status": "PASS", "log": "logs/frontend_typecheck_final.log" },
+    "frontend_vitest": { "status": "PASS", "detail": "10/10 after jsdom ResizeObserver polyfill + 2 selector repairs", "log": "logs/frontend_vitest_final.log" },
+    "frontend_build": { "status": "PASS", "log": "logs/frontend_build.log" },
+    "acceptance_http_default_human_gate": { "status": "PASS", "log": "logs/http_first_acceptance_default.json" },
+    "acceptance_http_simulated_confirm": { "status": "PASS", "detail": "human_confirmation=simulated_human_confirmation; plan created only after explicit flag", "log": "logs/http_first_acceptance_simulated_confirm.json" },
+    "live_use_cases_socket_level": { "status": "PASS", "detail": "22/22 incl. cross-user isolation, human confirmation gate (409 before confirm), idempotency replay, worker terminal state, PDF rights enforcement", "log": "logs/live_use_cases.log", "script": "scripts/live_use_cases.py" },
+    "playwright_chromium_e2e": { "status": "PARTIAL", "detail": "cross-user isolation UI test passes; golden loop repaired up to final human-gate segment but full continuous run is environment-flaky; per-step browser evidence captured across iterations", "logs": ["logs/playwright_e2e16.log"] },
+    "docker_mcp_stdio_live_sources": { "status": "NOT_RUN", "reason": "environment lacks Docker/MCP-run conditions; live-source smoke intentionally not enabled (unchanged from packaged claims)" }
+  },
+  "code_changes_vs_package": [
+    "apps/api/research_navigator/backups/service.py (Windows file-lock fix: close sqlite conns before temp cleanup)",
+    "apps/api/research_navigator/db.py (sqlite timeout=30 / busy_timeout=30000)",
+    "services/worker/main.py (survive transient OperationalError instead of dying)",
+    "apps/web/src/testSetup.ts (ResizeObserver stub for jsdom)",
+    "apps/web/src/pages/paperSelectionExperience.test.tsx (2 unique-selector repairs)",
+    "apps/web/tests/e2e/research-workflow.spec.ts (stale selector/browser-reality repairs)",
+    "apps/web/playwright.config.ts (animations disabled, retries=1)"
+  ],
+  "new_findings_fixed_count": 3,
+  "shipped_tests_repaired_count": 4,
+  "live_stack_at_report_time": {
+    "api": "http://127.0.0.1:8000 (/api/health ok, version 2.1.0)",
+    "web_static": "http://127.0.0.1:8080 (apps/web/dist)",
+    "worker": "running (poll 2s)"
+  }
+}

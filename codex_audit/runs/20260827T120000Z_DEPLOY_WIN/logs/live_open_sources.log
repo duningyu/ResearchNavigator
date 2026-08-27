@@ -1,0 +1,119 @@
+{
+  "query": "anomaly detection",
+  "requested_limit_per_source": 3,
+  "started_at": "2026-08-27T13:30:36.200811+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T13:30:38.356715+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "error",
+      "detail": "ConnectError: ",
+      "checked_at": "2026-08-27T13:30:43.750336+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:30:46.144328+00:00",
+      "result_count": 3,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "2406.16308v1",
+          "external_ids": {
+            "arxiv": "2406.16308v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2406.16308v1",
+            "https://arxiv.org/abs/2406.16308v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2406.16308v1",
+              "source_url": "http://arxiv.org/abs/2406.16308v1",
+              "fetched_at": "2026-08-27T13:30:46.144328+00:00",
+              "raw_hash": "95abf014cf777de9d0674664e976f423943d43ea4d4c0a9d23fab67af7d00eab",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.17871/BACI_ICML2016_Rodner",
+          "arxiv_id": "1610.06761v1",
+          "external_ids": {
+            "arxiv": "1610.06761v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/1610.06761v1",
+            "https://arxiv.org/abs/1610.06761v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "1610.06761v1",
+              "source_url": "http://arxiv.org/abs/1610.06761v1",
+              "fetched_at": "2026-08-27T13:30:46.144328+00:00",
+              "raw_hash": "55bfc7cb91b08cecf8005309dd538ef5d9217f376b5db96eccd3f822bf08a40f",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2202.07787v1",
+          "external_ids": {
+            "arxiv": "2202.07787v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2202.07787v1",
+            "https://arxiv.org/abs/2202.07787v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2202.07787v1",
+              "source_url": "http://arxiv.org/abs/2202.07787v1",
+              "fetched_at": "2026-08-27T13:30:46.144328+00:00",
+              "raw_hash": "00c9f62630adf97b400dbec8a9cb4e34098d40c9b3ad7547038e2526fee00490",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-27T13:30:47.161881+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 3,
+    "output_count": 3
+  },
+  "finished_at": "2026-08-27T13:30:47.164647+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "crossref",
+    "semantic_scholar"
+  ]
+}

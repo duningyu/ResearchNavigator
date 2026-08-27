@@ -1,0 +1,28 @@
+F......                                                                  [100%]
+================================== FAILURES ===================================
+_______________ test_openalex_adapter_sends_configured_api_key ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001B0F62566F0>
+
+    async def test_openalex_adapter_sends_configured_api_key(
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        captured: dict[str, object] = {}
+    
+        async def successful(*args: object, **kwargs: object) -> httpx.Response:
+            captured.update(kwargs)
+            return httpx.Response(
+                200,
+                json={"results": []},
+                request=httpx.Request("GET", "https://api.openalex.org/works"),
+            )
+    
+        monkeypatch.setattr(httpx.AsyncClient, "get", successful)
+>       adapter = OpenAlexAdapter(api_key="openalex-secret")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: OpenAlexAdapter.__init__() got an unexpected keyword argument 'api_key'
+
+tests\unit\test_scholarly_adapter_failures.py:26: TypeError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_scholarly_adapter_failures.py::test_openalex_adapter_sends_configured_api_key
+1 failed, 6 passed in 2.33s

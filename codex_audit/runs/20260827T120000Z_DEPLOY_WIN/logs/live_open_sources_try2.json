@@ -1,0 +1,138 @@
+{
+  "query": "time series forecasting",
+  "requested_limit_per_source": 2,
+  "started_at": "2026-08-27T13:32:35.253160+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T13:32:36.285986+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:32:40.231599+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": "10.2174/9781681085289117020009",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2174/9781681085289117020009"
+          },
+          "source_urls": [
+            "https://doi.org/10.2174/9781681085289117020009"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2174/9781681085289117020009",
+              "source_url": "https://doi.org/10.2174/9781681085289117020009",
+              "fetched_at": "2026-08-27T13:32:40.231599+00:00",
+              "raw_hash": "1a27b29c28299aab3392b307867466d1d1b0e896072f79e7b9c447a1f7a7ae4e",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2174/9781681085289117020011",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2174/9781681085289117020011"
+          },
+          "source_urls": [
+            "https://doi.org/10.2174/9781681085289117020011"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2174/9781681085289117020011",
+              "source_url": "https://doi.org/10.2174/9781681085289117020011",
+              "fetched_at": "2026-08-27T13:32:40.231599+00:00",
+              "raw_hash": "1bfea4b66a534cecf6d06504112c11a9a99eb3952a7b87a5047653b542b8642b",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T13:32:41.215047+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "2410.11674v2",
+          "external_ids": {
+            "arxiv": "2410.11674v2"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2410.11674v2",
+            "https://arxiv.org/abs/2410.11674v2"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2410.11674v2",
+              "source_url": "http://arxiv.org/abs/2410.11674v2",
+              "fetched_at": "2026-08-27T13:32:41.214031+00:00",
+              "raw_hash": "2157eeabb449e1671475632fa881eb85b9de5b51b9a23be26b9e5b9c9a560278",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.1016/j.ijforecast.2025.10.001",
+          "arxiv_id": "2502.19086v5",
+          "external_ids": {
+            "arxiv": "2502.19086v5"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2502.19086v5",
+            "https://arxiv.org/abs/2502.19086v5"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2502.19086v5",
+              "source_url": "http://arxiv.org/abs/2502.19086v5",
+              "fetched_at": "2026-08-27T13:32:41.215047+00:00",
+              "raw_hash": "2508b9ae0014aeca6d10b579019e4604cfae021ae3e728727628dc0d28f8e97b",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-27T13:32:44.584413+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 4,
+    "output_count": 4
+  },
+  "finished_at": "2026-08-27T13:32:44.586415+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "semantic_scholar"
+  ]
+}

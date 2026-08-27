@@ -1,0 +1,421 @@
+$ vitest run --exclude tests/e2e/**
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mE:/AI_Projects/ResearchNavigator/apps/web[39m
+
+ [32m✓[39m src/components/scoreMath.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m src/api/client.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstderr[2m | src/pages/paperSelectionExperience.test.tsx[2m > [22m[2mselection-first paper workflow[2m > [22m[2mrestores a persisted Top50 search session and paginates ten papers per page
+[22m[39mWarning: [antd: List] The `List` component is deprecated. And will be removed in next major version.
+
+ [31m❯[39m src/pages/paperSelectionExperience.test.tsx [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 870[2mms[22m[39m
+   [32m✓[39m selection-first paper workflow[2m > [22mloads the explicitly requested search session and never assumes the newest session[32m 265[2mms[22m[39m
+   [32m✓[39m selection-first paper workflow[2m > [22muses saved favourites as an explicit selection source[32m 280[2mms[22m[39m
+[31m   [31m×[31m selection-first paper workflow[2m > [22mrestores a persisted Top50 search session and paginates ten papers per page[39m[33m 324[2mms[22m[39m
+[31m     → Found multiple elements with the text: /discovery/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+[36m>[31m
+  [0m模糊概念词自动进入 Discovery；明确题名/DOI 使用 Precise。[0m
+[36m</span>[31m
+
+Ignored nodes: comments, script, style
+[36m<div[31m
+  [33mclass[31m=[32m"ant-select-content ant-select-content-has-value"[31m
+  [33mtitle[31m=[32m"Discovery"[31m
+[36m>[31m
+  [0mDiscovery[0m
+  [36m<input[31m
+    [33maria-autocomplete[31m=[32m"list"[31m
+    [33maria-expanded[31m=[32m"false"[31m
+    [33maria-haspopup[31m=[32m"listbox"[31m
+    [33mautocomplete[31m=[32m"new-password"[31m
+    [33mclass[31m=[32m"ant-select-input"[31m
+    [33mid[31m=[32m"mode"[31m
+    [33mreadonly[31m=[32m""[31m
+    [33mrole[31m=[32m"combobox"[31m
+    [33mtype[31m=[32m"text"[31m
+    [33mvalue[31m=[32m""[31m
+  [36m/>[31m
+[36m</div>[31m
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"ant-tag ant-tag-filled ant-tag-blue css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+[36m>[31m
+  [0mmode=[0m
+  [0mdiscovery[0m
+[36m</span>[31m
+
+Ignored nodes: comments, script, style
+[36m<span[31m
+  [33mclass[31m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+[36m>[31m
+  [0mrule=[0m
+  [0mdiscovery-ranking-v1[0m
+[36m</span>[31m
+
+Ignored nodes: comments, script, style
+[36m<div[31m
+  [33mclass[31m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+  [33mstyle[31m=[32m"margin-top: 10px;"[31m
+[36m>[31m
+  [0mDiscovery Top50 以 10 篇经典候选 + 40 篇前沿候选为目标；真实来源不足时显示 shortfall，不伪造论文。顺序和 seed 固化在该 search session 中。[0m
+[36m</div>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[31m
+  [36m<div>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"[31m
+      [33mstyle[31m=[32m"width: 100%;"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"ant-space-item"[31m
+      [36m>[31m
+        [36m<div[31m
+          [33mclass[31m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+        [36m>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"ant-card-head"[31m
+          [36m>[31m
+            [36m<div[31m
+              [33mclass[31m=[32m"ant-card-head-wrapper"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"ant-card-head-title"[31m
+              [36m>[31m
+                [0m多源论文检索[0m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"ant-card-extra"[31m
+              [36m>[31m
+                [36m<span[31m
+                  [33mclass[31m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+                [36m>[31m
+                  [0m模糊概念词自动进入 Discovery；明确题名/DOI 使用 Precise。[0m
+                [36m</span>[31m
+              [36m</div>[31m
+            [36m</div>[31m
+          [36m</div>[31m
+          [36m<div[31m
+            [33mclass[31m=[32m"ant-card-body"[31m
+          [36m>[31m
+            [36m<form[31m
+              [33mclass[31m=[32m"ant-form ant-form-inline css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 search-form"[31m
+            [36m>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 ant-form-item-has-success ant-form-item-inline"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ant-row ant-form-item-row css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+                [36m>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"ant-col ant-form-item-control css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+                  [36m>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"ant-form-item-control-input"[31m
+                    [36m>[31m
+                      [36m<div[31m
+                        [33mclass[31m=[32m"ant-form-item-control-input-content"[31m
+                      [36m>[31m
+                        [36m<input[31m
+                          [33maria-required[31m=[32m"true"[31m
+                          [33mclass[31m=[32m"ant-input css-dev-only-do-not-override-viwxw0 ant-input-outlined ant-input-status-success css-var-root ant-input-css-var"[31m
+                          [33mid[31m=[32m"query"[31m
+                          [33mplaceholder[31m=[32m"关键词、题目、DOI、arXiv ID、作者或数据集"[31m
+                          [33mtype[31m=[32m"text"[31m
+                          [33mvalue[31m=[32m"attention"[31m
+                        [36m/>[31m
+                      [36m</div>[31m
+                    [36m</div>[31m
+                  [36m</div>[31m
+                [36m</div>[31m
+              [36m</div>[31m
+              [36m<div[31m
+                [33mclass[31m=[32m"ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 ant-form-item-has-success ant-form-item-inline"[31m
+              [36m>[31m
+                [36m<div[31m
+                  [33mclass[31m=[32m"ant-row ant-form-item-row css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+                [36m>[31m
+                  [36m<div[31m
+                    [33mclass[31m=[32m"ant-col ant-form-item-control css-dev-only-do-not-override-viwxw0 css-var-root"[31m
+                  [36m>[31m
+                    [36m<div[31m
+                      [33mclass[31m=[32m"ant-form-item-control-input"[31m
+                    [36m>[31m
+                      [36m<div[31m
+                        [33mclass[31m=[32m"ant-form-item-control-input-content"[31m
+                      [36m>[31m
+                        [36m<div[31m
+                          [33mclass[31m=[32m"ant-select ant-select-outlined ant-select-in-form-item ant-select-status-success css-var-root ant-select-css-var css-dev-only-do-not-override-viwxw0 ant-select-single ant-select-show-arrow"[31m
+                          [33mstyle[31m=[32m"width: 140px;"[31m
+                        [36m>[31m
+                          [36m<div[31m
+                            [33mclass[31m=[32m"ant-select-content ant-select-content-has-value"[31m
+                            [33mtitle[31m=[32m"Discovery"[31m
+                          [36m>[31m
+                            [0mDiscovery[0m
+                            [36m<input[31m
+                              [33maria-autocomplete[31m=[32m"list"[31m
+                              [33maria-expanded[31m=[32m"false"[31m
+                              [33maria-haspopup[31m=[32m"listbox"[31m
+                              [33mautocomplete[31m=[32m"new-password"[31m
+                              [33mclass[31m=[32m"ant-select-input"[31m
+                              [33mid[31m=[32m"mode"[31m
+                              [33mreadonly[31m=[32m""[31m
+                              [33mrole[31m=[32m"combobox"[31m
+                              [33mtype[31m=[32m"text"[31m
+                              [33mvalue[31m=[32m""[31m
+                            [36m/>[31m
+                          [36m</div>[31m
+                          [36m<div[31m
+                            [33mclass[31m=[32m"ant-select-suffix"[31m
+                          [36m>[31m
+                            [36m<span[31m
+                              [33maria-label[31m=[32m"down"[31m
+                              [33mclass[31m=[32m"anticon anticon-down"[31m
+                              [33mrole[31m=[32m"img"[31m
+                            [36m>[31m
+                              [36m<svg[31m
+                                [33maria-hidden[31m=[32m"true"[31m
+                                [33mdata-icon[31m=[32m"down"[31m
+                                [33mfill[31m=[32m"currentColor"[31m
+                                [33mfocusable[31m=[32m"false"[31m
+                                [33mheight[31m=[32m"1em"[31m
+                                [33mviewBox[31m=[32m"64 64 896 896"[31m
+                                [33mwidth[31m=[32m"1em"[31m
+                              [36m>[31m
+                                [36m<path[31m
+                                  [33md[31m=[32m"M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7...[39m
+[90mstderr[2m | src/app/workspaceExperience.test.tsx[2m > [22m[2mresearch workspace experience[2m > [22m[2mkeeps every workflow destination reachable through a drawer on a narrow viewport
+[22m[39mWarning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Warning: [antd: Drawer] `width` is deprecated. Please use `size` instead.
+Error: Not implemented: window.getComputedStyle(elt, pseudoElt)
+    at module.exports (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at window.getComputedStyle (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:895:7)
+    at measureScrollbarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:35:34)
+    at getTargetScrollBarSize (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\getScrollBarSize.js:87:10)
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+portal@2.2.1__3abc72f1327aa534ec0d12241e2770a7\node_modules\@rc-component\portal\lib\useScrollLocker.js:22:62
+    at E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\@rc-component+util@1.12.0_r_1aa91da58f91f1f03eede0ba7eef390f\node_modules\@rc-component\util\lib\hooks\useLayoutEffect.js:19:12
+    at Object.react_stack_bottom_frame (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (E:\AI_Projects\ResearchNavigator\apps\web\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:13336:11) [90mundefined[39m
+
+ [32m✓[39m src/app/workspaceExperience.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 800[2mms[22m[39m
+   [33m[2m✓[22m[39m research workspace experience[2m > [22mexplains the evidence-driven workflow before a researcher signs in [33m 380[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/pages/paperSelectionExperience.test.tsx[2m > [22mselection-first paper workflow[2m > [22mrestores a persisted Top50 search session and paginates ten papers per page
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: /discovery/i
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+[36m>[39m
+  [0m模糊概念词自动进入 Discovery；明确题名/DOI 使用 Precise。[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ant-select-content ant-select-content-has-value"[39m
+  [33mtitle[39m=[32m"Discovery"[39m
+[36m>[39m
+  [0mDiscovery[0m
+  [36m<input[39m
+    [33maria-autocomplete[39m=[32m"list"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"listbox"[39m
+    [33mautocomplete[39m=[32m"new-password"[39m
+    [33mclass[39m=[32m"ant-select-input"[39m
+    [33mid[39m=[32m"mode"[39m
+    [33mreadonly[39m=[32m""[39m
+    [33mrole[39m=[32m"combobox"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ant-tag ant-tag-filled ant-tag-blue css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+[36m>[39m
+  [0mmode=[0m
+  [0mdiscovery[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"ant-tag ant-tag-filled css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+[36m>[39m
+  [0mrule=[0m
+  [0mdiscovery-ranking-v1[0m
+[36m</span>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33mclass[39m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+  [33mstyle[39m=[32m"margin-top: 10px;"[39m
+[36m>[39m
+  [0mDiscovery Top50 以 10 篇经典候选 + 40 篇前沿候选为目标；真实来源不足时显示 shortfall，不伪造论文。顺序和 seed 固化在该 search session 中。[0m
+[36m</div>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"ant-space css-dev-only-do-not-override-viwxw0 ant-space-vertical ant-space-gap-row-large ant-space-gap-col-large css-var-root"[39m
+      [33mstyle[39m=[32m"width: 100%;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"ant-space-item"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ant-card ant-card-bordered css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-head"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ant-card-head-wrapper"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-card-head-title"[39m
+              [36m>[39m
+                [0m多源论文检索[0m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-card-extra"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"ant-typography ant-typography-secondary css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [0m模糊概念词自动进入 Discovery；明确题名/DOI 使用 Precise。[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ant-card-body"[39m
+          [36m>[39m
+            [36m<form[39m
+              [33mclass[39m=[32m"ant-form ant-form-inline css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 search-form"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 ant-form-item-has-success ant-form-item-inline"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-row ant-form-item-row css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"ant-col ant-form-item-control css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"ant-form-item-control-input"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"ant-form-item-control-input-content"[39m
+                      [36m>[39m
+                        [36m<input[39m
+                          [33maria-required[39m=[32m"true"[39m
+                          [33mclass[39m=[32m"ant-input css-dev-only-do-not-override-viwxw0 ant-input-outlined ant-input-status-success css-var-root ant-input-css-var"[39m
+                          [33mid[39m=[32m"query"[39m
+                          [33mplaceholder[39m=[32m"关键词、题目、DOI、arXiv ID、作者或数据集"[39m
+                          [33mtype[39m=[32m"text"[39m
+                          [33mvalue[39m=[32m"attention"[39m
+                        [36m/>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ant-form-item css-var-root ant-form-css-var css-dev-only-do-not-override-viwxw0 ant-form-item-has-success ant-form-item-inline"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ant-row ant-form-item-row css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"ant-col ant-form-item-control css-dev-only-do-not-override-viwxw0 css-var-root"[39m
+                  [36m>[39m
+                    [36m<div[39m
+                      [33mclass[39m=[32m"ant-form-item-control-input"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mclass[39m=[32m"ant-form-item-control-input-content"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mclass[39m=[32m"ant-select ant-select-outlined ant-select-in-form-item ant-select-status-success css-var-root ant-select-css-var css-dev-only-do-not-override-viwxw0 ant-select-single ant-select-show-arrow"[39m
+                          [33mstyle[39m=[32m"width: 140px;"[39m
+                        [36m>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-select-content ant-select-content-has-value"[39m
+                            [33mtitle[39m=[32m"Discovery"[39m
+                          [36m>[39m
+                            [0mDiscovery[0m
+                            [36m<input[39m
+                              [33maria-autocomplete[39m=[32m"list"[39m
+                              [33maria-expanded[39m=[32m"false"[39m
+                              [33maria-haspopup[39m=[32m"listbox"[39m
+                              [33mautocomplete[39m=[32m"new-password"[39m
+                              [33mclass[39m=[32m"ant-select-input"[39m
+                              [33mid[39m=[32m"mode"[39m
+                              [33mreadonly[39m=[32m""[39m
+                              [33mrole[39m=[32m"combobox"[39m
+                              [33mtype[39m=[32m"text"[39m
+                              [33mvalue[39m=[32m""[39m
+                            [36m/>[39m
+                          [36m</div>[39m
+                          [36m<div[39m
+                            [33mclass[39m=[32m"ant-select-suffix"[39m
+                          [36m>[39m
+                            [36m<span[39m
+                              [33maria-label[39m=[32m"down"[39m
+                              [33mclass[39m=[32m"anticon anticon-down"[39m
+                              [33mrole[39m=[32m"img"[39m
+                            [36m>[39m
+                              [36m<svg[39m
+                                [33maria-hidden[39m=[32m"true"[39m
+                                [33mdata-icon[39m=[32m"down"[39m
+                                [33mfill[39m=[32m"currentColor"[39m
+                                [33mfocusable[39m=[32m"false"[39m
+                                [33mheight[39m=[32m"1em"[39m
+                                [33mviewBox[39m=[32m"64 64 896 896"[39m
+                                [33mwidth[39m=[32m"1em"[39m
+                              [36m>[39m
+                                [36m<path[39m
+                                  [33md[39m=[32m"M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7...
+[90m [2m❯[22m Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/pages/paperSelectionExperience.test.tsx:[2m54:19[22m[39m
+    [90m 52| [39m    [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([32m'Attention paper 10'[39m))[33m.[39m[34mtoBeInTheDocument[39m()[33m;[39m
+    [90m 53| [39m    expect(screen.queryByText('Attention paper 11')).not.toBeInTheDocu…
+    [90m 54| [39m    [34mexpect[39m(screen[33m.[39m[34mgetByText[39m([36m/discovery/i[39m))[33m.[39m[34mtoBeInTheDocument[39m()[33m;[39m
+    [90m   | [39m                  [31m^[39m
+    [90m 55| [39m    await waitFor(() => expect(screen.getByText(/10.*40|classic/i)).to…
+    [90m 56| [39m  })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 19:55:23
+[2m   Duration [22m 6.48s[2m (transform 207ms, setup 1.24s, collect 6.99s, tests 1.68s, environment 2.75s, prepare 803ms)[22m
+
+[ELIFECYCLE] Test failed. See above for more details.

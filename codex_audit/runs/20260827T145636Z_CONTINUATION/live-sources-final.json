@@ -1,0 +1,185 @@
+{
+  "query": "Attention Is All You Need",
+  "requested_limit_per_source": 2,
+  "started_at": "2026-08-27T15:16:48.494969+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "rate_limited",
+      "detail": "OpenAlex returned 429",
+      "checked_at": "2026-08-27T15:16:49.510094+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T15:16:56.799289+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": "10.1007/978-3-031-84300-6_13",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.1007/978-3-031-84300-6_13"
+          },
+          "source_urls": [
+            "https://doi.org/10.1007/978-3-031-84300-6_13"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.1007/978-3-031-84300-6_13",
+              "source_url": "https://doi.org/10.1007/978-3-031-84300-6_13",
+              "fetched_at": "2026-08-27T15:16:56.799289+00:00",
+              "raw_hash": "7c2a86008c3c8325d5b2a7f6b04ca8dcbfa605a694e23eefc4f0e5c5c43aa6d9",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.2139/ssrn.4993784",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.2139/ssrn.4993784"
+          },
+          "source_urls": [
+            "https://doi.org/10.2139/ssrn.4993784"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.2139/ssrn.4993784",
+              "source_url": "https://doi.org/10.2139/ssrn.4993784",
+              "fetched_at": "2026-08-27T15:16:56.799289+00:00",
+              "raw_hash": "aebd33de0f37de06049ddde22f7c65a7eb6ad1cfc7a48041d656583cb794b5d2",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "arxiv",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T15:16:58.219293+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "2105.02723v1",
+          "external_ids": {
+            "arxiv": "2105.02723v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2105.02723v1",
+            "https://arxiv.org/abs/2105.02723v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2105.02723v1",
+              "source_url": "http://arxiv.org/abs/2105.02723v1",
+              "fetched_at": "2026-08-27T15:16:58.219293+00:00",
+              "raw_hash": "f9268b6ee540e622f173652523bfefba272e8c9000524efb3ac6c3963a2adf86",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": null,
+          "arxiv_id": "2512.19700v1",
+          "external_ids": {
+            "arxiv": "2512.19700v1"
+          },
+          "source_urls": [
+            "http://arxiv.org/abs/2512.19700v1",
+            "https://arxiv.org/abs/2512.19700v1"
+          ],
+          "provenance": [
+            {
+              "source": "arxiv",
+              "source_id": "2512.19700v1",
+              "source_url": "http://arxiv.org/abs/2512.19700v1",
+              "fetched_at": "2026-08-27T15:16:58.219293+00:00",
+              "raw_hash": "876b0a60c95d10bb07bbfc775e0c4bd544bf0f80f7df94ab25d46650b75ee686",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-27T15:17:06.074647+00:00",
+      "result_count": 2,
+      "identifiers": [
+        {
+          "doi": null,
+          "arxiv_id": "1706.03762",
+          "external_ids": {
+            "MAG": "2963403868",
+            "DBLP": "journals/corr/VaswaniSPUJGKP17",
+            "ArXiv": "1706.03762",
+            "CorpusId": "13756489"
+          },
+          "source_urls": [
+            "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776"
+          ],
+          "provenance": [
+            {
+              "source": "semantic_scholar",
+              "source_id": "204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+              "source_url": "https://www.semanticscholar.org/paper/204e3073870fae3d05bcbc2f6a8e263d9b72e776",
+              "fetched_at": "2026-08-27T15:17:06.074647+00:00",
+              "raw_hash": "dfd55e5b977d57107f364d6279c5642c15bf0b9b02d35154bf8ca12cb6acfddd",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.1109/ICASSP39728.2021.9413901",
+          "arxiv_id": "2010.13154",
+          "external_ids": {
+            "DBLP": "journals/corr/abs-2010-13154",
+            "ArXiv": "2010.13154",
+            "MAG": "3094280184",
+            "DOI": "10.1109/ICASSP39728.2021.9413901",
+            "CorpusId": "225068152"
+          },
+          "source_urls": [
+            "https://www.semanticscholar.org/paper/51c9d4d2f50ac5707c1f889aa97f08350d549132"
+          ],
+          "provenance": [
+            {
+              "source": "semantic_scholar",
+              "source_id": "51c9d4d2f50ac5707c1f889aa97f08350d549132",
+              "source_url": "https://www.semanticscholar.org/paper/51c9d4d2f50ac5707c1f889aa97f08350d549132",
+              "fetched_at": "2026-08-27T15:17:06.074647+00:00",
+              "raw_hash": "0b88458cabe4b43e2c1b99b0ce2b3069628bf8ff8dae89d321e198627819633c",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    }
+  ],
+  "dedup": {
+    "input_count": 6,
+    "output_count": 6
+  },
+  "finished_at": "2026-08-27T15:17:06.076654+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex"
+  ]
+}

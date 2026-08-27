@@ -1,0 +1,9 @@
+name=licensed_sources
+status=SKIPPED
+command=Web of Science / Elsevier / Scopus
+exit_code=None
+duration_seconds=0.0
+--- stdout ---
+(empty)
+--- stderr/blocker ---
+licensed adapters are outside the implemented source set and no lawful credentials were supplied

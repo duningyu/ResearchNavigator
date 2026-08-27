@@ -1,0 +1,14 @@
+Target: E:\AI_Projects\ResearchNavigator
+Python locked dependency sync: PASS
+Frontend locked dependency sync: PASS
+Frontend production build: PASS
+Initial Alembic attempt: FAIL (runtime directory absent; retained as deployment diagnosis)
+Corrective action: created explicit runtime/uploads/vector_index/backups directories
+Alembic upgrade: PASS
+Alembic current: 0002 (head)
+API GET /api/health: HTTP 200
+API response: {"status":"ok","version":"0.2.0","database":"ok"}
+API GET /openapi.json: HTTP 200
+Frontend GET /: HTTP 200
+Frontend root element present: true
+Temporary API and frontend verification processes: STOPPED

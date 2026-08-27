@@ -1,0 +1,5 @@
+uv_sync_exit=1
+pytest_exit=1
+ruff_exit=0
+mypy_exit=0
+compileall_exit=0

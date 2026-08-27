@@ -1,0 +1,7 @@
+analysis_provider deterministic
+analysis_prompt_version paper-analysis-v2
+llm_base_url_configured False
+llm_api_key_configured False
+llm_model_configured False
+openalex_api_key_configured False
+unpaywall_email_configured False

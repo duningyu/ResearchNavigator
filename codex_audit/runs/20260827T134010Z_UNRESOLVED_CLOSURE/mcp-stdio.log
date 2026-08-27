@@ -1,0 +1,123 @@
+[08/27/26 21:48:30] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/search/p                
+                             apers "HTTP/1.1 200 OK"                           
+[08/27/26 21:48:31] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/sources/                
+                             fixture/test "HTTP/1.1 200 OK"                    
+[08/27/26 21:48:32] INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/papers/1                
+                             /content-status "HTTP/1.1 200 OK"                 
+                    ERROR    Tool 'resolve_doi' raised an         server.py:440
+                             unexpected exception                              
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:176  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   173                     return |              
+                             |       else resolved              |              
+                             |   174                 pass_direc |              
+                             |   175                            |              
+                             | > 176             result = await |              
+                             |       pass_directly)             |              
+                             |   177                            |              
+                             |   178             # Registration |              
+                             |   179             # a body that  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\utilities\func_met |              
+                             | adata.py:163 in call_fn          |              
+                             |                                  |              
+                             |   160         """                |              
+                             |   161         kwargs = arguments |              
+                             |   162         if fn_is_async:    |              
+                             | > 163             return await f |              
+                             |   164         return await anyio |              
+                             |   165                            |              
+                             |   166     @deprecated(           |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \mcp_servers\paper_access\server |              
+                             | .py:19 in resolve_doi            |              
+                             |                                  |              
+                             |   16     normalized = doi.strip( |              
+                             |   17     normalized = re.sub(r"^ |              
+                             |   18     if not normalized.start |              
+                             | > 19         raise ValueError("I |              
+                             |   20     return {"doi": normaliz |              
+                             |      False}                      |              
+                             |   21                             |              
+                             |   22                             |              
+                             +----------------------------------+              
+                             ValueError: Invalid DOI                           
+                                                                               
+                             The above exception was the direct                
+                             cause of the following exception:                 
+                                                                               
+                             +- Traceback (most recent call las-+              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:427 in   |              
+                             | _handle_call_tool                |              
+                             |                                  |              
+                             |    424     ) -> CallToolResult | |              
+                             |    425         context = Context |              
+                             |        subscriptions=self._subsc |              
+                             |    426         try:              |              
+                             | >  427             return await  |              
+                             |    428         except MCPError:  |              
+                             |    429             raise         |              
+                             |    430         except Exception  |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\server.py:533 in   |              
+                             | call_tool                        |              
+                             |                                  |              
+                             |    530         """               |              
+                             |    531         if context is Non |              
+                             |    532             context = Con |              
+                             | >  533         return await self |              
+                             |        convert_result=True)      |              
+                             |    534                           |              
+                             |    535     async def list_resour |              
+                             |    536         """List all avail |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\tool_manager |              
+                             | .py:87 in call_tool              |              
+                             |                                  |              
+                             |   84         if not tool:        |              
+                             |   85             raise ToolError |              
+                             |   86                             |              
+                             | > 87         return await tool.r |              
+                             |   88                             |              
+                             |                                  |              
+                             | E:\AI_Projects\ResearchNavigator |              
+                             | \.venv\Lib\site-packages\mcp\ser |              
+                             | ver\mcpserver\tools\base.py:210  |              
+                             | in run                           |              
+                             |                                  |              
+                             |   207             raise ToolErro |              
+                             |   208         except Exception a |              
+                             |   209             # A crash: the |              
+                             | > 210             raise Unexpect |              
+                             |   211                            |              
+                             +----------------------------------+              
+                             UnexpectedToolError: Error executing              
+                             tool resolve_doi                                  
+[08/27/26 21:48:34] INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/projects                
+                             "HTTP/1.1 201 Created"                            
+                    INFO     HTTP Request: POST                 _client.py:1740
+                             http://127.0.0.1:8000/api/library/                
+                             notes "HTTP/1.1 201 Created"                      
+                    INFO     HTTP Request: GET                  _client.py:1740
+                             http://127.0.0.1:8000/api/workspac                
+                             e/export "HTTP/1.1 200 OK"                        
+PASS module=mcp_servers.scholarly_search.server protocol=2025-11-25 tools=8 calls=search_papers,source_health_check
+PASS module=mcp_servers.paper_access.server protocol=2025-11-25 tools=7 calls=resolve_arxiv,get_content_status
+PASS module=mcp_servers.research_workspace.server protocol=2025-11-25 tools=10 calls=create_research_project,add_note,export_workspace
