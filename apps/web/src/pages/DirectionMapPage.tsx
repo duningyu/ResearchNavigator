@@ -26,7 +26,7 @@ export function DirectionMapPage() {
   const favorites = useMemo(() => library.items.filter((item) => item.favorite), [library]);
   const titleById = useMemo(() => new Map(favorites.map((item) => [item.paper.id, item.paper.title])), [favorites]);
   const membersByCluster = useMemo(() => {
-    const grouped = new Map<string, typeof run.members>();
+    const grouped = new Map<string, DirectionClusterRun['members']>();
     if (!run) return grouped;
     for (const member of run.members) {
       const key = member.cluster_key ?? 'unclustered';
