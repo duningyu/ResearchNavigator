@@ -18,3 +18,17 @@ Commit: `8b39b55`
 | MCP/live-source/Docker scripts | BLOCKED: Python 3.9 or missing mcp/Docker | corresponding `*-baseline2` logs |
 
 Historical delivery and audit reports were treated as claims only.
+
+## Continuation run
+
+`codex_audit/runs/20260828T_ENV_CLOSURE_CONT/` executed with Python 3.12 and uv 0.12.6:
+
+- backend: **184 passed**;
+- security/RAG: **16 passed**;
+- frontend: **16 passed**, typecheck/build pass;
+- MCP official stdio: **PASS**;
+- Alembic: **0005 head, 53 tables, integrity ok**;
+- compileall/OpenAPI: **PASS**;
+- Ruff: **FAIL**, 63 findings;
+- Mypy: **FAIL**, 8 findings;
+- Docker, Playwright, live sources, OA, live LLM and real expert outcomes remain BLOCKED.

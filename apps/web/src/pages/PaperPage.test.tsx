@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PaperPage } from './PaperPage';
@@ -97,7 +97,9 @@ describe('paper evidence acquisition', () => {
 
     expect(await screen.findByText('证据等级：metadata_only')).toBeInTheDocument();
     expect(screen.getAllByText('未在当前可访问文本中找到。').length).toBeGreaterThan(0);
-    expect(screen.getByText('缺失字段').closest('tr')).toHaveTextContent('无');
+    const statusCard = screen.getByText('当前证据状态与缺失提示').closest('.ant-card');
+    expect(statusCard).not.toBeNull();
+    expect(within(statusCard as HTMLElement).getByText('缺失字段').closest('tr')).toHaveTextContent('无');
 
     fireEvent.click(screen.getByRole('button', { name: '获取更多证据并重新分析' }));
 

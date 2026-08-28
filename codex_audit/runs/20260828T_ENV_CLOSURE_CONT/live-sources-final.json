@@ -1,0 +1,116 @@
+{
+  "query": "attention",
+  "requested_limit_per_source": 3,
+  "started_at": "2026-08-28T00:02:43.497961+00:00",
+  "acceptance_rule": "Source must return status=ok and at least one record with stable source identifier and raw hash. Titles and counts are intentionally not frozen because live scholarly sources change.",
+  "sources": [
+    {
+      "source": "openalex",
+      "status": "error",
+      "detail": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://api.openalex.org/works?search=attention&per-page=3&page=1'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "checked_at": "2026-08-28T00:02:44.691067+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "crossref",
+      "status": "ok",
+      "detail": null,
+      "checked_at": "2026-08-28T00:02:46.337182+00:00",
+      "result_count": 3,
+      "identifiers": [
+        {
+          "doi": "10.7717/peerj-cs.2826/fig-5",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.7717/peerj-cs.2826/fig-5"
+          },
+          "source_urls": [
+            "https://doi.org/10.7717/peerj-cs.2826/fig-5"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.7717/peerj-cs.2826/fig-5",
+              "source_url": "https://doi.org/10.7717/peerj-cs.2826/fig-5",
+              "fetched_at": "2026-08-28T00:02:46.337182+00:00",
+              "raw_hash": "e5fa8e3b7bca84fcbe66d08b9b3390afc4d00b994e505ed92e843c7558d89157",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.7551/mitpress/10283.003.0007",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.7551/mitpress/10283.003.0007"
+          },
+          "source_urls": [
+            "https://doi.org/10.7551/mitpress/10283.003.0007"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.7551/mitpress/10283.003.0007",
+              "source_url": "https://doi.org/10.7551/mitpress/10283.003.0007",
+              "fetched_at": "2026-08-28T00:02:46.337182+00:00",
+              "raw_hash": "8ef1b18eb8e3917938ff7deeaf7f97d58ab5d999e5ca9dabfd7f72ab0f021de7",
+              "is_fixture": false
+            }
+          ]
+        },
+        {
+          "doi": "10.7551/mitpress/10283.003.0006",
+          "arxiv_id": null,
+          "external_ids": {
+            "crossref": "10.7551/mitpress/10283.003.0006"
+          },
+          "source_urls": [
+            "https://doi.org/10.7551/mitpress/10283.003.0006"
+          ],
+          "provenance": [
+            {
+              "source": "crossref",
+              "source_id": "10.7551/mitpress/10283.003.0006",
+              "source_url": "https://doi.org/10.7551/mitpress/10283.003.0006",
+              "fetched_at": "2026-08-28T00:02:46.337182+00:00",
+              "raw_hash": "824ef019caa9f6acd9da5d1d6abc75ba7bde23c2d8f33ceb0e8d59f140d1f1e9",
+              "is_fixture": false
+            }
+          ]
+        }
+      ],
+      "acceptance": "PASS"
+    },
+    {
+      "source": "arxiv",
+      "status": "rate_limited",
+      "detail": "arXiv returned 429",
+      "checked_at": "2026-08-28T00:02:47.590597+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    },
+    {
+      "source": "semantic_scholar",
+      "status": "rate_limited",
+      "detail": "Semantic Scholar returned 429",
+      "checked_at": "2026-08-28T00:02:48.822257+00:00",
+      "result_count": 0,
+      "identifiers": [],
+      "acceptance": "FAIL"
+    }
+  ],
+  "dedup": {
+    "input_count": 3,
+    "output_count": 3
+  },
+  "finished_at": "2026-08-28T00:02:48.823978+00:00",
+  "overall_status": "FAIL",
+  "failed_sources": [
+    "openalex",
+    "arxiv",
+    "semantic_scholar"
+  ]
+}

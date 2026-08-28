@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import { PaperIntelligenceCards } from './PaperIntelligenceCards';
 
@@ -18,7 +18,9 @@ describe('PaperIntelligenceCards', () => {
     }]} loading={false} />);
     expect(screen.getByText('A. Researcher')).toBeInTheDocument();
     expect(screen.getByText('resolved_identifier')).toBeInTheDocument();
-    expect(screen.getByText('SWaT')).toBeInTheDocument();
+    const rawMentionRow = screen.getByText('原文提及').closest('tr');
+    expect(rawMentionRow).not.toBeNull();
+    expect(within(rawMentionRow as HTMLElement).getByText('SWaT')).toBeInTheDocument();
     expect(screen.getByText('mentioned_only')).toBeInTheDocument();
     expect(screen.getAllByText('未在当前可访问证据中找到。').length).toBeGreaterThan(0);
   });

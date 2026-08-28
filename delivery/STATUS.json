@@ -1,9 +1,37 @@
 {
-  "status": "PARTIAL",
-  "version": "2.2.0",
-  "commit": "8b39b55",
-  "audit_run": "codex_audit/runs/20260827T232244Z_RN220_ENV_CLOSURE",
-  "updated_at": "2026-08-27T23:22:44Z",
-  "claim_boundary": "metadata_only and abstract_only do not infer body-only fields; fixture data is not scholarly evidence.",
-  "blocked": ["uv/Python>=3.12", "Docker", "official MCP dependencies", "live source credentials/network", "real LLM provider", "real experts"]
+  "package": "ResearchNavigator",
+  "package_version": "2.2.1",
+  "release_label": "evidence-platform",
+  "current_run": "codex_audit/runs/20260828T_ENV_CLOSURE_CONT",
+  "audit_time_utc": "2026-08-28T00:00:00Z",
+  "overall_status": "PARTIAL",
+  "audited_implementation_commit": "ed90a88",
+  "audited_branch": "codex/rn220-environment-closure",
+  "pass": {
+    "uv_python_312": "Python 3.12.0; uv 0.12.6; frozen sync succeeded",
+    "frontend_typecheck": "PASS",
+    "frontend_vitest": "16 passed in 7.69s",
+    "frontend_build": "PASS",
+    "pnpm_install": "pnpm 10.15.1 frozen install PASS",
+    "python_compileall": "pending final rerun"
+  },
+  "partial": {
+    "live_integrations": "Requires current network and lawful configuration.",
+    "expert_evaluation": "Infrastructure exists; no real expert outcome."
+  },
+  "blocked": {
+    "playwright": "Chromium/browser server closure not yet executed.",
+    "docker_cold_start_restart": "docker executable unavailable.",
+    "live_llm_provider": "Provider/base URL/key/model not configured.",
+    "real_expert_outcomes": "Requires real external expert ratings.",
+    "historical_backfill_outcome": "No authorized historical runtime.",
+    "licensed_sources": "No lawful credentials or contract scope."
+  },
+  "skipped": {},
+  "not_implemented": [],
+  "claim_boundary": [
+    "metadata_only and abstract_only never infer body-only fields.",
+    "Fixture and mock results are not scholarly or live-provider evidence.",
+    "Overall PARTIAL is not production readiness."
+  ]
 }

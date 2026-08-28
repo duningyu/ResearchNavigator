@@ -54,7 +54,7 @@ export function DirectionMapPage() {
     <Alert
       type="warning"
       showIcon
-      title="方向聚类用于组织文献，不是学科领域的客观分类"
+      title={DIRECTION_DISCLAIMER}
       description="当前 direction-cluster-v1 使用确定性文本向量、相似度图和连通分量。它不证明研究方向成立，也不替代专家分类（not an objective field taxonomy）。"
     />
     {error && <Alert type="error" showIcon title="方向聚类失败" description={error} />}

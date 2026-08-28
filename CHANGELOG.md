@@ -82,3 +82,8 @@
 - evidence level 约束的结构化分析；
 - 可解释方向匹配与复现评估；
 - SQLite WAL、外键和持久化 worker。
+# 2.2.1 verification patch — 2026-08-28
+
+- Fixed Direction Map strict TypeScript nullability.
+- Corrected ambiguous frontend test selectors and Router test context.
+- Revalidated backend, security/RAG, MCP and Alembic gates; external gates remain explicitly blocked or failed.

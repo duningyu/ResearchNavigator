@@ -3,7 +3,7 @@
   "info": {
     "title": "ResearchNavigator API",
     "description": "Evidence-grounded research direction and paper workspace.",
-    "version": "2.2.0"
+    "version": "2.2.1"
   },
   "paths": {
     "/api/health": {
@@ -4565,7 +4565,7 @@
         "properties": {
           "file": {
             "type": "string",
-            "format": "binary",
+            "contentMediaType": "application/octet-stream",
             "title": "File"
           },
           "rights_confirmed": {

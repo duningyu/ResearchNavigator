@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DirectionMapPage } from './DirectionMapPage';
 
@@ -33,7 +34,7 @@ describe('DirectionMapPage', () => {
       });
       return json({ detail: `unexpected request: ${url}` }, { status: 500 });
     });
-    render(<DirectionMapPage />);
+    render(<MemoryRouter><DirectionMapPage /></MemoryRouter>);
     expect(await screen.findByText(/不是学术领域的客观分类/)).toBeInTheDocument();
     fireEvent.mouseDown(screen.getByLabelText('研究项目'));
     fireEvent.click(await screen.findByText('TSAD'));

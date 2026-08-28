@@ -1,0 +1,938 @@
+E501 Line too long (108 > 100)
+   --> apps\api\alembic\versions\0005_evidence_platform.py:265:101
+    |
+263 |         ),
+264 |         sa.Column(
+265 |             "algorithm_version", sa.String(length=80), nullable=False, server_default="direction-cluster-v1"
+    |                                                                                                     ^^^^^^^^
+266 |         ),
+267 |         sa.Column("parameters_json", sa.Text(), nullable=False, server_default="{}"),
+    |
+
+E501 Line too long (113 > 100)
+   --> apps\api\research_navigator\analysis\service.py:113:101
+    |
+111 | def _stable_hash(value: object) -> str:
+112 |     return hashlib.sha256(
+113 |         json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+    |                                                                                                     ^^^^^^^^^^^^^
+114 |     ).hexdigest()
+    |
+
+E501 Line too long (106 > 100)
+   --> apps\api\research_navigator\analysis\service.py:170:101
+    |
+168 |     if provider_override is not None:
+169 |         analysis_run_id = uuid.uuid4().hex
+170 |         provider_name = str(getattr(provider_override, "provider_name", type(provider_override).__name__))
+    |                                                                                                     ^^^^^^
+171 |         model_name = getattr(provider_override, "model_name", None)
+172 |         run = AgentRun(
+    |
+
+E501 Line too long (105 > 100)
+   --> apps\api\research_navigator\authors\service.py:121:101
+    |
+119 |                 orcid=orcid,
+120 |                 affiliations_json=json.dumps(affiliations, ensure_ascii=False),
+121 |                 identity_status="resolved" if (orcid or (source and source_author_id)) else "unresolved",
+    |                                                                                                     ^^^^^
+122 |                 provenance_json=json.dumps([provenance_item], ensure_ascii=False),
+123 |             )
+    |
+
+SIM105 Use `contextlib.suppress(ValueError, TypeError)` instead of `try`-`except`-`pass`
+   --> apps\api\research_navigator\clustering\service.py:114:9
+    |
+112 |       parts = [paper.title]
+113 |       for raw in (paper.fields_of_study_json, paper.concepts_json, paper.keywords_json):
+114 | /         try:
+115 | |             parts.extend(str(item) for item in json.loads(raw) if str(item).strip())
+116 | |         except (ValueError, TypeError):
+117 | |             pass
+    | |________________^
+118 |       analysis = session.scalar(
+119 |           select(PaperAnalysisRecord)
+    |
+help: Replace `try`-`except`-`pass` with `with contextlib.suppress(ValueError, TypeError): ...`
+
+UP012 [*] Unnecessary UTF-8 `encoding` argument to `encode`
+   --> apps\api\research_navigator\evaluations\service.py:116:9
+    |
+114 | def _blind_mapping(study: EvaluationStudy, task: EvaluationTask) -> list[dict[str, str]]:
+115 |     digest = hashlib.sha256(
+116 |         f"{study.randomized_seed}:{task.task_key}:{study.frozen_input_hash}".encode("utf-8")
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+117 |     ).digest()
+118 |     sources = ["baseline", "candidate"] if digest[0] % 2 == 0 else ["candidate", "baseline"]
+    |
+help: Remove unnecessary `encoding` argument
+    |
+115 |     digest = hashlib.sha256(
+    -         f"{study.randomized_seed}:{task.task_key}:{study.frozen_input_hash}".encode("utf-8")
+116 +         f"{study.randomized_seed}:{task.task_key}:{study.frozen_input_hash}".encode()
+117 |     ).digest()
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\evidence\workflow.py:3:1
+   |
+ 1 |   """Resumable, evidence-bounded acquisition workflow executor."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import json
+ 6 | | from dataclasses import dataclass
+ 7 | | from datetime import UTC, datetime
+ 8 | | from typing import Any, Protocol
+ 9 | |
+10 | | from sqlalchemy import select
+11 | | from sqlalchemy.orm import Session
+12 | |
+13 | | from research_navigator.analysis.acquisition import (
+14 | |     FULLTEXT_LEVELS,
+15 | |     EvidenceAcquisitionError,
+16 | |     acquire_paper_evidence,
+17 | | )
+18 | | from research_navigator.analysis.service import accessible_text, run_paper_analysis
+19 | | from research_navigator.authors.service import refresh_author_cards
+20 | | from research_navigator.datasets.service import refresh_dataset_cards
+21 | | from research_navigator.config import Settings
+22 | | from research_navigator.models import Job, JobEvent, Paper, ResearchProject
+23 | | from research_navigator.open_access.base import OpenAccessResolution, PaperIdentity
+24 | | from research_navigator.open_access.fetcher import PdfFetchResult
+25 | | from research_navigator.open_access.ingestion import ingest_open_access_pdf
+26 | | from research_navigator.scholarly.service import FederatedSearchService
+   | |_______________________________________________________________________^
+27 |
+28 |   WORKFLOW_TYPE = "evidence_workflow_v1"
+   |
+help: Organize imports
+   |
+19 | from research_navigator.authors.service import refresh_author_cards
+20 + from research_navigator.config import Settings
+21 | from research_navigator.datasets.service import refresh_dataset_cards
+   - from research_navigator.config import Settings
+22 | from research_navigator.models import Job, JobEvent, Paper, ResearchProject
+   |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> apps\api\research_navigator\evidence\workflow.py:368:13
+    |
+366 |         job = session.get(Job, job_id)
+367 |         if job is None:
+368 |             raise LookupError("Evidence workflow not found")
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+369 |         add_event(session, job, "author_card_refresh", {"outcome": "failed", "error": warning})
+    |
+
+B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+   --> apps\api\research_navigator\evidence\workflow.py:385:13
+    |
+383 |         job = session.get(Job, job_id)
+384 |         if job is None:
+385 |             raise LookupError("Evidence workflow not found")
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+386 |         add_event(session, job, "dataset_card_refresh", {"outcome": "failed", "error": warning})
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\main.py:3:1
+   |
+ 1 |   """FastAPI application factory."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | from collections.abc import AsyncIterator
+ 6 | | from contextlib import asynccontextmanager
+ 7 | |
+ 8 | | from fastapi import FastAPI
+ 9 | | from fastapi.middleware.cors import CORSMiddleware
+10 | |
+11 | | from research_navigator.analysis.providers import build_analysis_provider
+12 | | from research_navigator.backups.service import apply_pending_restore
+13 | | from research_navigator.config import Settings
+14 | | from research_navigator.db import Database
+15 | | from research_navigator.routes import (
+16 | |     analysis,
+17 | |     authors,
+18 | |     auth,
+19 | |     backups,
+20 | |     backfill,
+21 | |     comparisons,
+22 | |     clustering,
+23 | |     datasets,
+24 | |     documents,
+25 | |     evidence,
+26 | |     evaluations,
+27 | |     gaps,
+28 | |     library,
+29 | |     plans,
+30 | |     projects,
+31 | |     recommendations,
+32 | |     search,
+33 | |     selections,
+34 | |     system,
+35 | |     workspace,
+36 | | )
+37 | | from research_navigator.routes import (
+38 | |     settings as settings_routes,
+39 | | )
+40 | | from research_navigator.open_access import build_open_access_resolver, build_pdf_fetcher
+41 | | from research_navigator.scholarly.service import build_search_service
+   | |_____________________________________________________________________^
+help: Organize imports
+   |
+14 | from research_navigator.db import Database
+15 + from research_navigator.open_access import build_open_access_resolver, build_pdf_fetcher
+16 | from research_navigator.routes import (
+17 |     analysis,
+   -     authors,
+18 |     auth,
+19 +     authors,
+20 +     backfill,
+21 |     backups,
+   -     backfill,
+22 +     clustering,
+23 |     comparisons,
+   -     clustering,
+24 |     datasets,
+25 |     documents,
+   -     evidence,
+26 |     evaluations,
+27 +     evidence,
+28 |     gaps,
+--------------------------------------------------------------------------------
+40 | )
+   - from research_navigator.open_access import build_open_access_resolver, build_pdf_fetcher
+41 | from research_navigator.scholarly.service import build_search_service
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\open_access\arxiv.py:58:101
+   |
+56 |                 is_oa=True,
+57 |                 provenance_hash=hashlib.sha256(ET.tostring(entry)).hexdigest(),
+58 |                 metadata={"terms_note": "arXiv license governs automated storage and redistribution"},
+   |                                                                                                     ^^
+59 |             )
+60 |         ]
+   |
+
+E501 Line too long (101 > 100)
+   --> apps\api\research_navigator\open_access\fetcher.py:135:101
+    |
+133 |                     data = b"".join(chunks)
+134 |                     if not data.startswith(b"%PDF-"):
+135 |                         raise DocumentSecurityError("Remote content failed PDF signature validation")
+    |                                                                                                     ^
+136 |                     response_metadata = {
+137 |                         "final_url": current_url,
+    |
+
+E501 Line too long (101 > 100)
+  --> apps\api\research_navigator\routes\evaluations.py:85:101
+   |
+85 | def _assignment_read(session: Session, assignment: EvaluationAssignment) -> EvaluationAssignmentRead:
+   |                                                                                                     ^
+86 |     task = session.get(EvaluationTask, assignment.task_id)
+87 |     if task is None:
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\routes\system.py:3:1
+   |
+ 1 |   """Persistent jobs and scholarly-source health endpoints."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import asyncio
+ 6 | | import json
+ 7 | | from datetime import UTC, datetime
+ 8 | |
+ 9 | | from fastapi import APIRouter, Depends, HTTPException, Request, status
+10 | | from sqlalchemy import select
+11 | | from sqlalchemy.orm import Session
+12 | |
+13 | | from research_navigator.config import Settings
+14 | | from research_navigator.deps import get_current_user, get_db
+15 | | from research_navigator.idempotency import replay_snapshot, store_snapshot
+16 | | from research_navigator.models import Job, JobEvent, ResearchProject, User
+17 | | from research_navigator.scholarly.runtime import SourceRuntimeRepository
+18 | | from research_navigator.schemas.jobs import JobCreate, JobEventRead, JobRead, SourceHealthRead
+19 | | from research_navigator.schemas.settings import AdminConfigStatus, AdminRuntimeConfig
+20 | | from research_navigator.scholarly.base import SourceStatus
+   | |__________________________________________________________^
+21 |
+22 |   router = APIRouter(tags=["system"])
+   |
+help: Organize imports
+   |
+16 | from research_navigator.models import Job, JobEvent, ResearchProject, User
+   - from research_navigator.scholarly.runtime import SourceRuntimeRepository
+17 | from research_navigator.schemas.jobs import JobCreate, JobEventRead, JobRead, SourceHealthRead
+18 | from research_navigator.schemas.settings import AdminConfigStatus, AdminRuntimeConfig
+19 | from research_navigator.scholarly.base import SourceStatus
+20 + from research_navigator.scholarly.runtime import SourceRuntimeRepository
+21 |
+   |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> apps\api\research_navigator\scholarly\openalex.py:3:1
+   |
+ 1 |   """OpenAlex works adapter."""
+ 2 |
+ 3 | / from __future__ import annotations
+ 4 | |
+ 5 | | import hashlib
+ 6 | | from typing import Any
+ 7 | |
+ 8 | | import httpx
+ 9 | |
+10 | | from research_navigator.scholarly.base import (
+11 | |     AdapterSearchResult,
+12 | |     PaperAuthor,
+13 | |     PaperRecord,
+14 | |     ScholarlyAdapter,
+15 | |     SearchRequest,
+16 | |     SourceProvenance,
+17 | |     SourceStatus,
+18 | | )
+   | |_^
+help: Organize imports
+   |
+20 |
+   -
+   -
+21 | def _safe_int(value: str | None) -> int | None:
+   |
+
+E501 Line too long (102 > 100)
+  --> apps\api\research_navigator\scholarly\service.py:37:101
+   |
+35 |     ) -> FederatedSearchResult:
+36 |         selected_names = (
+37 |             selected_names if selected_names is not None else (request.sources or list(self.adapters))
+   |                                                                                                     ^^
+38 |         )
+39 |         selected = [self.adapters[name] for name in selected_names if name in self.adapters]
+   |
+
+E501 Line too long (107 > 100)
+   --> scripts\verify_delivery.py:345:101
+    |
+343 |             status("playwright_e2e"),
+344 |             evidence("playwright_e2e", "not executed"),
+345 |             "Run the current API-backed Playwright flow including 2.2 evidence, map and evaluation pages.",
+    |                                                                                                     ^^^^^^^
+346 |         ),
+347 |         (
+    |
+
+E501 Line too long (106 > 100)
+   --> scripts\verify_delivery.py:369:101
+    |
+367 |             status("live_open_sources"),
+368 |             evidence("live_open_sources", "not executed"),
+369 |             "Rerun with network and lawful keys; retain query/time/status/identifiers/provenance hashes.",
+    |                                                                                                     ^^^^^^
+370 |         ),
+371 |         (
+    |
+
+E501 Line too long (104 > 100)
+   --> scripts\verify_delivery.py:440:101
+    |
+438 |             "P1",
+439 |             implementation,
+440 |             evidence("evidence_platform_focused", "Dry-run/exact-match/idempotency/cancellation tests"),
+    |                                                                                                     ^^^^
+441 |             "Run dry-run on a real backup before any historical runtime mutation.",
+442 |         ),
+    |
+
+E501 Line too long (104 > 100)
+   --> scripts\verify_delivery.py:842:101
+    |
+840 |             "Search diversity is seeded within relevance bands and remains reproducible "
+841 |             "per saved session; it is not unrestricted randomization.",
+842 |             "Unknown OA rights never trigger automatic full-text storage; a PDF URL is not sufficient.",
+    |                                                                                                     ^^^^
+843 |             "OpenAlex fallback success does not relabel OpenAlex itself as healthy.",
+844 |             "Citation-validated provider tests do not prove a live LLM endpoint is available.",
+    |
+
+E501 Line too long (105 > 100)
+   --> scripts\verify_delivery.py:845:101
+    |
+843 |             "OpenAlex fallback success does not relabel OpenAlex itself as healthy.",
+844 |             "Citation-validated provider tests do not prove a live LLM endpoint is available.",
+845 |             "Author name-only identities remain unresolved; dataset fields are not inferred from names.",
+    |                                                                                                     ^^^^^
+846 |             "Direction clusters are literature-organization aids, not objective field taxonomy.",
+847 |             "Evaluation infrastructure does not prove expert effectiveness; simulated ratings remain separate.",
+    |
+
+E501 Line too long (112 > 100)
+   --> scripts\verify_delivery.py:847:101
+    |
+845 |             "Author name-only identities remain unresolved; dataset fields are not inferred from names.",
+846 |             "Direction clusters are literature-organization aids, not objective field taxonomy.",
+847 |             "Evaluation infrastructure does not prove expert effectiveness; simulated ratings remain separate.",
+    |                                                                                                     ^^^^^^^^^^^^
+848 |             "The package is a local/LAN research workflow implementation, "
+849 |             "not a verified public SaaS deployment.",
+    |
+
+F401 [*] `sys` imported but unused
+  --> scripts\verify_docker_persistence.py:20:8
+   |
+18 | import sqlite3
+19 | import subprocess
+20 | import sys
+   |        ^^^
+21 | import time
+22 | import urllib.error
+   |
+help: Remove unused import: `sys`
+   |
+19 | import subprocess
+   - import sys
+20 | import time
+   |
+
+E501 Line too long (122 > 100)
+   --> scripts\verify_docker_persistence.py:165:101
+    |
+163 |         b"<< /Type /Catalog /Pages 2 0 R >>",
+164 |         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+165 |         b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^
+166 |         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+167 |         b"<< /Length %d >>\nstream\n" % len(stream) + stream + b"\nendstream",
+    |
+
+E501 Line too long (104 > 100)
+   --> scripts\verify_docker_persistence.py:226:101
+    |
+224 |         ):
+225 |             if table in tables:
+226 |                 counts[table] = int(connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])
+    |                                                                                                     ^^^^
+227 |         return {"integrity": "ok", "counts": counts}
+    |
+
+E501 Line too long (103 > 100)
+   --> scripts\verify_docker_persistence.py:264:101
+    |
+262 |     if check and completed.returncode != 0:
+263 |         raise AcceptanceFailure(
+264 |             f"Command failed ({completed.returncode}): {' '.join(command)}\n{completed.stderr[-2000:]}"
+    |                                                                                                     ^^^
+265 |         )
+266 |     return completed
+    |
+
+E501 Line too long (112 > 100)
+   --> scripts\verify_docker_persistence.py:406:101
+    |
+404 |     if not any(int(row["id"]) == state["project_id"] for row in projects):
+405 |         raise AcceptanceFailure("Project disappeared after lifecycle transition")
+406 |     if not any(int(item["paper"]["id"]) == state["paper_id"] and item["favorite"] for item in library["items"]):
+    |                                                                                                     ^^^^^^^^^^^^
+407 |         raise AcceptanceFailure("Favorite disappeared after lifecycle transition")
+408 |     document = next((row for row in documents if int(row["id"]) == state["document_id"]), None)
+    |
+
+E501 Line too long (109 > 100)
+   --> scripts\verify_docker_persistence.py:414:101
+    |
+412 |         raise AcceptanceFailure("Latest analysis regressed to an older record")
+413 |     if workflow["status"] not in {"succeeded", "partial"}:
+414 |         raise AcceptanceFailure(f"Workflow is not terminal after lifecycle transition: {workflow['status']}")
+    |                                                                                                     ^^^^^^^^^
+415 |     return {
+416 |         "user_id": int(me["id"]),
+    |
+
+E501 Line too long (107 > 100)
+   --> scripts\verify_docker_persistence.py:490:101
+    |
+489 |     try:
+490 |         run_command([executable, "compose", "version"], environment=environment, report=report, timeout=30)
+    |                                                                                                     ^^^^^^^
+491 |         report["phases"]["docker_available"] = {"status": "PASS", "executable": executable}
+    |
+
+E501 Line too long (102 > 100)
+   --> scripts\verify_docker_persistence.py:501:101
+    |
+499 |             shutil.rmtree(runtime_dir)
+500 |         runtime_dir.mkdir(parents=True)
+501 |         marker.write_text("ResearchNavigator dedicated Docker acceptance runtime\n", encoding="utf-8")
+    |                                                                                                     ^^
+502 |         report["phases"]["runtime_prepared"] = {"status": "PASS"}
+    |
+
+E501 Line too long (112 > 100)
+   --> scripts\verify_docker_persistence.py:504:101
+    |
+502 |         report["phases"]["runtime_prepared"] = {"status": "PASS"}
+503 |
+504 |         run_command(compose + ["down", "--remove-orphans"], environment=environment, report=report, check=False)
+    |                                                                                                     ^^^^^^^^^^^^
+505 |         run_command(compose + ["build", "--no-cache"], environment=environment, report=report)
+506 |         report["phases"]["build"] = {"status": "PASS", "no_cache": True}
+    |
+
+E501 Line too long (123 > 100)
+   --> scripts\verify_docker_persistence.py:508:101
+    |
+506 |         report["phases"]["build"] = {"status": "PASS", "no_cache": True}
+507 |
+508 |         run_command(compose + ["up", "-d", "--wait"], environment=environment, report=report, timeout=args.timeout_seconds)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+509 |         services_started = True
+510 |         health = wait_for_health(client, args.timeout_seconds)
+    |
+
+E501 Line too long (109 > 100)
+   --> scripts\verify_docker_persistence.py:514:101
+    |
+513 |         state = seed_http_scenario(client, runtime_dir)
+514 |         report["scenario"] = {key: value for key, value in state.items() if key not in {"token", "password"}}
+    |                                                                                                     ^^^^^^^^^
+515 |         report["phases"]["http_seed"] = {"status": "PASS", "worker_terminal": state["workflow_status"]}
+516 |         first_verify = verify_http_scenario(client, state)
+    |
+
+E501 Line too long (103 > 100)
+   --> scripts\verify_docker_persistence.py:515:101
+    |
+513 |         state = seed_http_scenario(client, runtime_dir)
+514 |         report["scenario"] = {key: value for key, value in state.items() if key not in {"token", "password"}}
+515 |         report["phases"]["http_seed"] = {"status": "PASS", "worker_terminal": state["workflow_status"]}
+    |                                                                                                     ^^^
+516 |         first_verify = verify_http_scenario(client, state)
+517 |         report["phases"]["initial_state"] = {"status": "PASS", **first_verify}
+    |
+
+E501 Line too long (129 > 100)
+   --> scripts\verify_docker_persistence.py:519:101
+    |
+517 |         report["phases"]["initial_state"] = {"status": "PASS", **first_verify}
+518 |
+519 |         run_command(compose + ["restart", "api", "worker"], environment=environment, report=report, timeout=args.timeout_seconds)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+520 |         wait_for_health(client, args.timeout_seconds)
+521 |         after_restart = verify_http_scenario(client, state)
+    |
+
+E501 Line too long (123 > 100)
+   --> scripts\verify_docker_persistence.py:526:101
+    |
+524 |         run_command(compose + ["down", "--remove-orphans"], environment=environment, report=report)
+525 |         services_started = False
+526 |         run_command(compose + ["up", "-d", "--wait"], environment=environment, report=report, timeout=args.timeout_seconds)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^
+527 |         services_started = True
+528 |         wait_for_health(client, args.timeout_seconds)
+    |
+
+E501 Line too long (119 > 100)
+   --> scripts\verify_docker_persistence.py:554:101
+    |
+552 |         if not staged.get("restart_required"):
+553 |             raise AcceptanceFailure("stage-restore did not require restart")
+554 |         run_command(compose + ["restart", "api"], environment=environment, report=report, timeout=args.timeout_seconds)
+    |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+555 |         wait_for_health(client, args.timeout_seconds)
+556 |         run_command(compose + ["start", "worker"], environment=environment, report=report)
+    |
+
+E501 Line too long (137 > 100)
+   --> scripts\verify_docker_persistence.py:566:101
+    |
+564 | …
+565 | …esearch_navigator.db")
+566 | …ter_restore["user_id"]) / str(state["paper_id"]) / f"{state['document_sha256']}.pdf"
+    |                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+567 | …ored_pdf) != state["document_sha256"]:
+568 | … missing or hash-mismatched")
+    |
+
+F401 [*] `research_navigator.models.PaperAuthorLink` imported but unused
+  --> tests\integration\test_author_cards.py:12:54
+   |
+10 | from research_navigator.config import Settings
+11 | from research_navigator.main import create_app
+12 | from research_navigator.models import Author, Paper, PaperAuthorLink, PaperSource, User
+   |                                                      ^^^^^^^^^^^^^^^
+help: Remove unused import
+   |
+11 | from research_navigator.main import create_app
+   - from research_navigator.models import Author, Paper, PaperAuthorLink, PaperSource, User
+12 + from research_navigator.models import Author, Paper, PaperSource
+13 |
+   |
+
+F401 [*] `research_navigator.models.User` imported but unused
+  --> tests\integration\test_author_cards.py:12:84
+   |
+10 | from research_navigator.config import Settings
+11 | from research_navigator.main import create_app
+12 | from research_navigator.models import Author, Paper, PaperAuthorLink, PaperSource, User
+   |                                                                                    ^^^^
+help: Remove unused import
+   |
+11 | from research_navigator.main import create_app
+   - from research_navigator.models import Author, Paper, PaperAuthorLink, PaperSource, User
+12 + from research_navigator.models import Author, Paper, PaperSource
+13 |
+   |
+
+E501 Line too long (101 > 100)
+  --> tests\integration\test_author_cards.py:90:101
+   |
+90 | def test_refresh_merges_orcid_but_never_name_only_and_api_exposes_provenance(tmp_path: Path) -> None:
+   |                                                                                                     ^
+91 |     app = create_app(settings_for(tmp_path))
+92 |     with TestClient(app) as client:
+   |
+
+F401 [*] `json` imported but unused
+ --> tests\integration\test_dataset_cards.py:3:8
+  |
+1 | from __future__ import annotations
+2 |
+3 | import json
+  |        ^^^^
+4 | from pathlib import Path
+  |
+help: Remove unused import: `json`
+  |
+2 |
+  - import json
+3 | from pathlib import Path
+  |
+
+F401 [*] `research_navigator.models.User` imported but unused
+  --> tests\integration\test_dataset_cards.py:11:67
+   |
+ 9 | from research_navigator.config import Settings
+10 | from research_navigator.main import create_app
+11 | from research_navigator.models import Paper, PaperAnalysisRecord, User
+   |                                                                   ^^^^
+help: Remove unused import: `research_navigator.models.User`
+   |
+10 | from research_navigator.main import create_app
+   - from research_navigator.models import Paper, PaperAnalysisRecord, User
+11 + from research_navigator.models import Paper, PaperAnalysisRecord
+12 |
+   |
+
+E501 Line too long (101 > 100)
+  --> tests\integration\test_dataset_cards.py:43:101
+   |
+41 |     data = client.post(
+42 |         "/api/auth/register",
+43 |         json={"email": "datasets@example.com", "password": "research-pass-123", "display_name": "D"},
+   |                                                                                                     ^
+44 |     ).json()
+45 |     return {"Authorization": f"Bearer {data['access_token']}"}, data["user"]["id"]
+   |
+
+E501 Line too long (105 > 100)
+  --> tests\integration\test_dataset_cards.py:63:101
+   |
+61 |         datasets=["SWaT"],
+62 |         metrics=["PR-AUC"],
+63 |         experimental_protocol=["The training split uses 80 percent and the test split uses 20 percent."],
+   |                                                                                                     ^^^^^
+64 |         experiment_design=["The training split uses 80 percent and the test split uses 20 percent."],
+65 |         field_states={"datasets": "evidenced", "metrics": "evidenced", "experimental_protocol": "evidenced"},
+   |
+
+E501 Line too long (101 > 100)
+  --> tests\integration\test_dataset_cards.py:64:101
+   |
+62 |         metrics=["PR-AUC"],
+63 |         experimental_protocol=["The training split uses 80 percent and the test split uses 20 percent."],
+64 |         experiment_design=["The training split uses 80 percent and the test split uses 20 percent."],
+   |                                                                                                     ^
+65 |         field_states={"datasets": "evidenced", "metrics": "evidenced", "experimental_protocol": "evidenced"},
+66 |         field_citations={"datasets": [citation], "metrics": [citation], "experimental_protocol": [citation]},
+   |
+
+E501 Line too long (109 > 100)
+  --> tests\integration\test_dataset_cards.py:65:101
+   |
+63 |         experimental_protocol=["The training split uses 80 percent and the test split uses 20 percent."],
+64 |         experiment_design=["The training split uses 80 percent and the test split uses 20 percent."],
+65 |         field_states={"datasets": "evidenced", "metrics": "evidenced", "experimental_protocol": "evidenced"},
+   |                                                                                                     ^^^^^^^^^
+66 |         field_citations={"datasets": [citation], "metrics": [citation], "experimental_protocol": [citation]},
+67 |     )
+   |
+
+E501 Line too long (109 > 100)
+  --> tests\integration\test_dataset_cards.py:66:101
+   |
+64 |         experiment_design=["The training split uses 80 percent and the test split uses 20 percent."],
+65 |         field_states={"datasets": "evidenced", "metrics": "evidenced", "experimental_protocol": "evidenced"},
+66 |         field_citations={"datasets": [citation], "metrics": [citation], "experimental_protocol": [citation]},
+   |                                                                                                     ^^^^^^^^^
+67 |     )
+68 |     with app.state.database.session() as session:
+   |
+
+E501 Line too long (111 > 100)
+   --> tests\integration\test_dataset_cards.py:106:101
+    |
+104 |         other = client.post(
+105 |             "/api/auth/register",
+106 |             json={"email": "datasets-other@example.com", "password": "research-pass-123", "display_name": "O"},
+    |                                                                                                     ^^^^^^^^^^^
+107 |         ).json()
+108 |         other_headers = {"Authorization": f"Bearer {other['access_token']}"}
+    |
+
+E501 Line too long (105 > 100)
+   --> tests\integration\test_direction_clusters.py:101:101
+    |
+ 99 |         ).json()
+100 |         assert repeated["input_hash"] == body["input_hash"]
+101 |         first_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in body["members"]]
+    |                                                                                                     ^^^^^
+102 |         second_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in repeated["members"]]
+103 |         assert first_members == second_members
+    |
+
+E501 Line too long (110 > 100)
+   --> tests\integration\test_direction_clusters.py:102:101
+    |
+100 |         assert repeated["input_hash"] == body["input_hash"]
+101 |         first_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in body["members"]]
+102 |         second_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in repeated["members"]]
+    |                                                                                                     ^^^^^^^^^^
+103 |         assert first_members == second_members
+    |
+
+E501 Line too long (103 > 100)
+   --> tests\integration\test_evidence_workflow.py:184:101
+    |
+182 |         assert payload["strongest_evidence"] == "abstract_only"
+183 |         event_types = [item["event_type"] for item in payload["events"]]
+184 |         assert event_types[:4] == ["created", "started", "identity_resolution", "abstract_acquisition"]
+    |                                                                                                     ^^^
+185 |         assert event_types[-1] == "partial"
+186 |         assert payload["result"]["analysis_id"] > 0
+    |
+
+E501 Line too long (107 > 100)
+   --> tests\integration\test_expert_evaluations.py:149:101
+    |
+147 |         assert payload["validation_status"] == "awaiting_real_experts"
+148 |         assert payload["claim_boundary"] == (
+149 |             "Simulated or developer ratings are workflow evidence only and are not real expert validation."
+    |                                                                                                     ^^^^^^^
+150 |         )
+    |
+
+E501 Line too long (102 > 100)
+  --> tests\integration\test_llm_analysis_api.py:45:101
+   |
+43 |     data = client.post(
+44 |         "/api/auth/register",
+45 |         json={"email": "llm-api@example.com", "password": "research-pass-123", "display_name": "LLM"},
+   |                                                                                                     ^^
+46 |     ).json()
+47 |     return {"Authorization": f"Bearer {data['access_token']}"}
+   |
+
+E501 Line too long (104 > 100)
+  --> tests\integration\test_llm_analysis_api.py:58:101
+   |
+58 | def test_configured_provider_merges_valid_fields_and_persists_secret_free_audit(tmp_path: Path) -> None:
+   |                                                                                                     ^^^^
+59 |     app = create_app(settings_for(tmp_path))
+60 |     with TestClient(app) as client:
+   |
+
+E501 Line too long (107 > 100)
+  --> tests\integration\test_llm_analysis_api.py:76:101
+   |
+74 |         assert body["analysis_mode"] == "hybrid"
+75 |         assert body["provider"] == "deterministic_mock"
+76 |         assert body["analysis"]["research_background"] == "Industrial monitoring requires reliable alerts."
+   |                                                                                                     ^^^^^^^
+77 |
+78 |         with app.state.database.session() as session:
+   |
+
+SIM117 [*] Use a single `with` statement with multiple contexts instead of nested `with` statements
+  --> tests\integration\test_source_runtime_state.py:95:5
+   |
+93 |       app = create_app(settings_for(tmp_path))
+94 |       now = datetime.now(UTC)
+95 | /     with TestClient(app):
+96 | |         with app.state.database.session() as session:
+   | |_____________________________________________________^
+97 |               repository = SourceRuntimeRepository(session)
+98 |               repository.after_call(
+   |
+help: Combine `with` statements
+    |
+94  |     now = datetime.now(UTC)
+    -     with TestClient(app):
+    -         with app.state.database.session() as session:
+    -             repository = SourceRuntimeRepository(session)
+    -             repository.after_call(
+    -                 "openalex",
+    -                 SourceStatus(
+    -                     status="rate_limited",
+    -                     metadata={"http_status": 429, "retry_after_seconds": 1},
+    -                 ),
+    -                 now=now,
+    -             )
+    -             repository.after_call(
+    -                 "openalex",
+    -                 SourceStatus(
+    -                     status="ok",
+    -                     metadata={"http_status": 200, "rate_limit_remaining": 999},
+    -                 ),
+    -                 now=now + timedelta(seconds=2),
+    -             )
+    -             session.commit()
+    -             assert repository.before_call("openalex", now=now + timedelta(seconds=3)) is None
+    -             row = repository.get("openalex")
+    -             assert row is not None
+    -             assert row.operational_status == "ok"
+    -             assert row.consecutive_failures == 0
+    -             assert row.cooldown_until is None
+95  +     with TestClient(app), app.state.database.session() as session:
+96  +         repository = SourceRuntimeRepository(session)
+97  +         repository.after_call(
+98  +             "openalex",
+99  +             SourceStatus(
+100 +                 status="rate_limited",
+101 +                 metadata={"http_status": 429, "retry_after_seconds": 1},
+102 +             ),
+103 +             now=now,
+104 +         )
+105 +         repository.after_call(
+106 +             "openalex",
+107 +             SourceStatus(
+108 +                 status="ok",
+109 +                 metadata={"http_status": 200, "rate_limit_remaining": 999},
+110 +             ),
+111 +             now=now + timedelta(seconds=2),
+112 +         )
+113 +         session.commit()
+114 +         assert repository.before_call("openalex", now=now + timedelta(seconds=3)) is None
+115 +         row = repository.get("openalex")
+116 +         assert row is not None
+117 +         assert row.operational_status == "ok"
+118 +         assert row.consecutive_failures == 0
+119 +         assert row.cooldown_until is None
+    |
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests\integration\test_worker_evidence_workflow.py:1:1
+   |
+ 1 | / from __future__ import annotations
+ 2 | |
+ 3 | | from pathlib import Path
+ 4 | |
+ 5 | | from fastapi.testclient import TestClient
+ 6 | |
+ 7 | | from research_navigator.config import Settings
+ 8 | | from research_navigator.main import create_app
+ 9 | | from research_navigator.open_access.base import OpenAccessResolution
+10 | | from research_navigator.scholarly.base import (
+11 | |     AdapterSearchResult,
+12 | |     PaperRecord,
+13 | |     ScholarlyAdapter,
+14 | |     SearchRequest,
+15 | |     SourceProvenance,
+16 | |     SourceStatus,
+17 | | )
+18 | | from research_navigator.scholarly.service import FederatedSearchService
+19 | | from services.worker.main import run_once
+   | |_________________________________________^
+help: Organize imports
+   |
+5  | from fastapi.testclient import TestClient
+6  + from services.worker.main import run_once
+7  |
+--------------------------------------------------------------------------------
+19 | from research_navigator.scholarly.service import FederatedSearchService
+   - from services.worker.main import run_once
+20 |
+   |
+
+E501 Line too long (112 > 100)
+ --> tests\unit\test_author_identity.py:6:101
+  |
+4 | def test_orcid_is_stable_identity() -> None:
+5 |     assert canonical_author_identity(
+6 |         name="Jane Doe", orcid="https://orcid.org/0000-0002-1825-0097", source="openalex", source_author_id="A1"
+  |                                                                                                     ^^^^^^^^^^^^
+7 |     ) == "orcid:0000-0002-1825-0097"
+  |
+
+E501 Line too long (101 > 100)
+  --> tests\unit\test_llm_analysis_validation.py:77:101
+   |
+75 |             },
+76 |             accessible_snippets=[
+77 |                 {"chunk_id": 1, "text": "Evidence", "citation": citation_payload() | {"chunk_id": 1}}
+   |                                                                                                     ^
+78 |             ],
+79 |             evidence_level="open_fulltext",
+   |
+
+E501 Line too long (101 > 100)
+  --> tests\unit\test_oa_policy.py:43:101
+   |
+41 | def test_non_oa_or_credentialed_or_unsafe_url_is_rejected() -> None:
+42 |     assert decide_access(candidate(is_oa=False)).access_decision == "rejected"
+43 |     assert decide_access(candidate(requires_auth=True)).rejection_reason == "authentication_required"
+   |                                                                                                     ^
+44 |     assert (
+45 |         decide_access(candidate(pdf_url="https://user:secret@example.org/paper.pdf")).rejection_reason
+   |
+
+E501 Line too long (119 > 100)
+  --> tests\unit\test_oa_policy.py:48:101
+   |
+46 |         == "url_contains_userinfo"
+47 |     )
+48 |     assert decide_access(candidate(pdf_url="ftp://example.org/paper.pdf")).rejection_reason == "unsupported_url_scheme"
+   |                                                                                                     ^^^^^^^^^^^^^^^^^^^
+
+I001 [*] Import block is un-sorted or un-formatted
+  --> tests\unit\test_package_release.py:64:5
+   |
+63 |   def test_release_version_is_2_2_0_across_runtime_and_packages() -> None:
+64 | /     import tomllib
+65 | |
+66 | |     from research_navigator.main import app
+67 | |     from scripts.release_metadata import PACKAGE_VERSION, RELEASE_LABEL
+   | |_______________________________________________________________________^
+68 |
+69 |       pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+   |
+help: Organize imports
+   |
+65 |
+   -     from research_navigator.main import app
+66 |     from scripts.release_metadata import PACKAGE_VERSION, RELEASE_LABEL
+67 |
+68 +     from research_navigator.main import app
+69 +
+70 |     pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+   |
+
+Found 63 errors.
+[*] 13 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).

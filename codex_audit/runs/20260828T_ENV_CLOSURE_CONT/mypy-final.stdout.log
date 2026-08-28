@@ -1,0 +1,12 @@
+apps\api\research_navigator\clustering\service.py:198: error: No overload variant of "int" matches argument type "object"  [call-overload]
+apps\api\research_navigator\clustering\service.py:198: note: Possible overload variants:
+apps\api\research_navigator\clustering\service.py:198: note:     def int(str | Buffer | SupportsInt | SupportsIndex | SupportsTrunc = ..., /) -> int
+apps\api\research_navigator\clustering\service.py:198: note:     def int(str | bytes | bytearray, /, base: SupportsIndex) -> int
+apps\api\research_navigator\clustering\service.py:219: error: Incompatible types in assignment (expression has type "object", variable has type "int")  [assignment]
+apps\api\research_navigator\clustering\service.py:225: error: Argument 1 to "float" has incompatible type "object"; expected "str | Buffer | SupportsFloat | SupportsIndex"  [arg-type]
+apps\api\research_navigator\open_access\__init__.py:30: error: Argument 1 to "append" of "list" has incompatible type "UnpaywallOpenAccessClient"; expected "OpenAlexOpenAccessClient"  [arg-type]
+apps\api\research_navigator\open_access\__init__.py:32: error: Argument 1 to "append" of "list" has incompatible type "ArxivOpenAccessClient"; expected "OpenAlexOpenAccessClient"  [arg-type]
+apps\api\research_navigator\open_access\__init__.py:35: error: Argument 1 to "append" of "list" has incompatible type "SemanticScholarOpenAccessClient"; expected "OpenAlexOpenAccessClient"  [arg-type]
+apps\api\research_navigator\analysis\llm_validation.py:72: error: Unused "type: ignore" comment  [unused-ignore]
+services\worker\main.py:156: error: Incompatible types in assignment (expression has type "EvidenceWorkflowExecution", variable has type "BackfillExecution")  [assignment]
+Found 8 errors in 4 files (checked 125 source files)

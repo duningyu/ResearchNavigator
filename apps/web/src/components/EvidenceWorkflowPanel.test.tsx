@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { EvidenceWorkflowPanel } from './EvidenceWorkflowPanel';
 import type { EvidenceWorkflow } from '../types/domain';
@@ -31,7 +31,9 @@ describe('EvidenceWorkflowPanel', () => {
   it('renders terminal status, strongest evidence, source failure and event timeline', () => {
     render(<EvidenceWorkflowPanel workflow={workflow} busy={false} onRun={vi.fn()} onCancel={vi.fn()} onRefresh={vi.fn()} />);
     expect(screen.getByText('partial')).toBeInTheDocument();
-    expect(screen.getByText('abstract_only')).toBeInTheDocument();
+    const evidenceRow = screen.getByText('最终证据等级').closest('tr');
+    expect(evidenceRow).not.toBeNull();
+    expect(within(evidenceRow as HTMLElement).getByText('abstract_only')).toBeInTheDocument();
     expect(screen.getByText(/OpenAlex rate limited/)).toBeInTheDocument();
     expect(screen.getByText(/HTTP 429/)).toBeInTheDocument();
     expect(screen.getByText('abstract_acquisition')).toBeInTheDocument();
