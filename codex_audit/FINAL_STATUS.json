@@ -2,7 +2,7 @@
   "status": "PARTIAL",
   "version": "2.2.1",
   "audit_run": "20260827T232244Z_RN220_ENV_CLOSURE",
-  "commit": "ed90a88",
+  "commit": "690a81f9689f6c9388b50b8d53e28c7e1987c6aa",
   "reason": "Python 3.12/uv 已建立；后端 184 passed、安全/RAG 16 passed、前端 16 passed、MCP 与 Alembic 通过。Ruff/Mypy、Docker、Playwright、实时来源、合法 OA、真实 LLM 和真实专家仍未闭合。",
   "input_sha256": "1b0a7bbe6002a77c39c4c55db62961a14814a4a5ddd90d7f2664ca586832e441",
   "gates": {

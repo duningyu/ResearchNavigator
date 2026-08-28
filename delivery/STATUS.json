@@ -5,7 +5,7 @@
   "current_run": "codex_audit/runs/20260828T_ENV_CLOSURE_CONT",
   "audit_time_utc": "2026-08-28T00:00:00Z",
   "overall_status": "PARTIAL",
-  "audited_implementation_commit": "ed90a88",
+  "audited_implementation_commit": "690a81f9689f6c9388b50b8d53e28c7e1987c6aa",
   "audited_branch": "codex/rn220-environment-closure",
   "pass": {
     "uv_python_312": "Python 3.12.0; uv 0.12.6; frozen sync succeeded",
