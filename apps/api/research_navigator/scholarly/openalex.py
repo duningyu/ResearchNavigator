@@ -18,8 +18,6 @@ from research_navigator.scholarly.base import (
 )
 
 
-
-
 def _safe_int(value: str | None) -> int | None:
     if value is None:
         return None

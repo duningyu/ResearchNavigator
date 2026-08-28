@@ -7,6 +7,8 @@ import json
 import math
 import re
 from collections import Counter, defaultdict
+from contextlib import suppress
+from typing import TypedDict
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -25,9 +27,31 @@ ALGORITHM_VERSION = "direction-cluster-v1"
 DISCLAIMER = "Literature organization result; not an objective field taxonomy."
 _DIMENSIONS = 256
 _STOP = {
-    "the", "a", "an", "and", "or", "for", "of", "to", "in", "with", "using",
-    "on", "from", "via", "paper", "study", "method", "model",
+    "the",
+    "a",
+    "an",
+    "and",
+    "or",
+    "for",
+    "of",
+    "to",
+    "in",
+    "with",
+    "using",
+    "on",
+    "from",
+    "via",
+    "paper",
+    "study",
+    "method",
+    "model",
 }
+
+
+class ClusterMembership(TypedDict):
+    component: int | None
+    unclustered: bool
+    similarity: float
 
 
 def _tokens(text: str) -> list[str]:
@@ -55,7 +79,7 @@ def _cosine(left: list[float], right: list[float]) -> float:
 
 def cluster_documents(
     documents: dict[int, str], *, threshold: float
-) -> dict[int, dict[str, object]]:
+) -> dict[int, ClusterMembership]:
     if not 0.0 <= threshold <= 1.0:
         raise ValueError("threshold must be between 0 and 1")
     ids = sorted(documents)
@@ -87,7 +111,7 @@ def cluster_documents(
                     stack.append(neighbor)
         components.append(sorted(component))
     components.sort(key=lambda group: group[0])
-    result: dict[int, dict[str, object]] = {}
+    result: dict[int, ClusterMembership] = {}
     cluster_number = 0
     for group in components:
         if len(group) < 2:
@@ -111,10 +135,8 @@ def cluster_documents(
 def _paper_text(session: Session, user_id: int, paper: Paper) -> tuple[str, str]:
     parts = [paper.title]
     for raw in (paper.fields_of_study_json, paper.concepts_json, paper.keywords_json):
-        try:
+        with suppress(ValueError, TypeError):
             parts.extend(str(item) for item in json.loads(raw) if str(item).strip())
-        except (ValueError, TypeError):
-            pass
     analysis = session.scalar(
         select(PaperAnalysisRecord)
         .where(
@@ -216,11 +238,13 @@ def run_direction_clustering(
         clusters[component] = cluster
     for paper_id in unique_ids:
         item = memberships[paper_id]
-        component = item["component"]
+        member_component = item["component"]
         session.add(
             DirectionClusterMember(
                 run_id=run.id,
-                cluster_id=clusters[int(component)].id if component is not None else None,
+                cluster_id=clusters[int(member_component)].id
+                if member_component is not None
+                else None,
                 paper_id=paper_id,
                 similarity=float(item["similarity"]),
                 is_unclustered=bool(item["unclustered"]),

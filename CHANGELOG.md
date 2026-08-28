@@ -87,3 +87,8 @@
 - Fixed Direction Map strict TypeScript nullability.
 - Corrected ambiguous frontend test selectors and Router test context.
 - Revalidated backend, security/RAG, MCP and Alembic gates; external gates remain explicitly blocked or failed.
+# 2.2.2 verification closure — 2026-08-28
+
+- Ruff and Mypy are clean.
+- Playwright now launches an isolated API/Worker/Web stack with readiness polling and teardown.
+- No new product capability; Docker, live LLM and real expert gates remain externally blocked.

@@ -17,8 +17,8 @@ from research_navigator.analysis.acquisition import (
 )
 from research_navigator.analysis.service import accessible_text, run_paper_analysis
 from research_navigator.authors.service import refresh_author_cards
-from research_navigator.datasets.service import refresh_dataset_cards
 from research_navigator.config import Settings
+from research_navigator.datasets.service import refresh_dataset_cards
 from research_navigator.models import Job, JobEvent, Paper, ResearchProject
 from research_navigator.open_access.base import OpenAccessResolution, PaperIdentity
 from research_navigator.open_access.fetcher import PdfFetchResult
@@ -365,7 +365,7 @@ async def execute_evidence_workflow(
         session.rollback()
         job = session.get(Job, job_id)
         if job is None:
-            raise LookupError("Evidence workflow not found")
+            raise LookupError("Evidence workflow not found") from None
         add_event(session, job, "author_card_refresh", {"outcome": "failed", "error": warning})
 
     try:
@@ -382,7 +382,7 @@ async def execute_evidence_workflow(
         session.rollback()
         job = session.get(Job, job_id)
         if job is None:
-            raise LookupError("Evidence workflow not found")
+            raise LookupError("Evidence workflow not found") from None
         add_event(session, job, "dataset_card_refresh", {"outcome": "failed", "error": warning})
 
     add_event(session, job, "direction_cluster_refresh", {"outcome": "not_requested"})

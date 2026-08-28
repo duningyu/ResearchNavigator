@@ -76,14 +76,10 @@ def refresh_author_cards(session: Session, paper: Paper) -> list[Author]:
         name = str(raw["name"]).strip()
         orcid = _normalize_orcid(raw.get("orcid"))
         source_author_id = (
-            str(raw.get("source_author_id")).strip()
-            if raw.get("source_author_id")
-            else None
+            str(raw.get("source_author_id")).strip() if raw.get("source_author_id") else None
         )
         affiliations = [
-            str(item).strip()
-            for item in raw.get("affiliations", [])
-            if str(item).strip()
+            str(item).strip() for item in raw.get("affiliations", []) if str(item).strip()
         ]
         author: Author | None = None
         if orcid:
@@ -118,7 +114,9 @@ def refresh_author_cards(session: Session, paper: Paper) -> list[Author]:
                 normalized_name=_normalize_name(name),
                 orcid=orcid,
                 affiliations_json=json.dumps(affiliations, ensure_ascii=False),
-                identity_status="resolved" if (orcid or (source and source_author_id)) else "unresolved",
+                identity_status="resolved"
+                if (orcid or (source and source_author_id))
+                else "unresolved",
                 provenance_json=json.dumps([provenance_item], ensure_ascii=False),
             )
             if source == "openalex" and source_author_id:

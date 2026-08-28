@@ -74,7 +74,11 @@ def test_llm_cross_chunk_citation_is_rejected() -> None:
                 "citations": [{"field": "research_background", "chunk_id": 999}],
             },
             accessible_snippets=[
-                {"chunk_id": 1, "text": "Evidence", "citation": citation_payload() | {"chunk_id": 1}}
+                {
+                    "chunk_id": 1,
+                    "text": "Evidence",
+                    "citation": citation_payload() | {"chunk_id": 1},
+                }
             ],
             evidence_level="open_fulltext",
         )

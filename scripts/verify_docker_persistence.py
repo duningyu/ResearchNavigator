@@ -17,7 +17,6 @@ import os
 import shutil
 import sqlite3
 import subprocess
-import sys
 import time
 import urllib.error
 import urllib.parse
@@ -80,9 +79,7 @@ class HttpClient:
         except urllib.error.URLError as exc:
             raise AcceptanceFailure(f"HTTP {method} {path} failed: {exc}") from exc
         if status not in expected:
-            raise AcceptanceFailure(
-                f"HTTP {method} {path} returned {status}, expected {expected}"
-            )
+            raise AcceptanceFailure(f"HTTP {method} {path} returned {status}, expected {expected}")
         if not body:
             return None
         if "application/json" in content_type:
@@ -162,7 +159,8 @@ def build_text_pdf(text: str) -> bytes:
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+        b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
         b"<< /Length %d >>\nstream\n" % len(stream) + stream + b"\nendstream",
     ]
@@ -223,7 +221,9 @@ def database_snapshot(database_path: Path) -> dict[str, Any]:
             "job_events",
         ):
             if table in tables:
-                counts[table] = int(connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])
+                counts[table] = int(
+                    connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
+                )
         return {"integrity": "ok", "counts": counts}
 
 
@@ -261,7 +261,8 @@ def run_command(
     )
     if check and completed.returncode != 0:
         raise AcceptanceFailure(
-            f"Command failed ({completed.returncode}): {' '.join(command)}\n{completed.stderr[-2000:]}"
+            f"Command failed ({completed.returncode}): {' '.join(command)}\n"
+            f"{completed.stderr[-2000:]}"
         )
     return completed
 
@@ -403,7 +404,10 @@ def verify_http_scenario(client: HttpClient, state: dict[str, Any]) -> dict[str,
     workflow = client.request("GET", f"/evidence-workflows/{state['workflow_id']}")
     if not any(int(row["id"]) == state["project_id"] for row in projects):
         raise AcceptanceFailure("Project disappeared after lifecycle transition")
-    if not any(int(item["paper"]["id"]) == state["paper_id"] and item["favorite"] for item in library["items"]):
+    if not any(
+        int(item["paper"]["id"]) == state["paper_id"] and item["favorite"]
+        for item in library["items"]
+    ):
         raise AcceptanceFailure("Favorite disappeared after lifecycle transition")
     document = next((row for row in documents if int(row["id"]) == state["document_id"]), None)
     if document is None or document["sha256"] != state["document_sha256"]:
@@ -411,7 +415,9 @@ def verify_http_scenario(client: HttpClient, state: dict[str, Any]) -> dict[str,
     if int(analysis["id"]) < state["analysis_id"]:
         raise AcceptanceFailure("Latest analysis regressed to an older record")
     if workflow["status"] not in {"succeeded", "partial"}:
-        raise AcceptanceFailure(f"Workflow is not terminal after lifecycle transition: {workflow['status']}")
+        raise AcceptanceFailure(
+            f"Workflow is not terminal after lifecycle transition: {workflow['status']}"
+        )
     return {
         "user_id": int(me["id"]),
         "project_count": len(projects),
@@ -487,7 +493,9 @@ def main(argv: list[str] | None = None) -> int:
     services_started = False
 
     try:
-        run_command([executable, "compose", "version"], environment=environment, report=report, timeout=30)
+        run_command(
+            [executable, "compose", "version"], environment=environment, report=report, timeout=30
+        )
         report["phases"]["docker_available"] = {"status": "PASS", "executable": executable}
 
         marker = runtime_dir / ".rn-acceptance-runtime"
@@ -498,32 +506,59 @@ def main(argv: list[str] | None = None) -> int:
         if runtime_dir.exists():
             shutil.rmtree(runtime_dir)
         runtime_dir.mkdir(parents=True)
-        marker.write_text("ResearchNavigator dedicated Docker acceptance runtime\n", encoding="utf-8")
+        marker.write_text(
+            "ResearchNavigator dedicated Docker acceptance runtime\n", encoding="utf-8"
+        )
         report["phases"]["runtime_prepared"] = {"status": "PASS"}
 
-        run_command(compose + ["down", "--remove-orphans"], environment=environment, report=report, check=False)
+        run_command(
+            compose + ["down", "--remove-orphans"],
+            environment=environment,
+            report=report,
+            check=False,
+        )
         run_command(compose + ["build", "--no-cache"], environment=environment, report=report)
         report["phases"]["build"] = {"status": "PASS", "no_cache": True}
 
-        run_command(compose + ["up", "-d", "--wait"], environment=environment, report=report, timeout=args.timeout_seconds)
+        run_command(
+            compose + ["up", "-d", "--wait"],
+            environment=environment,
+            report=report,
+            timeout=args.timeout_seconds,
+        )
         services_started = True
         health = wait_for_health(client, args.timeout_seconds)
         report["phases"]["cold_start"] = {"status": "PASS", "health": health}
 
         state = seed_http_scenario(client, runtime_dir)
-        report["scenario"] = {key: value for key, value in state.items() if key not in {"token", "password"}}
-        report["phases"]["http_seed"] = {"status": "PASS", "worker_terminal": state["workflow_status"]}
+        report["scenario"] = {
+            key: value for key, value in state.items() if key not in {"token", "password"}
+        }
+        report["phases"]["http_seed"] = {
+            "status": "PASS",
+            "worker_terminal": state["workflow_status"],
+        }
         first_verify = verify_http_scenario(client, state)
         report["phases"]["initial_state"] = {"status": "PASS", **first_verify}
 
-        run_command(compose + ["restart", "api", "worker"], environment=environment, report=report, timeout=args.timeout_seconds)
+        run_command(
+            compose + ["restart", "api", "worker"],
+            environment=environment,
+            report=report,
+            timeout=args.timeout_seconds,
+        )
         wait_for_health(client, args.timeout_seconds)
         after_restart = verify_http_scenario(client, state)
         report["phases"]["service_restart"] = {"status": "PASS", **after_restart}
 
         run_command(compose + ["down", "--remove-orphans"], environment=environment, report=report)
         services_started = False
-        run_command(compose + ["up", "-d", "--wait"], environment=environment, report=report, timeout=args.timeout_seconds)
+        run_command(
+            compose + ["up", "-d", "--wait"],
+            environment=environment,
+            report=report,
+            timeout=args.timeout_seconds,
+        )
         services_started = True
         wait_for_health(client, args.timeout_seconds)
         after_down_up = verify_http_scenario(client, state)
@@ -551,7 +586,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         if not staged.get("restart_required"):
             raise AcceptanceFailure("stage-restore did not require restart")
-        run_command(compose + ["restart", "api"], environment=environment, report=report, timeout=args.timeout_seconds)
+        run_command(
+            compose + ["restart", "api"],
+            environment=environment,
+            report=report,
+            timeout=args.timeout_seconds,
+        )
         wait_for_health(client, args.timeout_seconds)
         run_command(compose + ["start", "worker"], environment=environment, report=report)
         after_restore = verify_http_scenario(client, state)
@@ -563,7 +603,13 @@ def main(argv: list[str] | None = None) -> int:
         run_command(compose + ["down", "--remove-orphans"], environment=environment, report=report)
         services_started = False
         database = database_snapshot(runtime_dir / "research_navigator.db")
-        stored_pdf = runtime_dir / "uploads" / str(after_restore["user_id"]) / str(state["paper_id"]) / f"{state['document_sha256']}.pdf"
+        stored_pdf = (
+            runtime_dir
+            / "uploads"
+            / str(after_restore["user_id"])
+            / str(state["paper_id"])
+            / f"{state['document_sha256']}.pdf"
+        )
         if not stored_pdf.is_file() or sha256_file(stored_pdf) != state["document_sha256"]:
             raise AcceptanceFailure("Persisted PDF is missing or hash-mismatched")
         report["phases"]["filesystem_database"] = {

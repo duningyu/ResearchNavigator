@@ -72,13 +72,16 @@ def accessible_text(
             [span.citation for span in spans],
             spans,
         )
-    abstract_is_verified = session.scalar(
-        select(PaperSource.id).where(
-            PaperSource.paper_id == paper.id,
-            PaperSource.provides_abstract.is_(True),
-            PaperSource.is_fixture.is_(False),
+    abstract_is_verified = (
+        session.scalar(
+            select(PaperSource.id).where(
+                PaperSource.paper_id == paper.id,
+                PaperSource.provides_abstract.is_(True),
+                PaperSource.is_fixture.is_(False),
+            )
         )
-    ) is not None
+        is not None
+    )
     if paper.abstract and abstract_is_verified:
         citation = CitationLocator(
             source_type="abstract",
@@ -110,7 +113,9 @@ def accessible_text(
 
 def _stable_hash(value: object) -> str:
     return hashlib.sha256(
-        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
+        json.dumps(
+            value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str
+        ).encode("utf-8")
     ).hexdigest()
 
 
@@ -167,7 +172,9 @@ def run_paper_analysis(
 
     if provider_override is not None:
         analysis_run_id = uuid.uuid4().hex
-        provider_name = str(getattr(provider_override, "provider_name", type(provider_override).__name__))
+        provider_name = str(
+            getattr(provider_override, "provider_name", type(provider_override).__name__)
+        )
         model_name = getattr(provider_override, "model_name", None)
         run = AgentRun(
             run_id=analysis_run_id,

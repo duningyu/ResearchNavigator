@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from services.worker.main import run_once
 
 from research_navigator.config import Settings
 from research_navigator.main import create_app
@@ -16,7 +17,6 @@ from research_navigator.scholarly.base import (
     SourceStatus,
 )
 from research_navigator.scholarly.service import FederatedSearchService
-from services.worker.main import run_once
 
 
 class Adapter(ScholarlyAdapter):

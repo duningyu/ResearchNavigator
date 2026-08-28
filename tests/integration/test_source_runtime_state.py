@@ -92,29 +92,28 @@ def test_rate_limit_state_blocks_repeated_calls_and_is_visible_in_source_status(
 def test_success_after_cooldown_clears_failure_state(tmp_path: Path) -> None:
     app = create_app(settings_for(tmp_path))
     now = datetime.now(UTC)
-    with TestClient(app):
-        with app.state.database.session() as session:
-            repository = SourceRuntimeRepository(session)
-            repository.after_call(
-                "openalex",
-                SourceStatus(
-                    status="rate_limited",
-                    metadata={"http_status": 429, "retry_after_seconds": 1},
-                ),
-                now=now,
-            )
-            repository.after_call(
-                "openalex",
-                SourceStatus(
-                    status="ok",
-                    metadata={"http_status": 200, "rate_limit_remaining": 999},
-                ),
-                now=now + timedelta(seconds=2),
-            )
-            session.commit()
-            assert repository.before_call("openalex", now=now + timedelta(seconds=3)) is None
-            row = repository.get("openalex")
-            assert row is not None
-            assert row.operational_status == "ok"
-            assert row.consecutive_failures == 0
-            assert row.cooldown_until is None
+    with TestClient(app), app.state.database.session() as session:
+        repository = SourceRuntimeRepository(session)
+        repository.after_call(
+            "openalex",
+            SourceStatus(
+                status="rate_limited",
+                metadata={"http_status": 429, "retry_after_seconds": 1},
+            ),
+            now=now,
+        )
+        repository.after_call(
+            "openalex",
+            SourceStatus(
+                status="ok",
+                metadata={"http_status": 200, "rate_limit_remaining": 999},
+            ),
+            now=now + timedelta(seconds=2),
+        )
+        session.commit()
+        assert repository.before_call("openalex", now=now + timedelta(seconds=3)) is None
+        row = repository.get("openalex")
+        assert row is not None
+        assert row.operational_status == "ok"
+        assert row.consecutive_failures == 0
+        assert row.cooldown_until is None

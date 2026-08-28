@@ -142,18 +142,18 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
             "recommendation_ids": [row.id for row in rows],
         }
     if job.job_type == "abstract_provenance_backfill_v1":
-        execution = asyncio.run(
+        backfill_execution = asyncio.run(
             execute_abstract_backfill(
                 session,
                 job_id=job.id,
                 search_service=build_search_service(settings),
             )
         )
-        result = dict(execution.result)
-        result["__terminal_status"] = execution.terminal_status
+        result = dict(backfill_execution.result)
+        result["__terminal_status"] = backfill_execution.terminal_status
         return result
     if job.job_type == "evidence_workflow_v1":
-        execution = asyncio.run(
+        workflow_execution = asyncio.run(
             execute_evidence_workflow(
                 session,
                 settings=settings,
@@ -165,8 +165,8 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
                 prompt_version=settings.analysis_prompt_version,
             )
         )
-        result = dict(execution.result)
-        result["__terminal_status"] = execution.terminal_status
+        result = dict(workflow_execution.result)
+        result["__terminal_status"] = workflow_execution.terminal_status
         return result
     if job.job_type == "gap_challenge":
         gap_id = _require_int(payload, "gap_id")

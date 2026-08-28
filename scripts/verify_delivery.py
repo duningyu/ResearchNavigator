@@ -342,7 +342,8 @@ def write_gap_ledger(path: Path, checks: list[dict[str, Any]]) -> None:
             "P0",
             status("playwright_e2e"),
             evidence("playwright_e2e", "not executed"),
-            "Run the current API-backed Playwright flow including 2.2 evidence, map and evaluation pages.",
+            "Run the current API-backed Playwright flow including 2.2 evidence, "
+            "map and evaluation pages.",
         ),
         (
             "GAP-003",
@@ -366,7 +367,8 @@ def write_gap_ledger(path: Path, checks: list[dict[str, Any]]) -> None:
             "P0",
             status("live_open_sources"),
             evidence("live_open_sources", "not executed"),
-            "Rerun with network and lawful keys; retain query/time/status/identifiers/provenance hashes.",
+            "Rerun with network and lawful keys; retain query/time/status/identifiers/"
+            "provenance hashes.",
         ),
         (
             "GAP-006",
@@ -437,7 +439,9 @@ def write_gap_ledger(path: Path, checks: list[dict[str, Any]]) -> None:
             "Historical abstract provenance backfill",
             "P1",
             implementation,
-            evidence("evidence_platform_focused", "Dry-run/exact-match/idempotency/cancellation tests"),
+            evidence(
+                "evidence_platform_focused", "Dry-run/exact-match/idempotency/cancellation tests"
+            ),
             "Run dry-run on a real backup before any historical runtime mutation.",
         ),
         (
@@ -839,12 +843,15 @@ def main() -> None:
             "they are not sentence-level entailment proof.",
             "Search diversity is seeded within relevance bands and remains reproducible "
             "per saved session; it is not unrestricted randomization.",
-            "Unknown OA rights never trigger automatic full-text storage; a PDF URL is not sufficient.",
+            "Unknown OA rights never trigger automatic full-text storage; "
+            "a PDF URL is not sufficient.",
             "OpenAlex fallback success does not relabel OpenAlex itself as healthy.",
             "Citation-validated provider tests do not prove a live LLM endpoint is available.",
-            "Author name-only identities remain unresolved; dataset fields are not inferred from names.",
+            "Author name-only identities remain unresolved; dataset fields are not "
+            "inferred from names.",
             "Direction clusters are literature-organization aids, not objective field taxonomy.",
-            "Evaluation infrastructure does not prove expert effectiveness; simulated ratings remain separate.",
+            "Evaluation infrastructure does not prove expert effectiveness; "
+            "simulated ratings remain separate.",
             "The package is a local/LAN research workflow implementation, "
             "not a verified public SaaS deployment.",
         ],

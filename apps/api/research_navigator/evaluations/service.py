@@ -113,7 +113,7 @@ def freeze_study(session: Session, study: EvaluationStudy) -> EvaluationStudy:
 
 def _blind_mapping(study: EvaluationStudy, task: EvaluationTask) -> list[dict[str, str]]:
     digest = hashlib.sha256(
-        f"{study.randomized_seed}:{task.task_key}:{study.frozen_input_hash}".encode("utf-8")
+        f"{study.randomized_seed}:{task.task_key}:{study.frozen_input_hash}".encode()
     ).digest()
     sources = ["baseline", "candidate"] if digest[0] % 2 == 0 else ["candidate", "baseline"]
     return [

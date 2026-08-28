@@ -171,9 +171,9 @@ def test_workflow_create_run_read_and_cross_user_denial(tmp_path: Path) -> None:
         assert created.status_code == 201, created.text
         job = created.json()
         assert job["status"] == "pending"
-        assert client.get(
-            f"/api/evidence-workflows/{job['id']}", headers=stranger
-        ).status_code == 404
+        assert (
+            client.get(f"/api/evidence-workflows/{job['id']}", headers=stranger).status_code == 404
+        )
 
         run = client.post(f"/api/evidence-workflows/{job['id']}/run", headers=owner)
         assert run.status_code == 200, run.text
@@ -181,7 +181,12 @@ def test_workflow_create_run_read_and_cross_user_denial(tmp_path: Path) -> None:
         assert payload["status"] == "partial"
         assert payload["strongest_evidence"] == "abstract_only"
         event_types = [item["event_type"] for item in payload["events"]]
-        assert event_types[:4] == ["created", "started", "identity_resolution", "abstract_acquisition"]
+        assert event_types[:4] == [
+            "created",
+            "started",
+            "identity_resolution",
+            "abstract_acquisition",
+        ]
         assert event_types[-1] == "partial"
         assert payload["result"]["analysis_id"] > 0
 
@@ -212,9 +217,7 @@ def test_workflow_ingests_permitted_oa_pdf_and_finishes(tmp_path: Path) -> None:
             json={"sources": ["evidence_source"], "allow_oa_fulltext": True},
         ).json()
 
-        completed = client.post(
-            f"/api/evidence-workflows/{job['id']}/run", headers=headers
-        )
+        completed = client.post(f"/api/evidence-workflows/{job['id']}/run", headers=headers)
         assert completed.status_code == 200, completed.text
         body = completed.json()
         assert body["status"] == "succeeded"
@@ -243,9 +246,7 @@ def test_workflow_external_pdf_failure_preserves_abstract_and_reports_reason(
             json={"sources": ["evidence_source"], "allow_oa_fulltext": True},
         ).json()
 
-        completed = client.post(
-            f"/api/evidence-workflows/{job['id']}/run", headers=headers
-        ).json()
+        completed = client.post(f"/api/evidence-workflows/{job['id']}/run", headers=headers).json()
         assert completed["status"] == "partial"
         assert completed["strongest_evidence"] == "abstract_only"
         assert "repository offline" in " ".join(completed["result"]["warnings"])
@@ -263,15 +264,14 @@ def test_workflow_cancel_uses_terminal_semantics(tmp_path: Path) -> None:
             headers=headers,
             json={},
         ).json()
-        cancelled = client.post(
-            f"/api/evidence-workflows/{job['id']}/cancel", headers=headers
-        )
+        cancelled = client.post(f"/api/evidence-workflows/{job['id']}/cancel", headers=headers)
         assert cancelled.status_code == 200
         assert cancelled.json()["status"] == "cancelled"
         assert cancelled.json()["terminal"] is True
-        assert client.post(
-            f"/api/evidence-workflows/{job['id']}/run", headers=headers
-        ).status_code == 409
+        assert (
+            client.post(f"/api/evidence-workflows/{job['id']}/run", headers=headers).status_code
+            == 409
+        )
 
 
 def test_workflow_refreshes_author_and_dataset_cards_after_analysis(tmp_path: Path) -> None:
@@ -283,9 +283,7 @@ def test_workflow_refreshes_author_and_dataset_cards_after_analysis(tmp_path: Pa
         )
     )
     rich_record.authors = [
-        __import__(
-            "research_navigator.scholarly.base", fromlist=["PaperAuthor"]
-        ).PaperAuthor(
+        __import__("research_navigator.scholarly.base", fromlist=["PaperAuthor"]).PaperAuthor(
             name="Ada Researcher",
             orcid="0000-0002-1825-0097",
             affiliations=["Evidence Lab"],
@@ -302,9 +300,7 @@ def test_workflow_refreshes_author_and_dataset_cards_after_analysis(tmp_path: Pa
             json={"sources": ["evidence_source"], "allow_oa_fulltext": False},
         ).json()
 
-        completed = client.post(
-            f"/api/evidence-workflows/{job['id']}/run", headers=headers
-        )
+        completed = client.post(f"/api/evidence-workflows/{job['id']}/run", headers=headers)
         assert completed.status_code == 200, completed.text
         body = completed.json()
         author_event = next(
@@ -317,9 +313,15 @@ def test_workflow_refreshes_author_and_dataset_cards_after_analysis(tmp_path: Pa
         assert author_event["detail"]["count"] == 1
         assert dataset_event["detail"]["outcome"] == "succeeded"
         assert dataset_event["detail"]["count"] == 1
-        assert client.get(f"/api/papers/{paper_id}/authors", headers=headers).json()[0][
-            "canonical_name"
-        ] == "Ada Researcher"
-        assert client.get(f"/api/papers/{paper_id}/datasets", headers=headers).json()[0][
-            "canonical_name"
-        ] == "SWaT"
+        assert (
+            client.get(f"/api/papers/{paper_id}/authors", headers=headers).json()[0][
+                "canonical_name"
+            ]
+            == "Ada Researcher"
+        )
+        assert (
+            client.get(f"/api/papers/{paper_id}/datasets", headers=headers).json()[0][
+                "canonical_name"
+            ]
+            == "SWaT"
+        )

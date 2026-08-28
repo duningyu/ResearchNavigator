@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -8,7 +7,7 @@ from fastapi.testclient import TestClient
 from research_navigator.analysis.structured import CitationLocator, PaperAnalysisOutput
 from research_navigator.config import Settings
 from research_navigator.main import create_app
-from research_navigator.models import Paper, PaperAnalysisRecord, User
+from research_navigator.models import Paper, PaperAnalysisRecord
 
 
 def settings_for(tmp_path: Path) -> Settings:
@@ -40,7 +39,11 @@ def settings_for(tmp_path: Path) -> Settings:
 def register(client: TestClient) -> tuple[dict[str, str], int]:
     data = client.post(
         "/api/auth/register",
-        json={"email": "datasets@example.com", "password": "research-pass-123", "display_name": "D"},
+        json={
+            "email": "datasets@example.com",
+            "password": "research-pass-123",
+            "display_name": "D",
+        },
     ).json()
     return {"Authorization": f"Bearer {data['access_token']}"}, data["user"]["id"]
 
@@ -60,10 +63,22 @@ def seed_analysis(app, user_id: int, *, evidence_level: str) -> tuple[int, int]:
         summary="Dataset evidence.",
         datasets=["SWaT"],
         metrics=["PR-AUC"],
-        experimental_protocol=["The training split uses 80 percent and the test split uses 20 percent."],
-        experiment_design=["The training split uses 80 percent and the test split uses 20 percent."],
-        field_states={"datasets": "evidenced", "metrics": "evidenced", "experimental_protocol": "evidenced"},
-        field_citations={"datasets": [citation], "metrics": [citation], "experimental_protocol": [citation]},
+        experimental_protocol=[
+            "The training split uses 80 percent and the test split uses 20 percent."
+        ],
+        experiment_design=[
+            "The training split uses 80 percent and the test split uses 20 percent."
+        ],
+        field_states={
+            "datasets": "evidenced",
+            "metrics": "evidenced",
+            "experimental_protocol": "evidenced",
+        },
+        field_citations={
+            "datasets": [citation],
+            "metrics": [citation],
+            "experimental_protocol": [citation],
+        },
     )
     with app.state.database.session() as session:
         paper = Paper(title="Dataset Paper", normalized_title="dataset paper")
@@ -103,7 +118,11 @@ def test_dataset_card_is_evidence_bounded_and_user_scoped(tmp_path: Path) -> Non
 
         other = client.post(
             "/api/auth/register",
-            json={"email": "datasets-other@example.com", "password": "research-pass-123", "display_name": "O"},
+            json={
+                "email": "datasets-other@example.com",
+                "password": "research-pass-123",
+                "display_name": "O",
+            },
         ).json()
         other_headers = {"Authorization": f"Bearer {other['access_token']}"}
         assert client.get(f"/api/datasets/{card['id']}", headers=other_headers).status_code == 404

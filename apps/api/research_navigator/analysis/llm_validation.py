@@ -69,7 +69,7 @@ def validate_and_merge_llm_analysis(
             citation = CitationLocator.model_validate(dict(raw))
         else:
             citation = CitationLocator(
-                source_type="evidence", chunk_id=snippet.get("chunk_id")  # type: ignore[arg-type]
+                source_type="evidence", chunk_id=snippet.get("chunk_id")
             )
         citation_by_chunk[snippet.get("chunk_id")] = citation
 

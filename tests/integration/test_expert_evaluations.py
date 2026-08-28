@@ -98,9 +98,7 @@ def submit_rating(
     *,
     preference: str = "A",
 ) -> dict[str, object]:
-    started = client.post(
-        f"/api/evaluations/assignments/{assignment_id}/start", headers=headers
-    )
+    started = client.post(f"/api/evaluations/assignments/{assignment_id}/start", headers=headers)
     assert started.status_code == 200, started.text
     rated = client.post(
         f"/api/evaluations/assignments/{assignment_id}/ratings",
@@ -137,16 +135,15 @@ def test_simulated_ratings_never_unlock_expert_validation(tmp_path: Path) -> Non
         assert all("source" not in variant for variant in assignment["variants"])
 
         submit_rating(client, simulated, assignment["id"])
-        results = client.get(
-            f"/api/evaluations/studies/{study['id']}/results", headers=owner
-        )
+        results = client.get(f"/api/evaluations/studies/{study['id']}/results", headers=owner)
         assert results.status_code == 200, results.text
         payload = results.json()
         assert payload["simulated_count"] == 1
         assert payload["real_expert_count"] == 0
         assert payload["validation_status"] == "awaiting_real_experts"
         assert payload["claim_boundary"] == (
-            "Simulated or developer ratings are workflow evidence only and are not real expert validation."
+            "Simulated or developer ratings are workflow evidence only and are not "
+            "real expert validation."
         )
 
 
@@ -174,13 +171,19 @@ def test_two_real_experts_produce_blinded_aggregate_without_cross_user_access(
         own_queue = client.get("/api/evaluations/assignments", headers=expert_a)
         assert own_queue.status_code == 200
         assert [item["id"] for item in own_queue.json()] == [assignments[0][1]["id"]]
-        assert client.get(
-            f"/api/evaluations/studies/{study['id']}/results", headers=outsider
-        ).status_code == 404
-        assert client.post(
-            f"/api/evaluations/assignments/{assignments[0][1]['id']}/start",
-            headers=expert_b,
-        ).status_code == 404
+        assert (
+            client.get(
+                f"/api/evaluations/studies/{study['id']}/results", headers=outsider
+            ).status_code
+            == 404
+        )
+        assert (
+            client.post(
+                f"/api/evaluations/assignments/{assignments[0][1]['id']}/start",
+                headers=expert_b,
+            ).status_code
+            == 404
+        )
 
         for headers, assignment in assignments:
             submit_rating(client, headers, int(assignment["id"]), preference="A")
@@ -209,11 +212,10 @@ def test_study_owner_can_list_and_reopen_frozen_protocol(tmp_path: Path) -> None
         listed = client.get("/api/evaluations/studies", headers=owner)
         assert listed.status_code == 200, listed.text
         assert [item["id"] for item in listed.json()] == [study["id"]]
-        reopened = client.get(
-            f"/api/evaluations/studies/{study['id']}", headers=owner
-        )
+        reopened = client.get(f"/api/evaluations/studies/{study['id']}", headers=owner)
         assert reopened.status_code == 200, reopened.text
         assert reopened.json()["frozen_input_hash"] == study["frozen_input_hash"]
-        assert client.get(
-            f"/api/evaluations/studies/{study['id']}", headers=outsider
-        ).status_code == 404
+        assert (
+            client.get(f"/api/evaluations/studies/{study['id']}", headers=outsider).status_code
+            == 404
+        )

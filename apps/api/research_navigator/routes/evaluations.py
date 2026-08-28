@@ -82,7 +82,9 @@ def _study_read(session: Session, study: EvaluationStudy) -> EvaluationStudyRead
     )
 
 
-def _assignment_read(session: Session, assignment: EvaluationAssignment) -> EvaluationAssignmentRead:
+def _assignment_read(
+    session: Session, assignment: EvaluationAssignment
+) -> EvaluationAssignmentRead:
     task = session.get(EvaluationTask, assignment.task_id)
     if task is None:
         raise HTTPException(status_code=409, detail="Evaluation task is missing")
@@ -208,9 +210,7 @@ def list_my_evaluation_assignments(
     return [_assignment_read(session, row) for row in rows]
 
 
-def _assigned_to_user(
-    session: Session, assignment_id: int, user_id: int
-) -> EvaluationAssignment:
+def _assigned_to_user(session: Session, assignment_id: int, user_id: int) -> EvaluationAssignment:
     row = session.scalar(
         select(EvaluationAssignment).where(
             EvaluationAssignment.id == assignment_id,

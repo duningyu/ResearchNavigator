@@ -64,9 +64,7 @@ def upgrade() -> None:
             server_default="deterministic",
         ),
     )
-    op.add_column(
-        "paper_analyses", sa.Column("model_name", sa.String(length=160), nullable=True)
-    )
+    op.add_column("paper_analyses", sa.Column("model_name", sa.String(length=160), nullable=True))
     op.add_column(
         "paper_analyses", sa.Column("prompt_version", sa.String(length=80), nullable=True)
     )
@@ -89,9 +87,7 @@ def upgrade() -> None:
         "tool_calls",
         sa.Column("token_usage_json", sa.Text(), nullable=False, server_default="{}"),
     )
-    op.add_column(
-        "tool_calls", sa.Column("response_status", sa.String(length=80), nullable=True)
-    )
+    op.add_column("tool_calls", sa.Column("response_status", sa.String(length=80), nullable=True))
     op.add_column(
         "tool_calls", sa.Column("validated_output_hash", sa.String(length=64), nullable=True)
     )
@@ -182,13 +178,9 @@ def upgrade() -> None:
         sa.Column("fetched_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
-        sa.UniqueConstraint(
-            "source", "source_author_id", name="uq_author_source_record_identity"
-        ),
+        sa.UniqueConstraint("source", "source_author_id", name="uq_author_source_record_identity"),
     )
-    op.create_index(
-        "ix_author_source_records_author", "author_source_records", ["author_id"]
-    )
+    op.create_index("ix_author_source_records_author", "author_source_records", ["author_id"])
 
     op.create_table(
         "dataset_cards",
@@ -262,7 +254,10 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column(
-            "algorithm_version", sa.String(length=80), nullable=False, server_default="direction-cluster-v1"
+            "algorithm_version",
+            sa.String(length=80),
+            nullable=False,
+            server_default="direction-cluster-v1",
         ),
         sa.Column("parameters_json", sa.Text(), nullable=False, server_default="{}"),
         sa.Column("input_hash", sa.String(length=64), nullable=False),
@@ -325,9 +320,7 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.UniqueConstraint("run_id", "paper_id", name="uq_direction_cluster_member"),
     )
-    op.create_index(
-        "ix_direction_cluster_members_run", "direction_cluster_members", ["run_id"]
-    )
+    op.create_index("ix_direction_cluster_members_run", "direction_cluster_members", ["run_id"])
 
     op.create_table(
         "evaluation_studies",
@@ -446,9 +439,7 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.UniqueConstraint("assignment_id", name="uq_evaluation_rating_assignment"),
     )
-    op.create_index(
-        "ix_evaluation_ratings_expert", "evaluation_ratings", ["expert_user_id"]
-    )
+    op.create_index("ix_evaluation_ratings_expert", "evaluation_ratings", ["expert_user_id"])
 
     op.create_table(
         "evaluation_results",

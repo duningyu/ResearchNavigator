@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from research_navigator.config import Settings
 from research_navigator.open_access.arxiv import ArxivOpenAccessClient
+from research_navigator.open_access.base import OpenAccessClient
 from research_navigator.open_access.fetcher import SafePdfFetcher
 from research_navigator.open_access.openalex import OpenAlexOpenAccessClient
 from research_navigator.open_access.resolver import OpenAccessResolver
@@ -18,7 +19,7 @@ def build_open_access_resolver(settings: Settings) -> OpenAccessResolver:
     credential or contact value is exposed through the returned contracts.
     """
 
-    clients = []
+    clients: list[OpenAccessClient] = []
     if settings.enable_openalex:
         clients.append(
             OpenAlexOpenAccessClient(

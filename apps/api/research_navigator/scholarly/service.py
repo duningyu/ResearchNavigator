@@ -34,7 +34,9 @@ class FederatedSearchService:
         self, request: SearchRequest, *, selected_names: list[str] | None = None
     ) -> FederatedSearchResult:
         selected_names = (
-            selected_names if selected_names is not None else (request.sources or list(self.adapters))
+            selected_names
+            if selected_names is not None
+            else (request.sources or list(self.adapters))
         )
         selected = [self.adapters[name] for name in selected_names if name in self.adapters]
         unknown = [name for name in selected_names if name not in self.adapters]

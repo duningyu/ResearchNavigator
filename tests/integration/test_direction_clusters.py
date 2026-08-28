@@ -88,9 +88,7 @@ def test_direction_cluster_api_is_versioned_deterministic_and_user_scoped(tmp_pa
         assert "not an objective field taxonomy" in body["disclaimer"]
         assert len(body["members"]) == 3
         assert any(item["is_unclustered"] for item in body["members"])
-        assert client.get(
-            f"/api/direction-clusters/{body['id']}", headers=other
-        ).status_code == 404
+        assert client.get(f"/api/direction-clusters/{body['id']}", headers=other).status_code == 404
 
         repeated = client.post(
             f"/api/projects/{project_id}/direction-clusters",
@@ -98,6 +96,10 @@ def test_direction_cluster_api_is_versioned_deterministic_and_user_scoped(tmp_pa
             json={"paper_ids": list(reversed(paper_ids)), "threshold": 0.2},
         ).json()
         assert repeated["input_hash"] == body["input_hash"]
-        first_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in body["members"]]
-        second_members = [(x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in repeated["members"]]
+        first_members = [
+            (x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in body["members"]
+        ]
+        second_members = [
+            (x["paper_id"], x["cluster_key"], x["is_unclustered"]) for x in repeated["members"]
+        ]
         assert first_members == second_members

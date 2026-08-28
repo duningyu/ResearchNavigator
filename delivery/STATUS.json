@@ -1,11 +1,11 @@
 {
   "package": "ResearchNavigator",
-  "package_version": "2.2.1",
+  "package_version": "2.2.2",
   "release_label": "evidence-platform",
   "current_run": "codex_audit/runs/20260828T_ENV_CLOSURE_CONT",
   "audit_time_utc": "2026-08-28T00:00:00Z",
   "overall_status": "PARTIAL",
-  "audited_implementation_commit": "4c412e0b1046c30bf9e3bafd63fb51039abefcfe",
+  "audited_implementation_commit": "pending-final-commit",
   "audited_branch": "codex/rn220-environment-closure",
   "pass": {
     "uv_python_312": "Python 3.12.0; uv 0.12.6; frozen sync succeeded",
@@ -13,14 +13,16 @@
     "frontend_vitest": "16 passed in 7.69s",
     "frontend_build": "PASS",
     "pnpm_install": "pnpm 10.15.1 frozen install PASS",
-    "python_compileall": "pending final rerun"
+    "python_compileall": "PASS",
+    "ruff": "PASS",
+    "mypy": "PASS",
+    "playwright": "2 passed"
   },
   "partial": {
     "live_integrations": "Requires current network and lawful configuration.",
     "expert_evaluation": "Infrastructure exists; no real expert outcome."
   },
   "blocked": {
-    "playwright": "Chromium/browser server closure not yet executed.",
     "docker_cold_start_restart": "docker executable unavailable.",
     "live_llm_provider": "Provider/base URL/key/model not configured.",
     "real_expert_outcomes": "Requires real external expert ratings.",

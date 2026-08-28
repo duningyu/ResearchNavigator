@@ -132,7 +132,9 @@ class SafePdfFetcher:
                         chunks.append(chunk)
                     data = b"".join(chunks)
                     if not data.startswith(b"%PDF-"):
-                        raise DocumentSecurityError("Remote content failed PDF signature validation")
+                        raise DocumentSecurityError(
+                            "Remote content failed PDF signature validation"
+                        )
                     response_metadata = {
                         "final_url": current_url,
                         "status_code": response.status_code,

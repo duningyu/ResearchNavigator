@@ -42,7 +42,11 @@ def settings_for(tmp_path: Path) -> Settings:
 def register(client: TestClient) -> dict[str, str]:
     data = client.post(
         "/api/auth/register",
-        json={"email": "llm-api@example.com", "password": "research-pass-123", "display_name": "LLM"},
+        json={
+            "email": "llm-api@example.com",
+            "password": "research-pass-123",
+            "display_name": "LLM",
+        },
     ).json()
     return {"Authorization": f"Bearer {data['access_token']}"}
 
@@ -55,7 +59,9 @@ def paper_id(client: TestClient, headers: dict[str, str]) -> int:
     ).json()["papers"][0]["id"]
 
 
-def test_configured_provider_merges_valid_fields_and_persists_secret_free_audit(tmp_path: Path) -> None:
+def test_configured_provider_merges_valid_fields_and_persists_secret_free_audit(
+    tmp_path: Path,
+) -> None:
     app = create_app(settings_for(tmp_path))
     with TestClient(app) as client:
         headers = register(client)
@@ -73,7 +79,10 @@ def test_configured_provider_merges_valid_fields_and_persists_secret_free_audit(
         body = response.json()
         assert body["analysis_mode"] == "hybrid"
         assert body["provider"] == "deterministic_mock"
-        assert body["analysis"]["research_background"] == "Industrial monitoring requires reliable alerts."
+        assert (
+            body["analysis"]["research_background"]
+            == "Industrial monitoring requires reliable alerts."
+        )
 
         with app.state.database.session() as session:
             row = session.get(PaperAnalysisRecord, body["id"])

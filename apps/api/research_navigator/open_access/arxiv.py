@@ -55,6 +55,8 @@ class ArxivOpenAccessClient:
                 version="submittedVersion",
                 is_oa=True,
                 provenance_hash=hashlib.sha256(ET.tostring(entry)).hexdigest(),
-                metadata={"terms_note": "arXiv license governs automated storage and redistribution"},
+                metadata={
+                    "terms_note": "arXiv license governs automated storage and redistribution"
+                },
             )
         ]

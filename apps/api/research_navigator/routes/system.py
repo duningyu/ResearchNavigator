@@ -14,10 +14,10 @@ from research_navigator.config import Settings
 from research_navigator.deps import get_current_user, get_db
 from research_navigator.idempotency import replay_snapshot, store_snapshot
 from research_navigator.models import Job, JobEvent, ResearchProject, User
-from research_navigator.scholarly.runtime import SourceRuntimeRepository
 from research_navigator.schemas.jobs import JobCreate, JobEventRead, JobRead, SourceHealthRead
 from research_navigator.schemas.settings import AdminConfigStatus, AdminRuntimeConfig
 from research_navigator.scholarly.base import SourceStatus
+from research_navigator.scholarly.runtime import SourceRuntimeRepository
 
 router = APIRouter(tags=["system"])
 

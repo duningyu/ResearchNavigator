@@ -9,7 +9,7 @@ from sqlalchemy import func, select
 from research_navigator.authors.service import refresh_author_cards
 from research_navigator.config import Settings
 from research_navigator.main import create_app
-from research_navigator.models import Author, Paper, PaperAuthorLink, PaperSource, User
+from research_navigator.models import Author, Paper, PaperSource
 
 
 def settings_for(tmp_path: Path) -> Settings:
@@ -87,7 +87,9 @@ def seed(app) -> tuple[int, int]:
         return papers[0], papers[1]
 
 
-def test_refresh_merges_orcid_but_never_name_only_and_api_exposes_provenance(tmp_path: Path) -> None:
+def test_refresh_merges_orcid_but_never_name_only_and_api_exposes_provenance(
+    tmp_path: Path,
+) -> None:
     app = create_app(settings_for(tmp_path))
     with TestClient(app) as client:
         headers = register(client)
