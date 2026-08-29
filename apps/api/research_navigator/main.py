@@ -75,7 +75,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(
         title="ResearchNavigator API",
-        version="2.2.2",
+        version="2.2.3",
         description="Evidence-grounded research direction and paper workspace.",
         lifespan=lifespan,
     )
@@ -97,7 +97,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             database_status = "error"
         return {
             "status": "ok" if database_status == "ok" else "degraded",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "database": database_status,
         }
 

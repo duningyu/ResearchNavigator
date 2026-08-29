@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.3 — 2026-08-30
+
+### Fixed
+
+- Exact DOI requests are now resolved by canonical identifier before broad textual search, with provider fallback.
+
+修复 DOI 被作为普通文本进入宽泛检索，导致已存在论文无法精确解析的问题。
+
 ## 2.2.0 evidence platform — 2026-08-28
 
 ### Added
