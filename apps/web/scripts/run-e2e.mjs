@@ -36,6 +36,9 @@ const env = {
 const children = [];
 let cleanupStarted = false;
 let playwrightExit = 1;
+const receiptPath = process.env.RN_E2E_RECEIPT_PATH
+  ? resolve(process.env.RN_E2E_RECEIPT_PATH)
+  : resolve(root, 'codex_audit', 'E2E_TEARDOWN_RECEIPT.json');
 
 function start(command, args, cwd) {
   const child = spawnOwned(command, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
@@ -80,7 +83,7 @@ async function teardown() {
   rmSync(dataDir, { recursive: true, force: true });
   const runtimeDeleted = !existsSync(dataDir);
   assert.equal(runtimeDeleted, true, 'runtime must be deleted');
-  writeFileSync(resolve(root, 'codex_audit', 'E2E_TEARDOWN_RECEIPT.json'), JSON.stringify({
+  writeFileSync(receiptPath, JSON.stringify({
     scenario_status: playwrightExit === 0 ? 'PASS' : 'FAIL',
     playwright_exit_code: playwrightExit,
     owned_processes_before_teardown: trees.flatMap((tree) => [tree.root, ...tree.descendants].filter(Boolean)),
@@ -90,6 +93,7 @@ async function teardown() {
     runtime_path: dataDir,
     runtime_exists_after_teardown: !runtimeDeleted,
     unowned_processes_touched: 0,
+    startup_failure_expected: process.env.RN_E2E_FORCE_STARTUP_FAILURE === '1',
     status: playwrightExit === 0 ? 'PASS' : 'FAIL',
   }, null, 2));
 }
@@ -100,6 +104,9 @@ async function main() {
   try {
     start(python, ['-m', 'uvicorn', 'research_navigator.main:app', '--host', '127.0.0.1', '--port', String(apiPort)], root);
     start(python, ['-m', 'services.worker.main', '--poll-seconds', '0.5'], root);
+    if (process.env.RN_E2E_FORCE_STARTUP_FAILURE === '1') {
+      throw new Error('deterministic E2E startup failure requested');
+    }
     start(process.execPath, [vite, '--host', '127.0.0.1', '--port', String(webPort)], webDir);
     await waitFor(`http://127.0.0.1:${apiPort}/api/health`, 'api');
     await waitFor(`${baseUrl}/`, 'web');
@@ -107,7 +114,9 @@ async function main() {
     const corepackArgs = process.platform === 'win32'
       ? ['/d', '/s', '/c', 'corepack pnpm run test:e2e:playwright']
       : ['pnpm', 'run', 'test:e2e:playwright'];
-    playwright = start(corepack, corepackArgs, webDir);
+    playwright = process.env.RN_E2E_FAKE_PLAYWRIGHT_EXIT
+      ? start(process.execPath, ['-e', `process.exit(${Number(process.env.RN_E2E_FAKE_PLAYWRIGHT_EXIT)})`], webDir)
+      : start(corepack, corepackArgs, webDir);
     playwrightExit = await new Promise((resolveExit) => playwright.once('close', (code) => resolveExit(code ?? 1)));
   } catch (error) {
     failure = error;

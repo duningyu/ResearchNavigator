@@ -1,0 +1,18 @@
+{
+  "playwright_failure_path": {
+    "status": "PASS",
+    "playwright_exit_code": 1,
+    "owned_processes_after_teardown": [],
+    "ports_released": true,
+    "runtime_deleted": true,
+    "unowned_processes_touched": 0
+  },
+  "startup_failure_path": {
+    "status": "PASS",
+    "startup_failure_expected": true,
+    "owned_processes_after_teardown": [],
+    "ports_released": true,
+    "runtime_deleted": true,
+    "unowned_processes_touched": 0
+  }
+}

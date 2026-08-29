@@ -8,7 +8,7 @@
   "unowned_process_alive": true,
   "unowned_processes_touched": 0,
   "playwright_exit_propagated": true,
-  "failure_path_test": "NOT_RUN",
-  "startup_failure_test": "NOT_RUN",
+  "failure_path_test": "PASS",
+  "startup_failure_test": "PASS",
   "focused_supervisor_test": "PASS"
 }
