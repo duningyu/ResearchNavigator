@@ -60,7 +60,7 @@ def test_delivery_gap_ledger_does_not_reopen_currently_passed_gates() -> None:
             )
 
 
-def test_release_version_is_2_2_2_across_runtime_and_packages() -> None:
+def test_release_version_is_2_2_3_across_runtime_and_packages() -> None:
     import tomllib
 
     from scripts.release_metadata import PACKAGE_VERSION, RELEASE_LABEL
@@ -70,7 +70,7 @@ def test_release_version_is_2_2_2_across_runtime_and_packages() -> None:
     pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
     web_package = json.loads(Path("apps/web/package.json").read_text(encoding="utf-8"))
 
-    assert PACKAGE_VERSION == "2.2.2"
+    assert PACKAGE_VERSION == "2.2.3"
     assert RELEASE_LABEL == "evidence-platform"
     assert pyproject["project"]["version"] == PACKAGE_VERSION
     assert web_package["version"] == PACKAGE_VERSION
