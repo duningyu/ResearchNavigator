@@ -1,0 +1,5 @@
+provider,doi,raw_license,license_url,oa_status,normalized_provider_value,timestamp,response_hash
+Crossref,10.1177/20552076241297729,https://creativecommons.org/licenses/by-nc/4.0/,https://creativecommons.org/licenses/by-nc/4.0/,not_reported,cc-by-nc,2026-08-29T16:00:32.691512+00:00,6cf86942749b62e1f19131aadc0b2ff76a2c4ef49c56aa8cd746b47ce44d4ef9
+OpenAlex,10.1177/20552076241297729,cc-by-nc,https://openalex.org/licenses/cc-by-nc,gold,cc-by-nc,2026-08-29T16:00:34.371967+00:00,3540cb09f18094ba60107a91d48ab9c13652f8652c2c12ea43d07f23ebb99cf2
+PMC,10.1177/20552076241297729,CC BY-NC 4.0 (frozen manifest / PMC metadata evidence),https://creativecommons.org/licenses/by-nc/4.0/,public repository,cc-by-nc,2026-08-29T16:00:35.512651+00:00,14f1c6df858c1405f4cb1b442316bbbd6606c37541c5c3fcf6a1179cc065f5f1
+Semantic Scholar,10.1177/20552076241297729,RATE_LIMITED,,RATE_LIMITED,,2026-08-29T16:00:37.291573+00:00,65ab993d12c5c2cc9b68e6da2bb79b326930283e520363ffcdc145f88cd5a148

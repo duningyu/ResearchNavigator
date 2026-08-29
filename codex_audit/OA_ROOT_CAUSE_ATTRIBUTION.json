@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED_MANIFEST_IDENTITY",
+  "manifest_sha256_required": "0c7c51c00d2e40d56d2c637e6ea6734c2bd72947a1e204e2fd43dee6ef8473e4",
+  "manifest_path_exists": false,
+  "case_a": {
+    "classification": "UNRESOLVED",
+    "software_bug": false,
+    "confidence": "LOW",
+    "evidence": ["Frozen manifest is absent from current source tree; no diagnostic request made."]
+  },
+  "case_b": {
+    "classification": "UNRESOLVED",
+    "software_bug": false,
+    "confidence": "LOW",
+    "evidence": ["Frozen manifest is absent from current source tree; no diagnostic request made."]
+  },
+  "frozen_core_modified": false,
+  "release_zip_modified": false,
+  "next_legal_action": "RESTORE_OR_PROVIDE_THE_EXACT_FROZEN_MANIFEST_THEN_RECOMPUTE_ITS_SHA256"
+}

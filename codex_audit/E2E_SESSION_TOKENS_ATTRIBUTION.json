@@ -1,0 +1,27 @@
+{
+  "frozen_commit": "4feee21824187ca60d15dded18703a593ff212cd",
+  "bugfix_candidate_commit": "e143e55f4b47500416e8f23cfa0a1c336dc58526",
+  "frozen_result": "PASS: 2/2; no session_tokens error; cleanup PASS",
+  "bugfix_result": "PASS: 2/2; no session_tokens error; cleanup PASS",
+  "fresh_runtime_per_run": true,
+  "official_invocation": "corepack pnpm run test:e2e",
+  "stack_count": 1,
+  "database_paths": ["one fresh RN_DATA_DIR / SQLite database per run; exact path is runtime-generated and recorded in receipts/logs"],
+  "session_token_initializers": [
+    "API lifespan -> database.init() -> Base.metadata.create_all(self.engine)",
+    "Alembic migration metadata path (schema definition, not a second runtime stack)"
+  ],
+  "playwright_webserver_config": "absent from playwright.managed.config.ts",
+  "classification": "TEST_INVOCATION_OR_STALE_RUNTIME",
+  "software_bug": false,
+  "confidence": "HIGH",
+  "previous_error_reproduced": false,
+  "evidence": [
+    "Frozen control official E2E passed with fresh runtime and cleanup.",
+    "Bugfix candidate official E2E passed with fresh runtime and cleanup.",
+    "Current managed Playwright config has no webServer composite stack.",
+    "Current run-e2e.mjs owns API, Worker, Vite and Playwright and records one runtime.",
+    "No DOI resolver startup/import change was involved in the observed lifecycle."
+  ],
+  "next_legal_action": "RESUME_RN222_OA_RESOLVE_001_RELEASE_GATE"
+}

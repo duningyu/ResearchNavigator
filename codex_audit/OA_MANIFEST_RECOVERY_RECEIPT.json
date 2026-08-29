@@ -1,0 +1,11 @@
+{
+  "source_commit": "16211a4",
+  "source_path": "codex_audit/OA_LIVE_SMOKE_MANIFEST.json",
+  "git_blob": "7ddab58f723eb809437511f3ca25275ac9d148b0",
+  "blob_size_bytes": 2441,
+  "recovered_path": "codex_audit/recovered/OA_LIVE_SMOKE_MANIFEST.json",
+  "expected_sha256": "0c7c51c00d2e40d56d2c637e6ea6734c2bd72947a1e204e2fd43dee6ef8473e4",
+  "actual_sha256": "0c7c51c00d2e40d56d2c637e6ea6734c2bd72947a1e204e2fd43dee6ef8473e4",
+  "identity_match": true,
+  "status": "PASS"
+}

@@ -1,0 +1,7 @@
+timestamp,run_id,process,PID,event,db_path,table_operation,result
+2026-08-29T16:10:00Z,frozen-4feee21,api,observed,official stack startup,fresh RN_DATA_DIR,Base.metadata.create_all(session_tokens),PASS
+2026-08-29T16:10:00Z,frozen-4feee21,playwright,observed,managed child launch,fresh RN_DATA_DIR,no second stack initializer,NOT_REPRODUCED
+2026-08-29T16:10:00Z,frozen-4feee21,orchestrator,observed,teardown,fresh RN_DATA_DIR,owned process/port/runtime cleanup,PASS
+2026-08-29T16:00:00Z,candidate-e78306d,api,observed,official stack startup,fresh RN_DATA_DIR,Base.metadata.create_all(session_tokens),PASS
+2026-08-29T16:00:00Z,candidate-e78306d,playwright,observed,managed child launch,fresh RN_DATA_DIR,no second stack initializer,NOT_REPRODUCED
+2026-08-29T16:00:00Z,candidate-e78306d,orchestrator,observed,teardown,fresh RN_DATA_DIR,owned process/port/runtime cleanup,PASS

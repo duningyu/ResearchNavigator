@@ -1,0 +1,27 @@
+{
+  "doi": "10.1177/20552076241297729",
+  "manifest_sha256": "0c7c51c00d2e40d56d2c637e6ea6734c2bd72947a1e204e2fd43dee6ef8473e4",
+  "crossref_raw_license": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "openalex_raw_license": "cc-by-nc",
+  "pmc_raw_license": "CC BY-NC 4.0",
+  "paper_source_license": null,
+  "oa_candidate_license": "cc-by-nc",
+  "normalized_license": "cc-by-nc",
+  "effective_policy_license": "cc-by-nc",
+  "rights_decision": "requires_user_confirmation",
+  "auto_ingested": false,
+  "evidence_promoted": false,
+  "normalization_consistent": true,
+  "conservative_resolution": true,
+  "classification": "LICENSE_PROVENANCE_CONSISTENT",
+  "software_bug": false,
+  "confidence": "HIGH",
+  "semantic_scholar_status": "RATE_LIMITED",
+  "evidence": [
+    "Crossref exact DOI response reported the CC BY-NC 4.0 license URL.",
+    "OpenAlex exact DOI response reported best_oa_location license cc-by-nc.",
+    "Frozen manifest and PMC metadata evidence identify CC BY-NC 4.0.",
+    "Frozen Core live CASE B selected the OpenAlex candidate with cc-by-nc and requires_user_confirmation.",
+    "No auto-ingest and no evidence promotion occurred."
+  ]
+}
