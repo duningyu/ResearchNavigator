@@ -1,0 +1,48 @@
+{
+  "working_directory": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28",
+  "source_directory": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28",
+  "pyproject_version": "2.2.2",
+  "package_version": "2.2.1",
+  "pytest_collected": 184,
+  "alembic_head_present": "0005_evidence_platform.py",
+  "alembic_max_revision": "0005",
+  "evidence_platform_files": {
+    "apps/api/research_navigator/open_access/base.py": true,
+    "apps/api/research_navigator/open_access/policy.py": true,
+    "apps/api/research_navigator/open_access/resolver.py": true,
+    "apps/api/research_navigator/open_access/fetcher.py": true,
+    "apps/api/research_navigator/open_access/ingestion.py": true,
+    "apps/api/research_navigator/evidence/workflow.py": true,
+    "apps/api/research_navigator/authors/service.py": true,
+    "apps/api/research_navigator/datasets/service.py": true,
+    "apps/api/research_navigator/clustering/service.py": true,
+    "apps/api/research_navigator/evaluations/service.py": true,
+    "apps/api/research_navigator/routes/evidence.py": true,
+    "apps/api/research_navigator/routes/authors.py": true,
+    "apps/api/research_navigator/routes/datasets.py": true,
+    "apps/api/research_navigator/routes/clustering.py": true,
+    "apps/api/research_navigator/routes/evaluations.py": true
+  },
+  "expected_input_sha256": "1b0a7bbe6002a77c39c4c55db62961a14814a4a5ddd90d7f2664ca586832e441",
+  "expected_input_archive_found": false,
+  "candidate_archives": [
+    {
+      "path": "E:\\AI_Projects\\_package_out\\ResearchNavigator_2.2.0_environment_verified_2026-08-27.zip",
+      "sha256": "80C2D509B9280A0B958FE3B432CE9A73EEE57CC16C7466B782DECC7F253C91A5",
+      "matches_expected": false
+    }
+  ],
+  "git_head": "f2fab47aa39596af161d791338cb55f37f10718c",
+  "git_branch": "codex/rn220-environment-closure",
+  "git_worktree_status": "DIRTY; pre-existing changes were preserved",
+  "metadata_consistency": "FIXED: delivery/PACKAGE_INFO.json was aligned from 2.2.1 to 2.2.2; generated checksum/package artifacts require regeneration",
+  "metadata_consistency_before_fix": "FAIL: pyproject.toml=2.2.2 but delivery/PACKAGE_INFO.json=2.2.1",
+  "classification": "CORRECT_2_2_X_BASE",
+  "classification_basis": [
+    "pyproject version is >=2.2.0",
+    "pytest collected 184 tests",
+    "migration 0005 is present",
+    "all required 2.2.x evidence-platform modules are present"
+  ],
+  "production_code_modified_by_this_audit": false
+}

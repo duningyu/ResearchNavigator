@@ -1,0 +1,85 @@
+{
+  "scenario_status": "PASS",
+  "playwright_exit_code": 0,
+  "owned_processes_before_teardown": [
+    {
+      "pid": 2380,
+      "parent_pid": 6536,
+      "creation_time": "/Date(1787935313039)/",
+      "command_line": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "name": "python.exe"
+    },
+    {
+      "pid": 3012,
+      "parent_pid": 2380,
+      "creation_time": "/Date(1787935313055)/",
+      "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 3384,
+      "parent_pid": 2380,
+      "creation_time": "/Date(1787935313099)/",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "name": "python.exe"
+    },
+    {
+      "pid": 15936,
+      "parent_pid": 6536,
+      "creation_time": "/Date(1787935313053)/",
+      "command_line": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe -m services.worker.main --poll-seconds 0.5",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "name": "python.exe"
+    },
+    {
+      "pid": 11904,
+      "parent_pid": 15936,
+      "creation_time": "/Date(1787935313070)/",
+      "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 1608,
+      "parent_pid": 15936,
+      "creation_time": "/Date(1787935313103)/",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m services.worker.main --poll-seconds 0.5",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "name": "python.exe"
+    },
+    {
+      "pid": 25448,
+      "parent_pid": 6536,
+      "creation_time": "/Date(1787935313067)/",
+      "command_line": "E:\\DevTools\\nodejs\\node.exe E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\apps\\web\\node_modules\\vite\\bin\\vite.js --host 127.0.0.1 --port 5173",
+      "executable": "E:\\DevTools\\nodejs\\node.exe",
+      "name": "node.exe"
+    },
+    {
+      "pid": 8784,
+      "parent_pid": 25448,
+      "creation_time": "/Date(1787935313085)/",
+      "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "name": "conhost.exe"
+    },
+    {
+      "pid": 19980,
+      "parent_pid": 25448,
+      "creation_time": "/Date(1787935313362)/",
+      "command_line": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\apps\\web\\node_modules\\.pnpm\\@esbuild+win32-x64@0.28.2\\node_modules\\@esbuild\\win32-x64\\esbuild.exe --service=0.28.2 --ping",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\apps\\web\\node_modules\\.pnpm\\@esbuild+win32-x64@0.28.2\\node_modules\\@esbuild\\win32-x64\\esbuild.exe",
+      "name": "esbuild.exe"
+    }
+  ],
+  "owned_processes_after_teardown": [],
+  "api_port_released": true,
+  "web_port_released": true,
+  "runtime_path": "<temporary RN_DATA_DIR>",
+  "runtime_exists_after_teardown": false,
+  "unowned_processes_touched": 0,
+  "status": "PASS"
+}

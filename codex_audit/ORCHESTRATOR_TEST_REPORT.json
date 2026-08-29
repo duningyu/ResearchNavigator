@@ -1,0 +1,14 @@
+{
+  "commit": "9bd0a800d2a0f5d0c4312511c2f534d92ccefe14",
+  "top_level_orchestrator_success": "PASS",
+  "playwright_scenarios": "2/2 PASS",
+  "runtime_deleted": true,
+  "owned_processes_after": [],
+  "ports_released": {"api_8000": true, "web_5173": true},
+  "unowned_process_alive": true,
+  "unowned_processes_touched": 0,
+  "playwright_exit_propagated": true,
+  "failure_path_test": "NOT_RUN",
+  "startup_failure_test": "NOT_RUN",
+  "focused_supervisor_test": "PASS"
+}

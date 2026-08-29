@@ -1,0 +1,61 @@
+path,status,category,origin,should_ship,reason
+CHANGELOG.md,M,DELIVERY_METADATA,PRE_EXISTING_2_2_2_WORK,YES,Release-history change present before this session
+apps/api/alembic/versions/0005_evidence_platform.py,M,MIGRATION,PRE_EXISTING_2_2_2_WORK,YES,2.2 evidence-platform migration and covered by migration tests
+apps/api/research_navigator/analysis/llm_validation.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,LLM citation and evidence validation implementation
+apps/api/research_navigator/analysis/service.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,LLM analysis integration and audit persistence
+apps/api/research_navigator/authors/service.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Author Card service implementation
+apps/api/research_navigator/clustering/service.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Direction Cluster implementation
+apps/api/research_navigator/evaluations/service.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Expert Evaluation service implementation
+apps/api/research_navigator/evidence/workflow.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Legal evidence workflow implementation
+apps/api/research_navigator/main.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,2.2 route and application registration
+apps/api/research_navigator/open_access/__init__.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Open Access package registration
+apps/api/research_navigator/open_access/arxiv.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Open Access arXiv adapter
+apps/api/research_navigator/open_access/fetcher.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,SSRF-aware remote PDF fetcher
+apps/api/research_navigator/routes/evaluations.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Expert Evaluation API routes
+apps/api/research_navigator/routes/system.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,2.2 system status routes
+apps/api/research_navigator/scholarly/openalex.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,OpenAlex rate-limit behavior
+apps/api/research_navigator/scholarly/service.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Scholarly source integration behavior
+apps/web/package.json,M,FRONTEND_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Frontend 2.2.2 package metadata
+apps/web/playwright.config.ts,M,FRONTEND_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Deterministic E2E configuration
+apps/web/tsconfig.tsbuildinfo,M,LOCAL_ENVIRONMENT,CURRENT_CODEX_SESSION,NO,Generated TypeScript build cache
+codex_audit/FINAL_STATUS.json,M,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical audit summary
+codex_audit/TEST_REPORT.md,M,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification report
+delivery/ACCEPTANCE_REPORT.md,M,DELIVERY_METADATA,PRE_EXISTING_2_2_2_WORK,YES,Release acceptance evidence
+delivery/OPENAPI.json,M,DELIVERY_METADATA,PRE_EXISTING_2_2_2_WORK,YES,Generated release API contract
+delivery/PACKAGE_INFO.json,M,DELIVERY_METADATA,CURRENT_CODEX_SESSION,YES,Minimal version alignment required by release test
+delivery/STATUS.json,M,DELIVERY_METADATA,PRE_EXISTING_2_2_2_WORK,YES,Release status metadata
+pyproject.toml,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Declared package version and dependency contract
+scripts/release_metadata.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Release metadata source of truth
+scripts/verify_delivery.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Delivery verification tooling
+scripts/verify_docker_persistence.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Docker acceptance harness
+services/worker/main.py,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Worker evidence workflow handlers
+tests/integration/test_author_cards.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Author Card integration coverage
+tests/integration/test_dataset_cards.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Dataset Card integration coverage
+tests/integration/test_direction_clusters.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Direction Cluster integration coverage
+tests/integration/test_evidence_workflow.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Legal evidence workflow integration coverage
+tests/integration/test_expert_evaluations.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Expert Evaluation integration coverage
+tests/integration/test_llm_analysis_api.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,LLM API integration coverage
+tests/integration/test_source_runtime_state.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Source runtime state coverage
+tests/integration/test_worker_evidence_workflow.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Worker evidence workflow coverage
+tests/unit/test_author_identity.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Author identity unit coverage
+tests/unit/test_llm_analysis_validation.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,LLM validation unit coverage
+tests/unit/test_oa_policy.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Open Access policy unit coverage
+tests/unit/test_package_release.py,M,TEST,PRE_EXISTING_2_2_2_WORK,YES,Release metadata regression coverage
+uv.lock,M,PRODUCTION_SOURCE,PRE_EXISTING_2_2_2_WORK,YES,Frozen dependency lock
+$r/openapi.json,??,RUNTIME_ARTIFACT,CURRENT_CODEX_SESSION,NO,Accidental audit-path variable output
+$r/openapi.log,??,RUNTIME_ARTIFACT,CURRENT_CODEX_SESSION,NO,Accidental audit-path variable output
+apps/web/scripts/run_e2e_stack.mjs,??,FRONTEND_SOURCE,CURRENT_CODEX_SESSION,NO,Three teardown fixes were attempted; E2E passed but isolated runtime cleanup still failed, so this uncommitted change is not shippable
+codex_audit/SOURCE_IDENTITY_AUDIT.json,??,AUDIT_EVIDENCE,CURRENT_CODEX_SESSION,NO,Source identity evidence
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/compileall-closure-final.exit,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/compileall-closure-final.stderr.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/compileall-closure-final.stdout.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/mypy-closure-final.exit,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/mypy-closure-final.stderr.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/mypy-closure-final.stdout.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/playwright-final.exit,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/playwright-final.stderr.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/playwright-final.stdout.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/ruff-closure-final.exit,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/ruff-closure-final.stderr.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+codex_audit/runs/20260828T_ENV_CLOSURE_CONT/ruff-closure-final.stdout.log,??,AUDIT_EVIDENCE,PRE_EXISTING_2_2_2_WORK,NO,Historical verification log
+docs/releases/V2.2.2.md,??,DELIVERY_METADATA,PRE_EXISTING_2_2_2_WORK,YES,Version 2.2.2 release notes
