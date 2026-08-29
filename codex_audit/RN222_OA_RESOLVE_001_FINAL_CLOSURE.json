@@ -1,0 +1,17 @@
+{
+  "bug_id": "RN222-OA-RESOLVE-001",
+  "root_cause": "WRONG_PROVIDER_QUERY",
+  "frozen_version": "2.2.2",
+  "fixed_version": "2.2.3",
+  "affected_doi": "10.1177/20552076241297729",
+  "red_verified": true,
+  "exact_lookup": "PASS",
+  "provider_fallback": "PASS",
+  "not_found_behavior": "PASS",
+  "broad_search_regression": "PASS",
+  "license_provenance": "PASS",
+  "live_case_b": "PASS",
+  "full_regression": "PASS",
+  "status": "CLOSED",
+  "source_commit": "2fe9dae1e8fa8e63c5af1f40813b6b320c9e1f06"
+}

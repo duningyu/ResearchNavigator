@@ -1,11 +1,9 @@
 id,status,gate,claim,evidence,blocker
-ENV-001,PASS,frontend-typecheck,DirectionMapPage strict nullability fixed,frontend-typecheck-green.stdout.log,none
-ENV-002,PASS,frontend-build,Vite production build succeeds,frontend-build-green.stdout.log,none
-ENV-003,FAIL,frontend-vitest,Full frontend unit suite,frontend-vitest-baseline.stdout.log,4 failing tests and unhandled Router context error
-ENV-004,BLOCKED,python,uv lock sync pytest Ruff mypy,uv-lock-check-baseline.stderr.log,uv unavailable and Python 3.9 unsupported
-ENV-005,BLOCKED,mcp,official MCP stdio,mcp-stdio-baseline2.stderr.log,mcp package unavailable
-ENV-006,BLOCKED,docker,Docker cold start persistence,docker-persistence-baseline2.stderr.log,Docker executable unavailable
-ENV-007,BLOCKED,live-sources,OpenAlex Crossref arXiv S2 Unpaywall,live-sources-baseline2.stderr.log,Python 3.9 script incompatibility and no credentials
-ENV-008,BLOCKED,llm,real provider validation,environment.txt,LLM provider variables unset
-ENV-009,BLOCKED,oa,legal OA fulltext end-to-end,environment.txt,Python/runtime and legal live-source gate unavailable
-ENV-010,BLOCKED,expert,real expert outcomes,environment.txt,no real participants supplied
+RN222-OA-RESOLVE-001,CLOSED,exact-doi,Canonical DOI exact lookup with fallback,RN222_OA_RESOLVE_001_FINAL_CLOSURE.json,none
+OA-001,PARTIAL,legal-oa-live,CASE A external 403; CASE B/C contract evidence,OA_LICENSE_PROVENANCE_AUDIT.json,external source policy/availability
+EXT-001,PARTIAL,live-sources,Semantic Scholar rate limiting,OA_LICENSE_PROVIDER_MATRIX.csv,external rate limit
+ENV-001,BLOCKED,docker,Docker persistence not verified,FINAL_STATUS.json,Docker daemon unavailable
+ENV-002,BLOCKED,live-llm,Live provider not verified,FINAL_STATUS.json,credentials/configuration absent
+ENV-003,BLOCKED,history,Real history backfill not verified,FINAL_STATUS.json,authorized database unavailable
+ENV-004,BLOCKED,expert,Real expert outcome not verified,FINAL_STATUS.json,participants unavailable
+ENV-005,BLOCKED,stability,Long-duration stability not verified,FINAL_STATUS.json,not in this release gate

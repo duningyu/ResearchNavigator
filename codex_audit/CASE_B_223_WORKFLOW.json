@@ -1,0 +1,515 @@
+{
+  "status": "partial",
+  "strongest_evidence": "abstract_only",
+  "result": {
+    "paper_id": 1,
+    "project_id": null,
+    "evidence_before": "metadata_only",
+    "evidence_after_abstract": "abstract_only",
+    "evidence_after": "abstract_only",
+    "analysis_id": 2,
+    "document_id": null,
+    "acquisition_run_id": "5fb0de344d2f4e9cbf3ed3a46341bf2f",
+    "source_status": {
+      "openalex": {
+        "status": "ok",
+        "result_count": 10,
+        "detail": null,
+        "metadata": {
+          "http_status": 200,
+          "rate_limit_limit": 1000,
+          "rate_limit_remaining": 639,
+          "rate_limit_reset": "26838"
+        },
+        "checked_at": "2026-08-29T16:32:42.457458Z"
+      },
+      "arxiv": {
+        "status": "ok",
+        "result_count": 10,
+        "detail": null,
+        "metadata": {},
+        "checked_at": "2026-08-29T16:32:42.426744Z"
+      },
+      "semantic_scholar": {
+        "status": "rate_limited",
+        "result_count": 0,
+        "detail": "Semantic Scholar returned 429",
+        "metadata": {},
+        "checked_at": "2026-08-29T16:32:41.321029Z"
+      }
+    },
+    "oa_resolution": {
+      "candidates": [
+        {
+          "source": "openalex",
+          "source_record_id": "https://openalex.org/W4404327152",
+          "landing_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/11558741",
+          "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11558741/pdf/10.1177_20552076241297729.pdf",
+          "license": "cc-by-nc",
+          "normalized_license": "cc-by-nc",
+          "host_type": "repository",
+          "version": "submittedVersion",
+          "is_oa": true,
+          "requires_auth": false,
+          "access_decision": "requires_user_confirmation",
+          "rejection_reason": "limited_license_requires_confirmation",
+          "provenance_hash": "21423f8b6a007fc891b1ab524dce4ef8b4517b612bdbabeb89af9eed94e11ab0",
+          "metadata": {
+            "oa_status": "gold"
+          }
+        },
+        {
+          "source": "openalex",
+          "source_record_id": "https://openalex.org/W4404327152",
+          "landing_url": "https://doaj.org/article/1cca485722cc4ffcb4fa117a982f705e",
+          "pdf_url": null,
+          "license": "cc-by-sa",
+          "normalized_license": "cc-by-sa",
+          "host_type": "repository",
+          "version": "submittedVersion",
+          "is_oa": true,
+          "requires_auth": false,
+          "access_decision": "link_only",
+          "rejection_reason": "pdf_url_unavailable",
+          "provenance_hash": "8dc94343857325befd92720dd881c0f8225441f87a591cd9756f0bf3cd3e8c76",
+          "metadata": {
+            "oa_status": "gold"
+          }
+        },
+        {
+          "source": "openalex",
+          "source_record_id": "https://openalex.org/W4404327152",
+          "landing_url": "https://doi.org/10.1177/20552076241297729",
+          "pdf_url": null,
+          "license": "cc-by-nc",
+          "normalized_license": "cc-by-nc",
+          "host_type": "journal",
+          "version": "publishedVersion",
+          "is_oa": true,
+          "requires_auth": false,
+          "access_decision": "link_only",
+          "rejection_reason": "pdf_url_unavailable",
+          "provenance_hash": "a34b62a081d614ed047b91cae82d81b98c0f1972882d3562f060567a86f17294",
+          "metadata": {
+            "oa_status": "gold"
+          }
+        },
+        {
+          "source": "openalex",
+          "source_record_id": "https://openalex.org/W4404327152",
+          "landing_url": "https://pubmed.ncbi.nlm.nih.gov/39539722",
+          "pdf_url": null,
+          "license": null,
+          "normalized_license": null,
+          "host_type": "repository",
+          "version": "publishedVersion",
+          "is_oa": true,
+          "requires_auth": false,
+          "access_decision": "link_only",
+          "rejection_reason": "pdf_url_unavailable",
+          "provenance_hash": "85cba495a181d520a42ff335c9be81db0706deaef7c5e47df8d28a62f9012f6d",
+          "metadata": {
+            "oa_status": "gold"
+          }
+        },
+        {
+          "source": "openalex",
+          "source_record_id": "https://openalex.org/W4404327152",
+          "landing_url": "https://researchonline.jcu.edu.au/84058/1/krahe-et-al-2024-digital-health-impleme.pdf",
+          "pdf_url": "https://researchonline.jcu.edu.au/84058/1/krahe-et-al-2024-digital-health-impleme.pdf",
+          "license": null,
+          "normalized_license": null,
+          "host_type": "repository",
+          "version": "submittedVersion",
+          "is_oa": true,
+          "requires_auth": false,
+          "access_decision": "link_only",
+          "rejection_reason": "license_unknown",
+          "provenance_hash": "3844d4d6487f30585351ff5bab29aee8c734a68d893b2c0f6b4748acebf4267a",
+          "metadata": {
+            "oa_status": "gold"
+          }
+        }
+      ],
+      "selected": {
+        "source": "openalex",
+        "source_record_id": "https://openalex.org/W4404327152",
+        "landing_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/11558741",
+        "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11558741/pdf/10.1177_20552076241297729.pdf",
+        "license": "cc-by-nc",
+        "normalized_license": "cc-by-nc",
+        "host_type": "repository",
+        "version": "submittedVersion",
+        "is_oa": true,
+        "requires_auth": false,
+        "access_decision": "requires_user_confirmation",
+        "rejection_reason": "limited_license_requires_confirmation",
+        "provenance_hash": "21423f8b6a007fc891b1ab524dce4ef8b4517b612bdbabeb89af9eed94e11ab0",
+        "metadata": {
+          "oa_status": "gold"
+        }
+      },
+      "source_status": {
+        "openalex": "ok",
+        "arxiv": "ok",
+        "semantic_scholar": "error"
+      },
+      "errors": {
+        "semantic_scholar": "HTTPStatusError: Client error '429 ' for url 'https://api.semanticscholar.org/graph/v1/paper/DOI:10.1177%2F20552076241297729?fields=paperId%2Curl%2CopenAccessPdf%2CexternalIds'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+      }
+    },
+    "warnings": [
+      "OA candidate not ingested: access_decision=requires_user_confirmation"
+    ],
+    "enrichment_warnings": [],
+    "completed_at": "2026-08-30T00:32:45.198661+08:00"
+  },
+  "events": [
+    {
+      "id": 1,
+      "event_type": "created",
+      "detail": {
+        "job_type": "evidence_workflow_v1",
+        "paper_id": 1
+      },
+      "created_at": "2026-08-29T16:32:37.025442"
+    },
+    {
+      "id": 2,
+      "event_type": "started",
+      "detail": {
+        "executor": "local"
+      },
+      "created_at": "2026-08-29T16:32:37.044292"
+    },
+    {
+      "id": 3,
+      "event_type": "identity_resolution",
+      "detail": {
+        "paper_id": 1,
+        "doi_present": true,
+        "arxiv_id_present": false,
+        "evidence_before": "metadata_only"
+      },
+      "created_at": "2026-08-29T16:32:37.047688"
+    },
+    {
+      "id": 4,
+      "event_type": "abstract_acquisition",
+      "detail": {
+        "outcome": "abstract_acquired",
+        "run_id": "5fb0de344d2f4e9cbf3ed3a46341bf2f",
+        "queried_sources": [
+          "openalex",
+          "arxiv",
+          "semantic_scholar"
+        ],
+        "source_status": {
+          "openalex": {
+            "status": "ok",
+            "result_count": 10,
+            "detail": null,
+            "metadata": {
+              "http_status": 200,
+              "rate_limit_limit": 1000,
+              "rate_limit_remaining": 639,
+              "rate_limit_reset": "26838"
+            },
+            "checked_at": "2026-08-29T16:32:42.457458Z"
+          },
+          "arxiv": {
+            "status": "ok",
+            "result_count": 10,
+            "detail": null,
+            "metadata": {},
+            "checked_at": "2026-08-29T16:32:42.426744Z"
+          },
+          "semantic_scholar": {
+            "status": "rate_limited",
+            "result_count": 0,
+            "detail": "Semantic Scholar returned 429",
+            "metadata": {},
+            "checked_at": "2026-08-29T16:32:41.321029Z"
+          }
+        },
+        "evidence_after": "abstract_only"
+      },
+      "created_at": "2026-08-29T16:32:42.481632"
+    },
+    {
+      "id": 5,
+      "event_type": "oa_location_discovery",
+      "detail": {
+        "source_status": {
+          "openalex": "ok",
+          "arxiv": "ok",
+          "semantic_scholar": "error"
+        },
+        "errors": {
+          "semantic_scholar": "HTTPStatusError: Client error '429 ' for url 'https://api.semanticscholar.org/graph/v1/paper/DOI:10.1177%2F20552076241297729?fields=paperId%2Curl%2CopenAccessPdf%2CexternalIds'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+        },
+        "candidate_count": 5
+      },
+      "created_at": "2026-08-29T16:32:45.153197"
+    },
+    {
+      "id": 6,
+      "event_type": "license_policy",
+      "detail": {
+        "candidates": [
+          {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "license": "cc-by-nc",
+            "access_decision": "requires_user_confirmation",
+            "rejection_reason": "limited_license_requires_confirmation"
+          },
+          {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "license": "cc-by-sa",
+            "access_decision": "link_only",
+            "rejection_reason": "pdf_url_unavailable"
+          },
+          {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "license": "cc-by-nc",
+            "access_decision": "link_only",
+            "rejection_reason": "pdf_url_unavailable"
+          },
+          {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "license": null,
+            "access_decision": "link_only",
+            "rejection_reason": "pdf_url_unavailable"
+          },
+          {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "license": null,
+            "access_decision": "link_only",
+            "rejection_reason": "license_unknown"
+          }
+        ],
+        "selected_decision": "requires_user_confirmation"
+      },
+      "created_at": "2026-08-29T16:32:45.159729"
+    },
+    {
+      "id": 7,
+      "event_type": "deterministic_analysis",
+      "detail": {
+        "analysis_id": 2,
+        "evidence_level": "abstract_only"
+      },
+      "created_at": "2026-08-29T16:32:45.179045"
+    },
+    {
+      "id": 8,
+      "event_type": "optional_llm_enrichment",
+      "detail": {
+        "outcome": "deterministic",
+        "provider": "deterministic",
+        "model_name": null,
+        "fallback_reason": null
+      },
+      "created_at": "2026-08-29T16:32:45.181458"
+    },
+    {
+      "id": 9,
+      "event_type": "author_card_refresh",
+      "detail": {
+        "outcome": "succeeded",
+        "count": 0
+      },
+      "created_at": "2026-08-29T16:32:45.186977"
+    },
+    {
+      "id": 10,
+      "event_type": "dataset_card_refresh",
+      "detail": {
+        "outcome": "succeeded",
+        "count": 1
+      },
+      "created_at": "2026-08-29T16:32:45.193338"
+    },
+    {
+      "id": 11,
+      "event_type": "direction_cluster_refresh",
+      "detail": {
+        "outcome": "not_requested"
+      },
+      "created_at": "2026-08-29T16:32:45.195327"
+    },
+    {
+      "id": 12,
+      "event_type": "partial",
+      "detail": {
+        "paper_id": 1,
+        "project_id": null,
+        "evidence_before": "metadata_only",
+        "evidence_after_abstract": "abstract_only",
+        "evidence_after": "abstract_only",
+        "analysis_id": 2,
+        "document_id": null,
+        "acquisition_run_id": "5fb0de344d2f4e9cbf3ed3a46341bf2f",
+        "source_status": {
+          "openalex": {
+            "status": "ok",
+            "result_count": 10,
+            "detail": null,
+            "metadata": {
+              "http_status": 200,
+              "rate_limit_limit": 1000,
+              "rate_limit_remaining": 639,
+              "rate_limit_reset": "26838"
+            },
+            "checked_at": "2026-08-29T16:32:42.457458Z"
+          },
+          "arxiv": {
+            "status": "ok",
+            "result_count": 10,
+            "detail": null,
+            "metadata": {},
+            "checked_at": "2026-08-29T16:32:42.426744Z"
+          },
+          "semantic_scholar": {
+            "status": "rate_limited",
+            "result_count": 0,
+            "detail": "Semantic Scholar returned 429",
+            "metadata": {},
+            "checked_at": "2026-08-29T16:32:41.321029Z"
+          }
+        },
+        "oa_resolution": {
+          "candidates": [
+            {
+              "source": "openalex",
+              "source_record_id": "https://openalex.org/W4404327152",
+              "landing_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/11558741",
+              "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11558741/pdf/10.1177_20552076241297729.pdf",
+              "license": "cc-by-nc",
+              "normalized_license": "cc-by-nc",
+              "host_type": "repository",
+              "version": "submittedVersion",
+              "is_oa": true,
+              "requires_auth": false,
+              "access_decision": "requires_user_confirmation",
+              "rejection_reason": "limited_license_requires_confirmation",
+              "provenance_hash": "21423f8b6a007fc891b1ab524dce4ef8b4517b612bdbabeb89af9eed94e11ab0",
+              "metadata": {
+                "oa_status": "gold"
+              }
+            },
+            {
+              "source": "openalex",
+              "source_record_id": "https://openalex.org/W4404327152",
+              "landing_url": "https://doaj.org/article/1cca485722cc4ffcb4fa117a982f705e",
+              "pdf_url": null,
+              "license": "cc-by-sa",
+              "normalized_license": "cc-by-sa",
+              "host_type": "repository",
+              "version": "submittedVersion",
+              "is_oa": true,
+              "requires_auth": false,
+              "access_decision": "link_only",
+              "rejection_reason": "pdf_url_unavailable",
+              "provenance_hash": "8dc94343857325befd92720dd881c0f8225441f87a591cd9756f0bf3cd3e8c76",
+              "metadata": {
+                "oa_status": "gold"
+              }
+            },
+            {
+              "source": "openalex",
+              "source_record_id": "https://openalex.org/W4404327152",
+              "landing_url": "https://doi.org/10.1177/20552076241297729",
+              "pdf_url": null,
+              "license": "cc-by-nc",
+              "normalized_license": "cc-by-nc",
+              "host_type": "journal",
+              "version": "publishedVersion",
+              "is_oa": true,
+              "requires_auth": false,
+              "access_decision": "link_only",
+              "rejection_reason": "pdf_url_unavailable",
+              "provenance_hash": "a34b62a081d614ed047b91cae82d81b98c0f1972882d3562f060567a86f17294",
+              "metadata": {
+                "oa_status": "gold"
+              }
+            },
+            {
+              "source": "openalex",
+              "source_record_id": "https://openalex.org/W4404327152",
+              "landing_url": "https://pubmed.ncbi.nlm.nih.gov/39539722",
+              "pdf_url": null,
+              "license": null,
+              "normalized_license": null,
+              "host_type": "repository",
+              "version": "publishedVersion",
+              "is_oa": true,
+              "requires_auth": false,
+              "access_decision": "link_only",
+              "rejection_reason": "pdf_url_unavailable",
+              "provenance_hash": "85cba495a181d520a42ff335c9be81db0706deaef7c5e47df8d28a62f9012f6d",
+              "metadata": {
+                "oa_status": "gold"
+              }
+            },
+            {
+              "source": "openalex",
+              "source_record_id": "https://openalex.org/W4404327152",
+              "landing_url": "https://researchonline.jcu.edu.au/84058/1/krahe-et-al-2024-digital-health-impleme.pdf",
+              "pdf_url": "https://researchonline.jcu.edu.au/84058/1/krahe-et-al-2024-digital-health-impleme.pdf",
+              "license": null,
+              "normalized_license": null,
+              "host_type": "repository",
+              "version": "submittedVersion",
+              "is_oa": true,
+              "requires_auth": false,
+              "access_decision": "link_only",
+              "rejection_reason": "license_unknown",
+              "provenance_hash": "3844d4d6487f30585351ff5bab29aee8c734a68d893b2c0f6b4748acebf4267a",
+              "metadata": {
+                "oa_status": "gold"
+              }
+            }
+          ],
+          "selected": {
+            "source": "openalex",
+            "source_record_id": "https://openalex.org/W4404327152",
+            "landing_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/11558741",
+            "pdf_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11558741/pdf/10.1177_20552076241297729.pdf",
+            "license": "cc-by-nc",
+            "normalized_license": "cc-by-nc",
+            "host_type": "repository",
+            "version": "submittedVersion",
+            "is_oa": true,
+            "requires_auth": false,
+            "access_decision": "requires_user_confirmation",
+            "rejection_reason": "limited_license_requires_confirmation",
+            "provenance_hash": "21423f8b6a007fc891b1ab524dce4ef8b4517b612bdbabeb89af9eed94e11ab0",
+            "metadata": {
+              "oa_status": "gold"
+            }
+          },
+          "source_status": {
+            "openalex": "ok",
+            "arxiv": "ok",
+            "semantic_scholar": "error"
+          },
+          "errors": {
+            "semantic_scholar": "HTTPStatusError: Client error '429 ' for url 'https://api.semanticscholar.org/graph/v1/paper/DOI:10.1177%2F20552076241297729?fields=paperId%2Curl%2CopenAccessPdf%2CexternalIds'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429"
+          }
+        },
+        "warnings": [
+          "OA candidate not ingested: access_decision=requires_user_confirmation"
+        ],
+        "enrichment_warnings": [],
+        "completed_at": "2026-08-30T00:32:45.198661+08:00"
+      },
+      "created_at": "2026-08-29T16:32:45.200043"
+    }
+  ]
+}

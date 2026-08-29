@@ -1,22 +1,15 @@
-# ResearchNavigator 2.2.2 verification closure
+# ResearchNavigator 2.2.3 final release gate
 
-Final source commit: `9bd0a800d2a0f5d0c4312511c2f534d92ccefe14`
+- Targeted DOI tests: 4 passed.
+- Backend: 188 passed.
+- Security/RAG: 16 passed.
+- Ruff: PASS.
+- Mypy: PASS, 125 source files.
+- Compileall: PASS.
+- Alembic: PASS, head 0005, 53 tables, integrity ok.
+- Frontend: frozen install, typecheck, 16 Vitest tests and build PASS.
+- Playwright: 2/2 PASS with process, port and runtime cleanup.
+- MCP: official stdio fresh-run PASS with isolated API.
+- Live CASE B: HTTP 200, exact DOI, provenance, `requires_user_confirmation`, no ingest/promotion.
 
-| Gate | Result |
-|---|---|
-| uv lock/check and frozen sync | PASS |
-| backend pytest | 184 passed |
-| security/RAG | 16 passed |
-| Ruff | PASS |
-| Mypy | PASS; 125 source files |
-| compileall | PASS |
-| Alembic | PASS; 0005 head, 53 tables, integrity ok |
-| frontend install | PASS |
-| frontend typecheck | PASS |
-| Vitest | 16 passed |
-| frontend build | PASS |
-| Playwright | 2/2 passed |
-| Playwright teardown | PASS; owned processes 0, ports released, runtime deleted |
-| MCP official stdio | PASS; exit code 0 |
-
-External boundaries: Docker is blocked by unavailable daemon; live LLM by missing configuration; live sources/OA smoke, real history backfill, and real expert validation were not claimed as PASS. Original input ZIP SHA256 provenance remains unresolved; source identity is verified by content fingerprint.
+External/real-world validation remains explicitly partial or blocked.

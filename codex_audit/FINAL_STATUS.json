@@ -1,26 +1,13 @@
 {
   "status": "PARTIAL",
-  "version": "2.2.2",
-  "audit_run": "20260829T_RN222_E2E_ORCHESTRATOR",
-  "commit": "9bd0a800d2a0f5d0c4312511c2f534d92ccefe14",
-  "reason": "Top-level E2E orchestrator owns runtime, API, Worker, Vite, Playwright, and teardown. Fresh formal Playwright run passed 2/2 scenarios with zero owned processes, released ports, and deleted runtime. Fresh official MCP stdio verification returned exit code 0. External and real-world validation remain blocked.",
-  "input_sha256": "1b0a7bbe6002a77c39c4c55db62961a14814a4a5ddd90d7f2664ca586832e441",
-  "gates": {
-    "frontend_typecheck": "PASS",
-    "frontend_build": "PASS",
-    "frontend_vitest": "PASS",
-    "python_backend": "PASS",
-    "mcp": "PASS",
-    "alembic": "PASS",
-    "security_rag": "PASS",
-    "compileall": "PASS",
-    "openapi": "PASS",
-    "ruff": "PASS",
-    "mypy": "PASS",
-    "playwright": "PASS: top-level orchestrator, 2/2 scenarios, owned process cleanup, port cleanup, and runtime cleanup",
-    "docker": "BLOCKED",
-    "live_sources": "BLOCKED",
-    "live_llm": "BLOCKED",
-    "real_expert": "BLOCKED"
-  }
+  "version": "2.2.3",
+  "source_commit": "2fe9dae1e8fa8e63c5af1f40813b6b320c9e1f06",
+  "bug_closure": "RN222-OA-RESOLVE-001=CLOSED",
+  "core_software_verification": "PASS",
+  "aggregate_search_resilience": "RESILIENT_WITH_DEGRADATION",
+  "legal_oa_live": "PARTIAL_EXTERNAL_BLOCK_CONFIRMED",
+  "external_integration_verification": "PARTIAL",
+  "real_world_validation": "BLOCKED",
+  "production_ready": "NO",
+  "blocked": ["CASE_A_EXTERNAL_403", "SEMANTIC_SCHOLAR_RATE_LIMITING", "DOCKER", "LIVE_LLM", "REAL_HISTORY_BACKFILL", "REAL_EXPERT_VALIDATION", "LONG_DURATION_STABILITY"]
 }
