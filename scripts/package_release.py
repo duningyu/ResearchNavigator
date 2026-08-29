@@ -55,6 +55,8 @@ def should_exclude(relative: Path) -> bool:
         return relative != Path("runtime/.gitkeep")
     if relative.parts and relative.parts[0] in {"uploads", "vector_index", "backups"}:
         return True
+    if "uploads" in relative.parts or relative.suffix.lower() == ".pdf":
+        return True
     return relative.suffix in {".db", ".sqlite3"}
 
 

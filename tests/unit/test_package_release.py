@@ -12,6 +12,8 @@ def test_package_excludes_runtime_secrets_caches_and_existing_hash_outputs() -> 
         Path("apps/api/__pycache__/module.pyc"),
         Path("apps/web/node_modules/react/index.js"),
         Path("runtime/research_navigator.db"),
+        Path("codex_audit/runs/old/e2e-runtime/uploads/1/1/upload.pdf"),
+        Path("codex_audit/runs/old/real-paper.pdf"),
         Path(".env"),
         Path("delivery/SHA256SUMS.txt"),
         Path("delivery/FILE_MANIFEST.json"),
