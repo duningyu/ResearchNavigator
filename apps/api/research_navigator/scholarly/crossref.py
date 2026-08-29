@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 from datetime import date
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -39,6 +40,43 @@ class CrossrefAdapter(ScholarlyAdapter):
     def __init__(self, *, mailto: str | None = None, timeout: float = 20.0) -> None:
         self.mailto = mailto
         self.timeout = timeout
+
+    async def resolve_exact(self, doi: str) -> PaperRecord | None:
+        url = f"{self.base_url}/{quote(doi, safe='')}"
+        headers = {"User-Agent": "ResearchNavigator/0.2 (mailto:local-research@example.invalid)"}
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout, headers=headers) as client:
+                response = await client.get(url)
+                if response.status_code == 404:
+                    return None
+                response.raise_for_status()
+                item = (response.json().get("message") or {})
+        except Exception:
+            return None
+        title = " ".join(item.get("title") or []) or "Untitled"
+        source_id = str(item.get("DOI") or item.get("URL") or title)
+        provenance = SourceProvenance(
+            source=self.name,
+            source_id=source_id,
+            source_url=item.get("URL"),
+            raw_hash=hashlib.sha256(repr(sorted(item.items())).encode("utf-8")).hexdigest(),
+            is_fixture=False,
+        )
+        publication_date = _first_date(item)
+        return PaperRecord(
+            title=title,
+            publication_year=publication_date.year if publication_date else None,
+            publication_date=publication_date,
+            venue="; ".join(item.get("container-title") or []) or None,
+            venue_type=item.get("type"),
+            doi=doi,
+            external_ids={"crossref": source_id},
+            source_urls=[item["URL"]] if item.get("URL") else [],
+            publisher_url=item.get("URL"),
+            citation_count=item.get("is-referenced-by-count"),
+            reference_count=item.get("reference-count"),
+            source_provenance=[provenance],
+        )
 
     async def search(self, request: SearchRequest) -> AdapterSearchResult:
         params: dict[str, Any] = {

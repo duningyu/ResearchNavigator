@@ -389,6 +389,17 @@ async def resolve_paper(
         if local is not None:
             return paper_to_read(session, local)
 
+    if doi is not None:
+        exact_service: FederatedSearchService = request.app.state.search_service
+        exact = await exact_service.resolve_exact(doi, selected_names=payload.sources or None)
+        if exact is not None:
+            paper = upsert_paper(session, exact)
+            session.commit()
+            return paper_to_read(session, paper)
+        raise HTTPException(
+            status_code=404, detail="Paper could not be resolved from configured sources"
+        )
+
     query = payload.doi or payload.arxiv_id or payload.title or ""
     service: FederatedSearchService = request.app.state.search_service
     result = await service.search(SearchRequest(query=query, limit=10, sources=payload.sources))

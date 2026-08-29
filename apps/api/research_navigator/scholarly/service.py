@@ -60,6 +60,22 @@ class FederatedSearchService:
         deduplicated.sort(key=lambda item: item.source_score or 0.0, reverse=True)
         return FederatedSearchResult(papers=deduplicated[: request.limit], source_status=statuses)
 
+    async def resolve_exact(
+        self, doi: str, *, selected_names: list[str] | None = None
+    ) -> PaperRecord | None:
+        names = selected_names if selected_names is not None else list(self.adapters)
+        for name in names:
+            adapter = self.adapters.get(name)
+            if adapter is None:
+                continue
+            try:
+                record = await adapter.resolve_exact(doi)
+            except Exception:
+                continue
+            if record is not None:
+                return record
+        return None
+
 
 def build_search_service(settings: Settings) -> FederatedSearchService:
     adapters: list[ScholarlyAdapter] = []

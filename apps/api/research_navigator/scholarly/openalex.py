@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -65,6 +66,48 @@ class OpenAlexAdapter(ScholarlyAdapter):
         self.mailto = mailto
         self.api_key = api_key
         self.timeout = timeout
+
+    async def resolve_exact(self, doi: str) -> PaperRecord | None:
+        identifier = f"https://doi.org/{doi}"
+        url = f"{self.base_url}/{quote(identifier, safe='')}"
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(url)
+                if response.status_code == 404:
+                    return None
+                response.raise_for_status()
+                item = response.json()
+        except Exception:
+            return None
+        ids = item.get("ids") or {}
+        source = (item.get("primary_location") or {}).get("source") or {}
+        provenance = SourceProvenance(
+            source=self.name,
+            source_id=str(item.get("id") or identifier),
+            source_url=item.get("id"),
+            raw_hash=hashlib.sha256(repr(sorted(item.items())).encode("utf-8")).hexdigest(),
+            is_fixture=False,
+        )
+        return PaperRecord(
+            title=item.get("display_name") or item.get("title") or "Untitled",
+            publication_year=item.get("publication_year"),
+            venue=source.get("display_name"),
+            venue_type=source.get("type"),
+            doi=doi,
+            external_ids={k: str(v) for k, v in ids.items() if v},
+            source_urls=[
+                url
+                for url in [
+                    item.get("id"),
+                    (item.get("primary_location") or {}).get("landing_page_url"),
+                ]
+                if url
+            ],
+            publisher_url=(item.get("primary_location") or {}).get("landing_page_url"),
+            pdf_url=(item.get("primary_location") or {}).get("pdf_url"),
+            open_access_status=(item.get("open_access") or {}).get("oa_status"),
+            source_provenance=[provenance],
+        )
 
     async def search(self, request: SearchRequest) -> AdapterSearchResult:
         params: dict[str, Any] = {

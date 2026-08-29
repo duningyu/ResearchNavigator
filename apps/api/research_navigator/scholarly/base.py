@@ -87,3 +87,6 @@ class ScholarlyAdapter(ABC):
 
     async def health(self) -> SourceStatus:
         return SourceStatus(status="ok")
+
+    async def resolve_exact(self, doi: str) -> PaperRecord | None:
+        return None
