@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from research_navigator.deps import get_current_user, get_db
+from research_navigator.deps import ensure_public_demo_operation_allowed, get_current_user, get_db
 from research_navigator.evidence.backfill import (
     BACKFILL_JOB_TYPE,
     execute_abstract_backfill,
@@ -68,6 +68,7 @@ def create_backfill(
     session: Session = Depends(get_db),
 ) -> AbstractBackfillRead:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     body = payload.model_dump(mode="json")
     body["processed_paper_ids"] = []
     row = Job(
@@ -103,6 +104,7 @@ async def run_backfill(
     session: Session = Depends(get_db),
 ) -> AbstractBackfillRead:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     row = _owned(session, user.id, job_id)
     if row.status != "pending":
         raise HTTPException(status_code=409, detail="Only pending backfills can be run")
@@ -133,10 +135,12 @@ async def run_backfill(
 @router.post("/admin/backfills/{job_id}/cancel", response_model=AbstractBackfillRead)
 def cancel_backfill(
     job_id: int,
+    request: Request,
     user: User = Depends(get_current_user),
     session: Session = Depends(get_db),
 ) -> AbstractBackfillRead:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     row = _owned(session, user.id, job_id)
     if row.status not in {"pending", "running"}:
         raise HTTPException(status_code=409, detail="Only pending or running jobs can be cancelled")

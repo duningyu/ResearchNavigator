@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
-from research_navigator.deps import get_current_user, get_db
+from research_navigator.deps import ensure_public_demo_operation_allowed, get_current_user, get_db
 from research_navigator.idempotency import replay_snapshot, store_snapshot
 from research_navigator.models import Job, JobEvent, ResearchProject, User
 from research_navigator.schemas.jobs import JobCreate, JobEventRead, JobRead, SourceHealthRead
@@ -56,6 +56,7 @@ def update_admin_runtime_config(
     payload: AdminRuntimeConfig, request: Request, user: User = Depends(get_current_user)
 ) -> AdminRuntimeConfig:
     _require_admin(user)
+    ensure_public_demo_operation_allowed(request)
     values = payload.model_dump()
     request.app.state.runtime_config = values
     config_path = request.app.state.settings.data_dir / "admin_runtime_config.json"

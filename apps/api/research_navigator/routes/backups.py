@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import FileResponse
 
 from research_navigator.backups.service import create_backup, list_backups, stage_restore
-from research_navigator.deps import get_current_user
+from research_navigator.deps import ensure_public_demo_operation_allowed, get_current_user
 from research_navigator.models import User
 from research_navigator.schemas.backups import BackupRead, StageRestoreRead, StageRestoreRequest
 
@@ -27,6 +27,7 @@ def backups(request: Request, user: User = Depends(get_current_user)) -> list[Ba
 @router.post("", response_model=BackupRead, status_code=status.HTTP_201_CREATED)
 def backup(request: Request, user: User = Depends(get_current_user)) -> BackupRead:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     try:
         return BackupRead.model_validate(create_backup(request.app.state.settings))
     except (FileNotFoundError, ValueError) as exc:
@@ -38,6 +39,7 @@ def download_backup(
     name: str, request: Request, user: User = Depends(get_current_user)
 ) -> FileResponse:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     path = (request.app.state.settings.backup_dir / name).resolve()
     root = request.app.state.settings.backup_dir.resolve()
     if path.parent != root or not path.is_file() or path.suffix.lower() != ".zip":
@@ -55,6 +57,7 @@ def restore(
     user: User = Depends(get_current_user),
 ) -> StageRestoreRead:
     _admin(user)
+    ensure_public_demo_operation_allowed(request)
     if not payload.confirm_restore:
         raise HTTPException(status_code=409, detail="Explicit restore confirmation is required")
     try:

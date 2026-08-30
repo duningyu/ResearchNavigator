@@ -16,6 +16,11 @@ from research_navigator.security import hash_token
 _bearer = HTTPBearer(auto_error=False)
 
 
+def ensure_public_demo_operation_allowed(request: Request) -> None:
+    if request.app.state.settings.public_demo_mode:
+        raise HTTPException(status_code=403, detail="DEMO_MODE_RESTRICTED")
+
+
 def get_db(request: Request) -> Iterator[Session]:
     session = request.app.state.database.session_factory()
     try:

@@ -53,6 +53,12 @@ class Settings:
     analysis_prompt_version: str = "paper-analysis-v2"
     llm_timeout_seconds: float = 20.0
     llm_max_attempts: int = 2
+    public_demo_mode: bool = False
+    public_demo_max_users: int = 50
+    public_demo_max_upload_mb: int = 10
+    public_demo_max_active_jobs: int = 5
+    public_demo_max_query_length: int = 200
+    public_demo_max_job_payload_bytes: int = 16_384
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -96,6 +102,18 @@ class Settings:
             analysis_prompt_version=os.getenv("RN_ANALYSIS_PROMPT_VERSION", "paper-analysis-v2"),
             llm_timeout_seconds=float(os.getenv("RN_LLM_TIMEOUT_SECONDS", "20")),
             llm_max_attempts=int(os.getenv("RN_LLM_MAX_ATTEMPTS", "2")),
+            public_demo_mode=_as_bool(os.getenv("RN_PUBLIC_DEMO_MODE"), False),
+            public_demo_max_users=int(os.getenv("RN_PUBLIC_DEMO_MAX_USERS", "50")),
+            public_demo_max_upload_mb=int(os.getenv("RN_PUBLIC_DEMO_MAX_UPLOAD_MB", "10")),
+            public_demo_max_active_jobs=int(
+                os.getenv("RN_PUBLIC_DEMO_MAX_ACTIVE_JOBS", "5")
+            ),
+            public_demo_max_query_length=int(
+                os.getenv("RN_PUBLIC_DEMO_MAX_QUERY_LENGTH", "200")
+            ),
+            public_demo_max_job_payload_bytes=int(
+                os.getenv("RN_PUBLIC_DEMO_MAX_JOB_PAYLOAD_BYTES", "16384")
+            ),
         )
 
     def ensure_directories(self) -> None:
