@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
+import { getApiBaseUrl } from '../lib/runtimeBackend';
 
 export class ApiError extends Error {
   constructor(
@@ -26,7 +26,7 @@ export async function apiRequest<T>(
   const headers = new Headers(options.headers);
   if (!(options.body instanceof FormData)) headers.set('Content-Type', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  const response = await fetch(`${getApiBaseUrl()}${path}`, { ...options, headers });
   const text = await response.text();
   let payload: unknown = null;
   if (text) {
@@ -49,7 +49,7 @@ export async function apiRequest<T>(
 export async function apiDownload(path: string, filename: string, token: string | null = getStoredToken()): Promise<void> {
   const headers = new Headers();
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  const response = await fetch(`${API_BASE}${path}`, { headers });
+  const response = await fetch(`${getApiBaseUrl()}${path}`, { headers });
   if (!response.ok) {
     const text = await response.text();
     throw new ApiError(response.status, text || `HTTP ${response.status}`);

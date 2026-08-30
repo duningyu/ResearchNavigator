@@ -74,7 +74,7 @@ class Settings:
             .expanduser()
             .resolve(),
             allowed_origins=_as_csv(
-                os.getenv("RN_ALLOWED_ORIGINS"),
+                os.getenv("RN_CORS_ALLOWED_ORIGINS", os.getenv("RN_ALLOWED_ORIGINS")),
                 ("http://localhost:5173", "http://127.0.0.1:5173"),
             ),
             enable_fixture_source=_as_bool(os.getenv("RN_ENABLE_FIXTURE_SOURCE"), True),
