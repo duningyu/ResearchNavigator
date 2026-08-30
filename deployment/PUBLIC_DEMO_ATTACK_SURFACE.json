@@ -1,0 +1,41 @@
+{
+  "version": "2.2.3",
+  "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
+  "starting_deployment_commit": "e5a8fec6b1e1b06443125f087ebc174a1d55d86f",
+  "classification_values": ["PUBLIC_SAFE", "PUBLIC_SAFE_WITH_LIMIT", "DEMO_DISABLE", "ADMIN_ONLY", "LOCAL_ONLY", "UNKNOWN"],
+  "features": [
+    {"feature": "health", "classification": "PUBLIC_SAFE", "evidence": "GET /api/health performs SELECT 1 and returns version/database status only"},
+    {"feature": "login_logout_me", "classification": "PUBLIC_SAFE", "evidence": "opaque bearer tokens, PBKDF2 passwords, expiry and revocation checks"},
+    {"feature": "registration", "classification": "PUBLIC_SAFE_WITH_LIMIT", "evidence": "input length validation exists; no public-demo user-count bound exists"},
+    {"feature": "search_and_resolution", "classification": "PUBLIC_SAFE_WITH_LIMIT", "evidence": "query <= 500 and limit <= 100; public demo needs a lower configurable query bound"},
+    {"feature": "paper_detail_author_dataset_direction_compare_gap", "classification": "PUBLIC_SAFE", "evidence": "authenticated product flows with deterministic evidence boundaries"},
+    {"feature": "user_settings", "classification": "PUBLIC_SAFE", "evidence": "per-user fields are schema bounded and do not accept provider credentials"},
+    {"feature": "pdf_upload", "classification": "PUBLIC_SAFE_WITH_LIMIT", "evidence": "25 MiB existing maximum, PDF MIME and magic checks, sanitized names and per-user upload root"},
+    {"feature": "user_document_delete", "classification": "PUBLIC_SAFE", "evidence": "owner query and upload-root containment check precede deletion"},
+    {"feature": "job_creation", "classification": "PUBLIC_SAFE_WITH_LIMIT", "evidence": "job type allowlist exists; no active-job count or payload-size public-demo bound exists"},
+    {"feature": "source_health_test", "classification": "PUBLIC_SAFE_WITH_LIMIT", "evidence": "authenticated and bounded timeout; repeated use can call external providers"},
+    {"feature": "admin_config_status_read", "classification": "ADMIN_ONLY", "evidence": "returns booleans/provider names only and enforces is_admin"},
+    {"feature": "admin_runtime_config_read", "classification": "ADMIN_ONLY", "evidence": "is_admin required and response schema is allowlisted"},
+    {"feature": "admin_runtime_config_write", "classification": "DEMO_DISABLE", "evidence": "writes deployment runtime configuration"},
+    {"feature": "backup_list", "classification": "ADMIN_ONLY", "evidence": "is_admin required"},
+    {"feature": "backup_create_download_restore", "classification": "DEMO_DISABLE", "evidence": "creates or exports state and stages database replacement"},
+    {"feature": "historical_backfill_create_run_cancel", "classification": "DEMO_DISABLE", "evidence": "admin-only bulk jobs can consume providers and mutate historical evidence"},
+    {"feature": "provider_credentials", "classification": "LOCAL_ONLY", "evidence": "credentials are environment-only; browser API exposes configured booleans, not values"},
+    {"feature": "MCP_servers", "classification": "LOCAL_ONLY", "evidence": "stdio servers are not mounted as public HTTP routes"},
+    {"feature": "backup_restore_cli", "classification": "LOCAL_ONLY", "evidence": "local scripts operate on configured runtime and are not HTTP endpoints"}
+  ],
+  "observed_gaps": [
+    "RN_PUBLIC_DEMO_MODE does not exist",
+    "naked Vercel URL has no supervised-backend offline state",
+    "expired Quick Tunnel is retained until manually cleared",
+    "start is not idempotent and has no marker preflight",
+    "stop records PID only, without process creation identity",
+    "status/reset/seed commands do not exist",
+    "logs are not split by API, worker, tunnel and deployment",
+    "Permissions-Policy and CSP are absent from the deployed frontend",
+    "no request/correlation ID was found",
+    "registration, active jobs and job payloads lack deployment-specific resource bounds"
+  ],
+  "security_boundary": "SUPERVISED_PUBLIC_DEMO",
+  "production_ready": false
+}

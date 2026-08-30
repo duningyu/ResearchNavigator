@@ -1,0 +1,28 @@
+{
+  "existing": {
+    "pdf_upload_bytes": 26214400,
+    "search_query_characters": 500,
+    "search_limit": 100,
+    "retrieval_query_characters": 1000,
+    "retrieval_top_k": 20,
+    "backfill_batch_size": 500,
+    "direction_cluster_paper_count": 500,
+    "evaluation_task_count": 500
+  },
+  "unbounded_or_insufficient_for_public_demo": {
+    "registered_users": "no demo-specific count bound",
+    "active_jobs_per_user": "no bound",
+    "job_payload_serialized_bytes": "no bound",
+    "source_health_manual_calls": "authenticated but may repeatedly contact providers"
+  },
+  "proposed_deployment_environment_controls": {
+    "RN_PUBLIC_DEMO_MAX_USERS": 50,
+    "RN_PUBLIC_DEMO_MAX_UPLOAD_MB": 10,
+    "RN_PUBLIC_DEMO_MAX_ACTIVE_JOBS": 5,
+    "RN_PUBLIC_DEMO_MAX_QUERY_LENGTH": 200,
+    "RN_PUBLIC_DEMO_MAX_JOB_PAYLOAD_BYTES": 16384
+  },
+  "rationale": "Bounds preserve normal interview workflows while limiting disk, queue and request abuse; defaults apply only when RN_PUBLIC_DEMO_MODE=1.",
+  "distributed_rate_limiter": "NOT_ADDED",
+  "production_ready": false
+}
