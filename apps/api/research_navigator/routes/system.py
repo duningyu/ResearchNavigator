@@ -7,7 +7,7 @@ import json
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
@@ -106,6 +106,21 @@ def create_job(
     )
     if replay is not None:
         return JobRead.model_validate(replay)
+    settings = request.app.state.settings
+    if settings.public_demo_mode:
+        payload_bytes = len(
+            json.dumps(payload.payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        )
+        if payload_bytes > settings.public_demo_max_job_payload_bytes:
+            raise HTTPException(status_code=413, detail="PUBLIC_DEMO_JOB_PAYLOAD_TOO_LARGE")
+        active_jobs = session.scalar(
+            select(func.count(Job.id)).where(
+                Job.user_id == user.id,
+                Job.status.in_(("pending", "running")),
+            )
+        ) or 0
+        if active_jobs >= settings.public_demo_max_active_jobs:
+            raise HTTPException(status_code=429, detail="PUBLIC_DEMO_ACTIVE_JOB_LIMIT_REACHED")
     if payload.project_id is not None:
         project = session.scalar(
             select(ResearchProject).where(

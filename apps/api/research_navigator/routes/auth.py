@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -35,6 +35,11 @@ def _create_session(request: Request, session: Session, user: User) -> TokenResp
 def register(
     payload: RegisterRequest, request: Request, session: Session = Depends(get_db)
 ) -> TokenResponse:
+    settings = request.app.state.settings
+    if settings.public_demo_mode:
+        user_count = session.scalar(select(func.count(User.id))) or 0
+        if user_count >= settings.public_demo_max_users:
+            raise HTTPException(status_code=429, detail="PUBLIC_DEMO_USER_LIMIT_REACHED")
     user = User(
         email=payload.email,
         password_hash=hash_password(payload.password),

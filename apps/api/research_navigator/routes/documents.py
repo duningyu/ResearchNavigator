@@ -81,13 +81,17 @@ async def upload_paper(
     _paper_or_404(session, paper_id)
     if not rights_confirmed:
         raise HTTPException(status_code=400, detail="Rights confirmation is required")
-    data = await file.read(request.app.state.settings.max_pdf_bytes + 1)
+    settings = request.app.state.settings
+    max_pdf_bytes = settings.max_pdf_bytes
+    if settings.public_demo_mode:
+        max_pdf_bytes = min(max_pdf_bytes, settings.public_demo_max_upload_mb * 1024 * 1024)
+    data = await file.read(max_pdf_bytes + 1)
     try:
         validated = validate_pdf_upload(
             file.filename or "paper.pdf",
             file.content_type,
             data,
-            max_bytes=request.app.state.settings.max_pdf_bytes,
+            max_bytes=max_pdf_bytes,
         )
         parsed = parse_pdf(data)
     except DocumentSecurityError as exc:

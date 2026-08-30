@@ -143,6 +143,9 @@ async def _perform_search(
     session: Session,
     diversity_seed: str | None = None,
 ) -> SearchResponse:
+    settings = request.app.state.settings
+    if settings.public_demo_mode and len(payload.query) > settings.public_demo_max_query_length:
+        raise HTTPException(status_code=422, detail="PUBLIC_DEMO_QUERY_TOO_LONG")
     _validate_project(session, user_id=user.id, project_id=payload.project_id)
     search_mode = classify_search_mode(payload.query, payload.mode)
     seed = diversity_seed or (secrets.token_hex(16) if search_mode == "discovery" else None)
