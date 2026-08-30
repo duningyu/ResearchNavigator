@@ -11,6 +11,8 @@ $DemoDataDir = [IO.Path]::GetFullPath($DemoDataDir)
 if (-not ($VercelOrigin.Scheme -eq 'https' -and $VercelOrigin.AbsolutePath -eq '/')) { throw 'VercelOrigin must be an HTTPS origin.' }
 if ($DemoDataDir.StartsWith($ProjectRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'DemoDataDir must be outside the repository.' }
 New-Item -ItemType Directory -Force -Path $DemoDataDir | Out-Null
+$databasePath = Join-Path $DemoDataDir 'research_navigator.db'
+$databaseUrlPath = $databasePath.Replace('\', '/')
 $statePath = Join-Path $ProjectRoot 'deployment/public_demo_state.json'
 $stateDirectory = Split-Path -Parent $statePath
 New-Item -ItemType Directory -Force -Path $stateDirectory | Out-Null
@@ -18,6 +20,7 @@ $python = Join-Path $ProjectRoot '.venv/Scripts/python.exe'
 if (-not (Test-Path $python)) { throw "Python environment not found: $python" }
 if (-not (Get-Command cloudflared -ErrorAction SilentlyContinue)) { throw 'cloudflared is required; run install_cloudflared.ps1 first.' }
 $env:RN_DATA_DIR = $DemoDataDir
+$env:RN_DATABASE_URL = "sqlite+pysqlite:///$databaseUrlPath"
 $env:RN_CORS_ALLOWED_ORIGINS = $VercelOrigin.AbsoluteUri.TrimEnd('/')
 $env:RN_ALLOWED_ORIGINS = $env:RN_CORS_ALLOWED_ORIGINS
 $env:RN_ENVIRONMENT = 'demo'

@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 const shareUrl = process.env.RN_PUBLIC_DEMO_SHARE_URL;
+const demoEmail = process.env.RN_PUBLIC_DEMO_EMAIL;
+const demoPassword = process.env.RN_PUBLIC_DEMO_PASSWORD;
 
 test.describe('public demo deployment', () => {
   test.skip(!shareUrl, 'Set RN_PUBLIC_DEMO_SHARE_URL to run against a real Vercel + Quick Tunnel deployment.');
@@ -15,6 +17,31 @@ test.describe('public demo deployment', () => {
     await page.goto(shareUrl!);
     await expect(page).toHaveTitle(/ResearchNavigator/i);
     await expect(page.getByText(/登录|Login/i).first()).toBeVisible();
+
+    if (demoEmail && demoPassword) {
+      await page.getByLabel('邮箱').fill(demoEmail);
+      await page.getByLabel('密码').fill(demoPassword);
+      const loginResponse = page.waitForResponse((response) => response.url().endsWith('/api/auth/login'));
+      await page.getByRole('button', { name: /^登\s*录$/ }).click();
+      await expect((await loginResponse).status()).toBe(200);
+      await expect(page.getByRole('heading', { name: '今日研究起点' })).toBeVisible();
+
+      await page.getByRole('menuitem', { name: /论文搜索$/ }).click();
+      await page.getByPlaceholder(/关键词、题目、DOI/).fill('anomaly detection');
+      await page.locator('#sources').click();
+      await page.locator('.ant-select-item-option', { hasText: 'fixture' }).click();
+      await page.getByRole('button', { name: /^搜\s*索$/ }).click();
+      const firstResult = page.getByRole('link', { name: '证据级分析' }).first();
+      await expect(firstResult).toBeVisible();
+      await firstResult.click();
+      await page.getByRole('button', { name: '收藏论文' }).click();
+      await page.getByRole('menuitem', { name: /论文对比$/ }).click();
+      await expect(page.getByText('生成证据级对比矩阵')).toBeVisible();
+      await page.getByRole('menuitem', { name: /候选研究空白$/ }).click();
+      await expect(page.getByText('生成候选研究空白', { exact: true })).toBeVisible();
+    }
+
+    expect(backendRequests.length).toBeGreaterThan(0);
     expect(backendRequests.every((url) => url.startsWith('https://'))).toBe(true);
   });
 });

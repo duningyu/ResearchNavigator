@@ -22,6 +22,8 @@ runtime/*
 uploads/
 vector_index/
 backups/
+deployment/public_demo_state.json
+deployment/PUBLIC_DEMO_DEPLOYMENT_RECEIPT.json
 
 # Secrets
 .env
