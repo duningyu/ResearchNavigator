@@ -1,7 +1,7 @@
 {
   "framework": "vite",
-  "installCommand": "pnpm --dir apps/web install --frozen-lockfile",
-  "buildCommand": "pnpm --dir apps/web run build",
+  "installCommand": "corepack pnpm@10.15.1 --dir apps/web install --frozen-lockfile",
+  "buildCommand": "corepack pnpm@10.15.1 --dir apps/web run build",
   "outputDirectory": "apps/web/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [{
