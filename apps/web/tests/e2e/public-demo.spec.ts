@@ -1,8 +1,27 @@
 import { expect, test } from '@playwright/test';
 
 const shareUrl = process.env.RN_PUBLIC_DEMO_SHARE_URL;
+const frontendUrl = process.env.RN_PUBLIC_DEMO_FRONTEND_URL;
 const demoEmail = process.env.RN_PUBLIC_DEMO_EMAIL;
 const demoPassword = process.env.RN_PUBLIC_DEMO_PASSWORD;
+
+test.describe('public demo naked frontend', () => {
+  test.skip(!frontendUrl, 'Set RN_PUBLIC_DEMO_FRONTEND_URL to validate the deployed offline landing state.');
+
+  test('shows a safe offline state without a tunnel URL', async ({ page }) => {
+    const localRequests: string[] = [];
+    page.on('request', (request) => {
+      if (/^https?:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(request.url())) {
+        localRequests.push(request.url());
+      }
+    });
+    const response = await page.goto(frontendUrl!);
+    expect(response?.ok()).toBe(true);
+    await expect(page.getByRole('heading', { name: 'ResearchNavigator 演示当前离线' })).toBeVisible();
+    await expect(page.getByTestId('backend-status')).toContainText('BACKEND_NOT_CONFIGURED');
+    expect(localRequests).toEqual([]);
+  });
+});
 
 test.describe('public demo deployment', () => {
   test.skip(!shareUrl, 'Set RN_PUBLIC_DEMO_SHARE_URL to run against a real Vercel + Quick Tunnel deployment.');

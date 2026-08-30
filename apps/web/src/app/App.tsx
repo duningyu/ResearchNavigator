@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { AppShell } from '../components/AppShell';
+import { BackendAvailabilityGate } from '../components/BackendAvailabilityGate';
 import { AdminPage } from '../pages/AdminPage';
 import { AuthPage } from '../pages/AuthPage';
 import { BackupPage } from '../pages/BackupPage';
@@ -30,5 +31,5 @@ function ProtectedRoutes() {
 
 export function App() {
   const { token } = useAuth();
-  return <QueryClientProvider client={queryClient}>{token ? <ProtectedRoutes /> : <Routes><Route path="*" element={<AuthPage />} /></Routes>}</QueryClientProvider>;
+  return <BackendAvailabilityGate><QueryClientProvider client={queryClient}>{token ? <ProtectedRoutes /> : <Routes><Route path="*" element={<AuthPage />} /></Routes>}</QueryClientProvider></BackendAvailabilityGate>;
 }
