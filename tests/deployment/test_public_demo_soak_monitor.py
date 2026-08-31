@@ -158,3 +158,10 @@ def test_status_command_prints_one_read_snapshot(tmp_path: Path) -> None:
     assert result.returncode == 0
     assert "40 / 120 min" in result.stdout
     assert "33.33%" in result.stdout
+
+
+def test_soak_runner_has_terminal_receipt_and_heartbeat_hooks() -> None:
+    source = (PROJECT_ROOT / "scripts/deployment/run_public_demo_soak.ps1").read_text(encoding="utf-8")
+    assert "PUBLIC_DEMO_SOAK_TERMINAL.json" in source
+    assert "PUBLIC_DEMO_SOAK_HEARTBEAT.json" in source
+    assert "normal_completion" in source

@@ -17,9 +17,23 @@ if (-not $OutputPath) { $OutputPath = Join-Path $root 'deployment/PUBLIC_DEMO_SO
 $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json -DateKind String
 $started = [DateTimeOffset]::UtcNow
 $deadline = $started.AddMinutes($DurationMinutes)
+$artifactDir = Split-Path -Parent $OutputPath
+$executionId = "RN223_SOAK_$(Get-Date -Format 'yyyyMMddTHHmmssfffZ' -AsUTC)"
+$terminalPath = Join-Path $artifactDir 'PUBLIC_DEMO_SOAK_TERMINAL.json'
+$heartbeatPath = Join-Path $artifactDir 'PUBLIC_DEMO_SOAK_HEARTBEAT.json'
 $nextAction = $started
 $rows = [Collections.Generic.List[object]]::new()
 $errorsSinceLast = [Collections.Generic.List[string]]::new()
+$lastSampleTimestamp = $null
+$exitReason = 'RUNNER_EXCEPTION'
+$fatalException = $null
+$normalCompletion = $false
+
+function Write-AtomicJson([string] $Path, [object] $Value) {
+  $temporary = "$Path.$PID.tmp"
+  $Value | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $temporary -Encoding utf8
+  Move-Item -LiteralPath $temporary -Destination $Path -Force
+}
 
 function Get-HttpCode([string] $Url) {
   try {
@@ -64,6 +78,7 @@ function Invoke-FixtureAction {
   } catch { $errorsSinceLast.Add("FIXTURE_ACTION $($_.Exception.GetType().Name): $($_.Exception.Message)") }
 }
 
+try {
 while ([DateTimeOffset]::UtcNow -lt $deadline) {
   $now = [DateTimeOffset]::UtcNow
   if ($now -ge $nextAction) { Invoke-FixtureAction; $nextAction = $now.AddMinutes($ActionIntervalMinutes) }
@@ -93,11 +108,21 @@ while ([DateTimeOffset]::UtcNow -lt $deadline) {
     errors_since_last_sample = ($errorsSinceLast -join ' | ')
   }
   $rows.Add([pscustomobject]$row)
+  $lastSampleTimestamp = $row.timestamp
   $errorsSinceLast.Clear()
   $rows | Export-Csv -LiteralPath $OutputPath -NoTypeInformation -Encoding utf8
+  Write-AtomicJson $heartbeatPath ([ordered]@{ execution_id=$executionId; runner_pid=$PID; runner_creation_time_utc=(Get-Process -Id $PID).StartTime.ToUniversalTime().ToString('o'); timestamp=$row.timestamp; elapsed_minutes=$row.elapsed_minutes; sample_count=$rows.Count })
   Write-Output (($row | ConvertTo-Json -Compress))
   $remaining = ($deadline - [DateTimeOffset]::UtcNow).TotalSeconds
   if ($remaining -le 0) { break }
   Start-Sleep -Seconds ([Math]::Min($SampleIntervalMinutes * 60, [int]$remaining))
+}
+  $normalCompletion = $true
+  $exitReason = 'NORMAL_COMPLETION'
+} catch {
+  $fatalException = $_.Exception.ToString()
+  throw
+} finally {
+  Write-AtomicJson $terminalPath ([ordered]@{ execution_id=$executionId; started_at=$started.ToString('o'); ended_at=[DateTimeOffset]::UtcNow.ToString('o'); target_minutes=$DurationMinutes; elapsed_minutes=if($rows.Count){$rows[-1].elapsed_minutes}else{0}; sample_count=$rows.Count; exit_reason=$exitReason; exit_code=if($normalCompletion){0}else{1}; normal_completion=$normalCompletion; fatal_exception=$fatalException; last_sample_timestamp=$lastSampleTimestamp })
 }
 Write-Output "SOAK_COMPLETE samples=$($rows.Count) output=$OutputPath"
