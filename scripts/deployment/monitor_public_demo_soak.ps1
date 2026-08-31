@@ -10,6 +10,7 @@ param(
   [string] $StatePath,
   [string] $LogPath,
   [string] $RuntimePath,
+  [string] $IdentityPath,
   [switch] $Once,
   [switch] $SkipContextGuard,
   [ValidateSet('LIVE','RUNNING_MATCH','RUNNING_MISMATCH','ABSENT')]
@@ -29,6 +30,7 @@ if (-not $SoakStderr) { $SoakStderr = Join-Path $root 'deployment/PUBLIC_DEMO_SO
 if (-not $StatePath) { $StatePath = Join-Path $monitorDir 'PUBLIC_DEMO_SOAK_MONITOR_STATE.json' }
 if (-not $LogPath) { $LogPath = Join-Path $monitorDir 'PUBLIC_DEMO_SOAK_MONITOR.log' }
 if (-not $RuntimePath) { $RuntimePath = Join-Path $monitorDir 'SOAK_MONITOR_RUNTIME.json' }
+if (-not $IdentityPath) { $IdentityPath = Join-Path $monitorDir 'SOAK_MONITOR_PROCESS_IDENTITY.json' }
 
 function Get-Hash([string] $Value) {
   $sha = [Security.Cryptography.SHA256]::Create()
@@ -45,7 +47,7 @@ function Get-ProcessSnapshot {
   $cim = Get-CimInstance Win32_Process -Filter "ProcessId=$SoakPid"
   $creation = $p.StartTime.ToUniversalTime().ToString('o')
   $command = if ($cim) { [string]$cim.CommandLine } else { '' }
-  $expected = if (Test-Path -LiteralPath (Join-Path $monitorDir 'SOAK_MONITOR_PROCESS_IDENTITY.json')) { (Get-Content (Join-Path $monitorDir 'SOAK_MONITOR_PROCESS_IDENTITY.json') -Raw | ConvertFrom-Json).creation_time_utc } else { $creation }
+  $expected = if (Test-Path -LiteralPath $IdentityPath) { (Get-Content $IdentityPath -Raw | ConvertFrom-Json).creation_time_utc } else { $creation }
   $match = [Math]::Abs((([DateTimeOffset]$creation).ToUniversalTime() - ([DateTimeOffset]$expected).ToUniversalTime()).TotalMilliseconds) -le 10
   [pscustomobject]@{ state='RUNNING'; match=$match; creation_time_utc=$creation; process_name=$p.ProcessName; command_line_hash=(Get-Hash $command) }
 }
@@ -107,14 +109,13 @@ function Invoke-Check {
   return $state
 }
 
-$identityPath = Join-Path $monitorDir 'SOAK_MONITOR_PROCESS_IDENTITY.json'
 try {
   $monitorProcess = Get-Process -Id $PID -ErrorAction Stop
   [ordered]@{ monitor_pid=$PID; creation_time_utc=$monitorProcess.StartTime.ToUniversalTime().ToString('o'); process_name=$monitorProcess.ProcessName; started_at_utc=[DateTimeOffset]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $RuntimePath -Encoding utf8
 } catch { }
 if ($ProcessStateOverride -eq 'LIVE') {
   $snapshot = Get-ProcessSnapshot
-  if ($snapshot.state -eq 'RUNNING') { [ordered]@{ soak_pid=$SoakPid; creation_time_utc=$snapshot.creation_time_utc; process_name=$snapshot.process_name; command_line_hash=$snapshot.command_line_hash; captured_at_utc=[DateTimeOffset]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $identityPath -Encoding utf8 }
+  if ($snapshot.state -eq 'RUNNING') { [ordered]@{ soak_pid=$SoakPid; creation_time_utc=$snapshot.creation_time_utc; process_name=$snapshot.process_name; command_line_hash=$snapshot.command_line_hash; captured_at_utc=[DateTimeOffset]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath $IdentityPath -Encoding utf8 }
 }
 do {
   $result = Invoke-Check
