@@ -162,12 +162,42 @@ def test_start_is_idempotent_stop_is_owned_and_stale_state_recovers(tmp_path: Pa
         assert status_payload["components"]["cloudflared"] == "ONLINE"
         assert status_payload["database"]["integrity_check"] == "ok"
 
+        tunnel_preview = run_script(
+            RESTART_SCRIPT,
+            [*restart_arguments(state_path, "Cloudflared"), "-DryRun"],
+        )
+        assert tunnel_preview.returncode == 0, tunnel_preview.stdout + tunnel_preview.stderr
+        preview_payload = json.loads(tunnel_preview.stdout)
+        preview_pids = {int(item["pid"]) for item in preview_payload["targets"]}
+        assert second_state["cloudflared_pid"] in preview_pids
+        assert second_state["api_pid"] not in preview_pids
+        assert second_state["worker_pid"] not in preview_pids
+        assert preview_payload["ownership_disjointness"] == "DISJOINT"
+
+        tunnel_stop = run_script(
+            RESTART_SCRIPT,
+            [*restart_arguments(state_path, "Cloudflared"), "-StopOnly"],
+        )
+        assert tunnel_stop.returncode == 0, tunnel_stop.stdout + tunnel_stop.stderr
+        assert process_alive(int(second_state["api_pid"]))
+        assert process_alive(int(second_state["worker_pid"]))
+        assert not process_alive(int(second_state["cloudflared_pid"]))
+
+        tunnel_restart = run_script(
+            RESTART_SCRIPT, restart_arguments(state_path, "Cloudflared")
+        )
+        assert tunnel_restart.returncode == 0, tunnel_restart.stdout + tunnel_restart.stderr
+        after_tunnel = json.loads(state_path.read_text(encoding="utf-8-sig"))
+        assert after_tunnel["cloudflared_pid"] != second_state["cloudflared_pid"]
+        assert after_tunnel["api_pid"] == second_state["api_pid"]
+        assert after_tunnel["worker_pid"] == second_state["worker_pid"]
+
         worker_restart = run_script(RESTART_SCRIPT, restart_arguments(state_path, "Worker"))
         assert worker_restart.returncode == 0, worker_restart.stdout + worker_restart.stderr
         after_worker = json.loads(state_path.read_text(encoding="utf-8-sig"))
         assert after_worker["worker_pid"] != second_state["worker_pid"]
         assert after_worker["api_pid"] == second_state["api_pid"]
-        assert after_worker["cloudflared_pid"] == second_state["cloudflared_pid"]
+        assert after_worker["cloudflared_pid"] == after_tunnel["cloudflared_pid"]
 
         api_restart = run_script(RESTART_SCRIPT, restart_arguments(state_path, "Api"))
         assert api_restart.returncode == 0, api_restart.stdout + api_restart.stderr

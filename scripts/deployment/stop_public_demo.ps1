@@ -1,80 +1,76 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory)] [string] $ProjectRoot,
-  [string] $StatePath
+  [string] $StatePath,
+  [switch] $DryRun
 )
 
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path
+Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 $StatePath = [IO.Path]::GetFullPath($StatePath)
 if (-not (Test-Path -LiteralPath $StatePath -PathType Leaf)) {
   Write-Output 'No public demo state found.'
   exit 0
 }
-$state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
-$diagnosticLog = $null
-if ($state.demo_data_dir) {
-  $diagnosticLog = Join-Path ([string]$state.demo_data_dir) 'logs/deployment.log'
+$state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -DateKind String
+$diagnosticLog = if ($state.demo_data_dir) {
+  Join-Path ([string]$state.demo_data_dir) 'logs/deployment.log'
+} else { $null }
+
+function Resolve-StoredComponent([string] $Name, $Live) {
+  $identity = $state."${Name}_process"
+  $match = Test-PublicDemoProcessIdentity $identity @($Live.processes)
+  if (-not $match.matched) {
+    return [pscustomobject][ordered]@{
+      root_trusted=$false; classification=$match.classification
+      accepted_tree=@(); rejected_edges=@()
+    }
+  }
+  return Resolve-PublicDemoOwnedProcessTree -Snapshot @($Live.processes) `
+    -RootPid ([int]$identity.pid) `
+    -RootCreationTimeUtc ([string]$identity.creation_time_utc) `
+    -SnapshotTimeUtc ([string]$Live.captured_at_utc)
 }
 
-function Get-MatchingProcess($Identity) {
-  if (-not $Identity -or -not $Identity.pid -or -not $Identity.creation_time) { return $null }
-  $process = Get-Process -Id ([int]$Identity.pid) -ErrorAction SilentlyContinue
-  if (-not $process) { return $null }
-  try {
-    if ($Identity.creation_time -is [DateTime]) {
-      $expected = $Identity.creation_time.ToUniversalTime()
-    } else {
-      $expected = [DateTime]::Parse(
-        [string]$Identity.creation_time,
-        [Globalization.CultureInfo]::InvariantCulture,
-        [Globalization.DateTimeStyles]::RoundtripKind
-      ).ToUniversalTime()
-    }
-    $actual = $process.StartTime.ToUniversalTime()
-    if ([Math]::Abs(($actual - $expected).TotalSeconds) -ge 1) { return $null }
-    if ($Identity.executable) {
-      try {
-        if (-not $process.Path.Equals(
-          [string]$Identity.executable, [StringComparison]::OrdinalIgnoreCase
-        )) { return $null }
-      } catch { return $null }
-    }
-    return $process
-  } catch { return $null }
+$live = Get-PublicDemoLiveProcessSnapshot
+$components = [ordered]@{}
+foreach ($name in @('api','worker','cloudflared')) {
+  $components[$name] = Resolve-StoredComponent $name $live
+}
+$disjoint = Test-PublicDemoOwnershipDisjoint $components
+if (-not $disjoint.disjoint) { throw 'COMPONENT_OWNERSHIP_SET_OVERLAP' }
+$targets = @($components.Values.accepted_tree | Where-Object { $_.killable } |
+  Sort-Object -Property @{ Expression={ [int]$_.depth }; Descending=$true })
+if ($DryRun) {
+  [ordered]@{
+    mode='DRY_RUN'; component='ALL'; targets=$targets
+    ownership_disjointness=$disjoint.classification; processes_terminated=0
+  } | ConvertTo-Json -Depth 8 | Write-Output
+  exit 0
 }
 
-$owned = @()
-$owned += @($state.cloudflared_process_tree)
-$owned += @($state.worker_process_tree)
-$owned += @($state.api_process_tree)
-$owned = @($owned | Where-Object { $_ -and $_.pid })
-if ($owned.Count -eq 0) {
-  $owned = @($state.cloudflared_process, $state.worker_process, $state.api_process)
-}
-$owned = @($owned | Sort-Object -Property @{ Expression = { [int]$_.depth }; Descending = $true })
-foreach ($identity in $owned) {
-  $process = Get-MatchingProcess $identity
-  if ($diagnosticLog) {
+foreach ($identity in $targets) {
+  $current = Get-PublicDemoLiveProcessSnapshot
+  $match = Test-PublicDemoProcessIdentity $identity @($current.processes)
+  if ($diagnosticLog -and (Test-Path -LiteralPath (Split-Path -Parent $diagnosticLog))) {
     Add-Content -LiteralPath $diagnosticLog -Value (
       "$(Get-Date -Format o) STOP_MATCH pid=$($identity.pid) depth=$($identity.depth) " +
-      "matched=$([bool]$process)"
+      "classification=$($match.classification)"
     )
   }
-  if ($process) {
-    & taskkill.exe /PID $process.Id /F 2>$null | Out-Null
-    if ($diagnosticLog) {
-      Add-Content -LiteralPath $diagnosticLog -Value (
-        "$(Get-Date -Format o) STOP_TASKKILL pid=$($process.Id) exit=$LASTEXITCODE"
-      )
-    }
+  if ($match.matched) {
+    & taskkill.exe /PID ([int]$identity.pid) /F 2>$null | Out-Null
   }
 }
 
 $deadline = (Get-Date).AddSeconds(15)
 do {
-  $survivors = @($owned | Where-Object { Get-MatchingProcess $_ })
+  $current = Get-PublicDemoLiveProcessSnapshot
+  $survivors = @($targets | Where-Object {
+    (Test-PublicDemoProcessIdentity $_ @($current.processes)).matched
+  })
   if ($survivors.Count -eq 0) { break }
   Start-Sleep -Milliseconds 200
 } while ((Get-Date) -lt $deadline)
@@ -91,23 +87,11 @@ if ($state.api_port) {
     if (-not $portInUse) { break }
     Start-Sleep -Milliseconds 200
   } while ((Get-Date) -lt $portDeadline)
-  if ($portInUse) {
-    $owner = Get-NetTCPConnection -LocalPort ([int]$state.api_port) -State Listen `
-      -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty OwningProcess
-    if ($diagnosticLog) {
-      Add-Content -LiteralPath $diagnosticLog -Value (
-        "$(Get-Date -Format o) STOP_PORT_REMAINS port=$($state.api_port) owner=$owner"
-      )
-    }
-    throw "API port $($state.api_port) remains in use after stop."
-  }
+  if ($portInUse) { throw "API port $($state.api_port) remains in use after stop." }
 }
 
-if ($state.demo_data_dir) {
-  $logPath = Join-Path ([string]$state.demo_data_dir) 'logs/deployment.log'
-  if (Test-Path -LiteralPath (Split-Path -Parent $logPath)) {
-    Add-Content -LiteralPath $logPath -Value "$(Get-Date -Format o) STOPPED"
-  }
+if ($diagnosticLog -and (Test-Path -LiteralPath (Split-Path -Parent $diagnosticLog))) {
+  Add-Content -LiteralPath $diagnosticLog -Value "$(Get-Date -Format o) STOPPED"
 }
 Remove-Item -LiteralPath $StatePath -Force
 Write-Output 'PUBLIC_DEMO_STOP=PASS'

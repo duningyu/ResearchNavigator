@@ -14,75 +14,40 @@ $ErrorActionPreference = 'Stop'
 $markerKind = 'RESEARCH_NAVIGATOR_PUBLIC_DEMO_RUNTIME_V1'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd('\')
 $demo = [IO.Path]::GetFullPath($DemoDataDir).TrimEnd('\')
+Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 $StatePath = [IO.Path]::GetFullPath($StatePath)
 if (-not ($VercelOrigin.Scheme -eq 'https' -and $VercelOrigin.AbsolutePath -eq '/')) {
   throw 'VercelOrigin must be an HTTPS origin.'
 }
 
-function Get-ProcessIdentity([Diagnostics.Process] $Process) {
-  $Process.Refresh()
-  $path = $null
-  try { $path = $Process.Path } catch {}
+function ConvertTo-StateIdentity($Identity) {
   return [ordered]@{
-    pid = $Process.Id
-    creation_time = $Process.StartTime.ToUniversalTime().ToString('o')
-    executable = $path
+    pid = [int]$Identity.pid
+    creation_time_utc = [string]$Identity.creation_time_utc
+    creation_time = [string]$Identity.creation_time_utc
+    parent_pid = [int]$Identity.parent_pid
+    process_name = [string]$Identity.process_name
+    executable = [string]$Identity.executable_path
+    executable_path = [string]$Identity.executable_path
+    command_line_hash = [string]$Identity.command_line_hash
   }
 }
 
-function Test-OwnedIdentity($Identity) {
-  if (-not $Identity -or -not $Identity.pid -or -not $Identity.creation_time) { return $false }
-  $process = Get-Process -Id ([int]$Identity.pid) -ErrorAction SilentlyContinue
-  if (-not $process) { return $false }
-  try {
-    if ($Identity.creation_time -is [DateTime]) {
-      $expected = $Identity.creation_time.ToUniversalTime()
-    } else {
-      $expected = [DateTime]::Parse(
-        [string]$Identity.creation_time,
-        [Globalization.CultureInfo]::InvariantCulture,
-        [Globalization.DateTimeStyles]::RoundtripKind
-      ).ToUniversalTime()
-    }
-    $actual = $process.StartTime.ToUniversalTime()
-    if ([Math]::Abs(($actual - $expected).TotalSeconds) -ge 1) { return $false }
-    if ($Identity.executable) {
-      try {
-        if (-not $process.Path.Equals(
-          [string]$Identity.executable, [StringComparison]::OrdinalIgnoreCase
-        )) { return $false }
-      } catch { return $false }
-    }
-    return $true
-  } catch { return $false }
-}
-
-function Get-OwnedProcessTree([int] $RootPid) {
-  $all = @(Get-CimInstance Win32_Process)
-  $queue = @([pscustomobject]@{ pid = $RootPid; depth = 0 })
-  $result = @()
-  while ($queue.Count -gt 0) {
-    $current = $queue[0]
-    if ($queue.Count -eq 1) { $queue = @() } else { $queue = @($queue[1..($queue.Count - 1)]) }
-    $cim = $all | Where-Object ProcessId -eq $current.pid | Select-Object -First 1
-    $process = Get-Process -Id ([int]$current.pid) -ErrorAction SilentlyContinue
-    if ($process -and $cim -and $cim.Name -ne 'conhost.exe') {
-      $identity = Get-ProcessIdentity $process
-      $result += [pscustomobject]@{
-        pid = $identity.pid
-        parent_pid = [int]$cim.ParentProcessId
-        depth = [int]$current.depth
-        creation_time = $identity.creation_time
-        executable = $identity.executable
-        command_line = [string]$cim.CommandLine
-      }
-    }
-    foreach ($child in @($all | Where-Object ParentProcessId -eq $current.pid)) {
-      $queue += [pscustomobject]@{ pid = [int]$child.ProcessId; depth = [int]$current.depth + 1 }
-    }
-  }
-  return @($result)
+function Get-CanonicalTree([int] $RootPid) {
+  $live = Get-PublicDemoLiveProcessSnapshot
+  $root = @($live.processes | Where-Object { [int]$_.process_id -eq $RootPid })
+  if ($root.Count -ne 1) { throw "Process root $RootPid is not uniquely present in CIM." }
+  $resolved = Resolve-PublicDemoOwnedProcessTree -Snapshot @($live.processes) `
+    -RootPid $RootPid -RootCreationTimeUtc ([string]$root[0].creation_time_utc) `
+    -SnapshotTimeUtc ([string]$live.captured_at_utc)
+  if (-not $resolved.root_trusted) { throw "Process root $RootPid is not trusted." }
+  return @($resolved.accepted_tree | ForEach-Object {
+    $item = ConvertTo-StateIdentity $_
+    $item.depth = [int]$_.depth
+    $item.killable = [bool]$_.killable
+    [pscustomobject]$item
+  })
 }
 
 function Test-LocalHealth([int] $Port) {
@@ -102,10 +67,11 @@ function Test-PortInUse([int] $Port) {
 }
 
 if (Test-Path -LiteralPath $StatePath -PathType Leaf) {
-  $existing = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
-  $apiOwned = Test-OwnedIdentity $existing.api_process
-  $workerOwned = Test-OwnedIdentity $existing.worker_process
-  $tunnelOwned = Test-OwnedIdentity $existing.cloudflared_process
+  $existing = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -DateKind String
+  $live = Get-PublicDemoLiveProcessSnapshot
+  $apiOwned = (Test-PublicDemoProcessIdentity $existing.api_process @($live.processes)).matched
+  $workerOwned = (Test-PublicDemoProcessIdentity $existing.worker_process @($live.processes)).matched
+  $tunnelOwned = (Test-PublicDemoProcessIdentity $existing.cloudflared_process @($live.processes)).matched
   $localHealthy = Test-LocalHealth ([int]$existing.api_port)
   $diagnosticLog = Join-Path ([string]$existing.demo_data_dir) 'logs/deployment.log'
   if (Test-Path -LiteralPath (Split-Path -Parent $diagnosticLog)) {
@@ -259,6 +225,16 @@ try {
   }
   if (-not $tunnelUrl) { throw 'Quick Tunnel URL was not observed.' }
   $shareUrl = "$vercelOriginText/?rn_backend=$([uri]::EscapeDataString($tunnelUrl))"
+  $apiTree = @(Get-CanonicalTree $api.Id)
+  $workerTree = @(Get-CanonicalTree $worker.Id)
+  $tunnelTree = @(Get-CanonicalTree $tunnel.Id)
+  $componentResults = [ordered]@{
+    api = [pscustomobject]@{ accepted_tree=$apiTree }
+    worker = [pscustomobject]@{ accepted_tree=$workerTree }
+    cloudflared = [pscustomobject]@{ accepted_tree=$tunnelTree }
+  }
+  $disjoint = Test-PublicDemoOwnershipDisjoint $componentResults
+  if (-not $disjoint.disjoint) { throw 'COMPONENT_OWNERSHIP_SET_OVERLAP' }
   New-Item -ItemType Directory -Force -Path (Split-Path -Parent $StatePath) | Out-Null
   $state = [ordered]@{
     version = '2.2.3'
@@ -270,12 +246,14 @@ try {
     api_pid = $api.Id
     worker_pid = $worker.Id
     cloudflared_pid = $tunnel.Id
-    api_process = Get-ProcessIdentity $api
-    worker_process = Get-ProcessIdentity $worker
-    cloudflared_process = Get-ProcessIdentity $tunnel
-    api_process_tree = @(Get-OwnedProcessTree $api.Id)
-    worker_process_tree = @(Get-OwnedProcessTree $worker.Id)
-    cloudflared_process_tree = @(Get-OwnedProcessTree $tunnel.Id)
+    api_process = ConvertTo-StateIdentity $apiTree[0]
+    worker_process = ConvertTo-StateIdentity $workerTree[0]
+    cloudflared_process = ConvertTo-StateIdentity $tunnelTree[0]
+    api_process_tree = $apiTree
+    worker_process_tree = $workerTree
+    cloudflared_process_tree = $tunnelTree
+    cloudflared_path = $CloudflaredPath
+    cloudflared_argument_prefix = @($CloudflaredArgumentPrefix)
     demo_data_dir = $demo
     share_url = $shareUrl
     started_at = (Get-Date).ToUniversalTime().ToString('o')

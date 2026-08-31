@@ -10,33 +10,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path
+Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 if (-not $OutputPath) { $OutputPath = Join-Path $project 'deployment/public_demo_status.json' }
 if (-not $PythonPath) { $PythonPath = Join-Path $project '.venv/Scripts/python.exe' }
-
-function Test-OwnedIdentity($Identity) {
-  if (-not $Identity -or -not $Identity.pid -or -not $Identity.creation_time) { return $false }
-  $process = Get-Process -Id ([int]$Identity.pid) -ErrorAction SilentlyContinue
-  if (-not $process) { return $false }
-  try {
-    if ($Identity.creation_time -is [DateTime]) {
-      $expected = $Identity.creation_time.ToUniversalTime()
-    } else {
-      $expected = [DateTime]::Parse(
-        [string]$Identity.creation_time,
-        [Globalization.CultureInfo]::InvariantCulture,
-        [Globalization.DateTimeStyles]::RoundtripKind
-      ).ToUniversalTime()
-    }
-    if ([Math]::Abs(($process.StartTime.ToUniversalTime() - $expected).TotalSeconds) -ge 1) {
-      return $false
-    }
-    if ($Identity.executable -and -not $process.Path.Equals(
-      [string]$Identity.executable, [StringComparison]::OrdinalIgnoreCase
-    )) { return $false }
-    return $true
-  } catch { return $false }
-}
 
 function Test-Http([string] $Url) {
   try {
@@ -63,11 +40,16 @@ if (-not (Test-Path -LiteralPath $StatePath -PathType Leaf)) {
     started_at = $null
   }
 } else {
-  $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json
-  $localApi = Test-Http "http://127.0.0.1:$($state.api_port)/api/health"
-  $worker = $(if (Test-OwnedIdentity $state.worker_process) { 'ONLINE' } else { 'OFFLINE' })
+  $state = Get-Content -LiteralPath $StatePath -Raw | ConvertFrom-Json -DateKind String
+  $live = Get-PublicDemoLiveProcessSnapshot
+  $apiIdentity = Test-PublicDemoProcessIdentity $state.api_process @($live.processes)
+  $workerIdentity = Test-PublicDemoProcessIdentity $state.worker_process @($live.processes)
+  $tunnelIdentity = Test-PublicDemoProcessIdentity $state.cloudflared_process @($live.processes)
+  $apiHealth = Test-Http "http://127.0.0.1:$($state.api_port)/api/health"
+  $localApi = $(if ($apiIdentity.matched) { $apiHealth } else { 'OFFLINE' })
+  $worker = $(if ($workerIdentity.matched) { 'ONLINE' } else { 'OFFLINE' })
   $cloudflared = $(
-    if (Test-OwnedIdentity $state.cloudflared_process) { 'ONLINE' } else { 'OFFLINE' }
+    if ($tunnelIdentity.matched) { 'ONLINE' } else { 'OFFLINE' }
   )
   if ($SkipExternalChecks) {
     $vercel = 'NOT_CHECKED'
