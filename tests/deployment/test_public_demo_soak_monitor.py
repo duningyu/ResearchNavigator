@@ -51,9 +51,12 @@ def write_fixture(tmp_path: Path, elapsed: float = 40.0, stderr: str = "") -> tu
     return csv_path, stderr_path
 
 
-def run_monitor(tmp_path: Path, *, elapsed: float, process_state: str, stderr: str = "") -> dict:
+def run_monitor(tmp_path: Path, *, elapsed: float, process_state: str, stderr: str = "", target_minutes: int = 120, terminal: bool = False) -> dict:
     csv_path, stderr_path = write_fixture(tmp_path, elapsed=elapsed, stderr=stderr)
     state_path = tmp_path / "state.json"
+    terminal_path = tmp_path / "terminal.json"
+    if terminal:
+        terminal_path.write_text(json.dumps({"normal_completion": True, "exit_reason": "NORMAL_COMPLETION", "elapsed_minutes": elapsed}), encoding="utf-8")
     result = subprocess.run(
         [
             "pwsh",
@@ -65,7 +68,7 @@ def run_monitor(tmp_path: Path, *, elapsed: float, process_state: str, stderr: s
             "-SoakPid",
             "2416",
             "-TargetMinutes",
-            "120",
+            str(target_minutes),
             "-SoakCsv",
             str(csv_path),
             "-SoakStderr",
@@ -76,6 +79,8 @@ def run_monitor(tmp_path: Path, *, elapsed: float, process_state: str, stderr: s
             str(tmp_path / "monitor.log"),
             "-RuntimePath",
             str(tmp_path / "runtime.json"),
+            "-TerminalReceipt",
+            str(terminal_path),
             "-Once",
             "-SkipContextGuard",
             "-ProcessStateOverride",
@@ -121,6 +126,12 @@ def test_target_reached_after_process_exit_requires_validation(tmp_path: Path) -
     state = run_monitor(tmp_path, elapsed=120.0, process_state="ABSENT")
     assert state["monitor_status"] == "TARGET_REACHED_PENDING_TERMINAL_VALIDATION"
     assert state["terminal_validation_required"] is True
+
+
+def test_normal_terminal_receipt_covers_rounded_elapsed_boundary(tmp_path: Path) -> None:
+    state = run_monitor(tmp_path, elapsed=4.99, process_state="ABSENT", target_minutes=5, terminal=True)
+    assert state["target_reached"] is True
+    assert state["monitor_status"] == "TARGET_REACHED_PENDING_TERMINAL_VALIDATION"
 
 
 def test_fatal_stderr_is_warning_without_editing_csv(tmp_path: Path) -> None:

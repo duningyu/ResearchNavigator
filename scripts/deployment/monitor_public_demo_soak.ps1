@@ -11,6 +11,7 @@ param(
   [string] $LogPath,
   [string] $RuntimePath,
   [string] $IdentityPath,
+  [string] $TerminalReceipt,
   [switch] $Once,
   [switch] $SkipContextGuard,
   [ValidateSet('LIVE','RUNNING_MATCH','RUNNING_MISMATCH','ABSENT')]
@@ -31,6 +32,7 @@ if (-not $StatePath) { $StatePath = Join-Path $monitorDir 'PUBLIC_DEMO_SOAK_MONI
 if (-not $LogPath) { $LogPath = Join-Path $monitorDir 'PUBLIC_DEMO_SOAK_MONITOR.log' }
 if (-not $RuntimePath) { $RuntimePath = Join-Path $monitorDir 'SOAK_MONITOR_RUNTIME.json' }
 if (-not $IdentityPath) { $IdentityPath = Join-Path $monitorDir 'SOAK_MONITOR_PROCESS_IDENTITY.json' }
+if (-not $TerminalReceipt) { $TerminalReceipt = Join-Path (Split-Path -Parent $SoakCsv) 'PUBLIC_DEMO_SOAK_TERMINAL.json' }
 
 function Get-Hash([string] $Value) {
   $sha = [Security.Cryptography.SHA256]::Create()
@@ -57,6 +59,11 @@ function Read-SoakRows {
   try { return @(Import-Csv -LiteralPath $SoakCsv) } catch { throw "CSV_PARSE_ERROR: $($_.Exception.Message)" }
 }
 
+function Read-TerminalReceipt {
+  if (-not (Test-Path -LiteralPath $TerminalReceipt)) { return $null }
+  try { return Get-Content -LiteralPath $TerminalReceipt -Raw | ConvertFrom-Json } catch { return $null }
+}
+
 function Get-StderrInfo {
   if (-not (Test-Path -LiteralPath $SoakStderr)) { return [pscustomobject]@{ status='EMPTY'; last=$null } }
   $lines = @(Get-Content -LiteralPath $SoakStderr | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
@@ -78,6 +85,7 @@ function Invoke-Check {
   $process = Get-ProcessSnapshot
   $stderr = Get-StderrInfo
   $rows = Read-SoakRows
+  $terminal = Read-TerminalReceipt
   $status = 'INITIALIZING'
   $elapsed = 0.0; $first = ''; $latest = ''; $age = $null; $healthFails = 0
   if ($null -eq $rows) { $status = 'CSV_MISSING' }
@@ -89,8 +97,9 @@ function Invoke-Check {
       foreach ($row in $rows) {
         if (($row.PSObject.Properties.Name -contains 'vercel_http' -and $row.vercel_http -ne '200') -or ($row.PSObject.Properties.Name -contains 'local_api_http' -and $row.local_api_http -ne '200') -or ($row.PSObject.Properties.Name -contains 'tunnel_http' -and $row.tunnel_http -ne '200') -or ($row.PSObject.Properties.Name -contains 'worker_status' -and $row.worker_status -ne 'ONLINE') -or ($row.PSObject.Properties.Name -contains 'errors_since_last_sample' -and -not [string]::IsNullOrWhiteSpace([string]$row.errors_since_last_sample))) { $healthFails++ }
       }
+      $targetReached = ($elapsed -ge $TargetMinutes -or ($terminal -and $terminal.normal_completion -eq $true))
       if (-not $process.match -and $process.state -eq 'RUNNING') { $status = 'PROCESS_IDENTITY_MISMATCH' }
-      elseif ($elapsed -ge $TargetMinutes) { $status = if ($process.state -eq 'RUNNING') { 'TARGET_REACHED_PROCESS_STILL_RUNNING' } else { 'TARGET_REACHED_PENDING_TERMINAL_VALIDATION' } }
+      elseif ($targetReached) { $status = if ($process.state -eq 'RUNNING') { 'TARGET_REACHED_PROCESS_STILL_RUNNING' } else { 'TARGET_REACHED_PENDING_TERMINAL_VALIDATION' } }
       elseif ($process.state -eq 'ABSENT') { $status = 'PROCESS_EXITED_EARLY' }
       elseif ($stderr.status -eq 'POTENTIAL_FATAL') { $status = 'FATAL_LOG_DETECTED' }
       elseif ($age -gt 420) { $status = 'RUNNING_STALE_SAMPLE_WARNING' }
@@ -103,7 +112,7 @@ function Invoke-Check {
     target_minutes=$TargetMinutes; elapsed_minutes=[Math]::Round($elapsed,2); remaining_minutes=[Math]::Round([Math]::Max($TargetMinutes-$elapsed,0),2); progress_percent=[Math]::Round([Math]::Min(($elapsed/$TargetMinutes)*100,100),2)
     csv_path=$SoakCsv; csv_row_count=if($rows){$rows.Count}else{0}; first_sample_timestamp=$first; latest_sample_timestamp=$latest; latest_sample_age_seconds=$age
     health_failure_count=$healthFails; local_api_status=if($rows){[string]$rows[-1].local_api_http}else{''}; worker_status=if($rows){[string]$rows[-1].worker_status}else{''}; cloudflared_status=if($rows){[string]$rows[-1].tunnel_http}else{''}; public_api_status=if($rows){[string]$rows[-1].vercel_http}else{''}
-    stderr_status=$stderr.status; stderr_last_nonempty_line=$stderr.last; target_reached=($elapsed -ge $TargetMinutes); terminal_validation_required=$true; second_soak_started=$false
+    stderr_status=$stderr.status; stderr_last_nonempty_line=$stderr.last; terminal_receipt_status=if($terminal){[string]$terminal.exit_reason}else{'MISSING'}; target_reached=($elapsed -ge $TargetMinutes -or ($terminal -and $terminal.normal_completion -eq $true)); terminal_validation_required=$true; second_soak_started=$false
   }
   Write-State $state
   return $state

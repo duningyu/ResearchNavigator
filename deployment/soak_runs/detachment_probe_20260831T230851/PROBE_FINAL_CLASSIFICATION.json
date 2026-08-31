@@ -1,0 +1,21 @@
+{
+  "execution_id": "RN223_SOAK_20260831T150852034Z",
+  "runner_detachment": "PASS",
+  "runner_terminal": "PASS",
+  "heartbeat_advanced": true,
+  "csv_advanced": true,
+  "normal_completion": true,
+  "fatal_stderr": false,
+  "monitor_binding": "PASS_AFTER_RETRY",
+  "health_stability_gate": "NOT_PASS",
+  "overall_detachment_probe": "NOT_PASS_PENDING_HTTP_STABILITY_INVESTIGATION",
+  "health_failure_count": 3,
+  "consecutive_failure_samples": [
+    {"timestamp": "2026-08-31T15:08:52.0377043+00:00", "endpoint": "vercel", "exception": "TaskCanceledException"},
+    {"timestamp": "2026-08-31T15:10:23.1289748+00:00", "endpoint": "vercel", "exception": "HttpRequestException"},
+    {"timestamp": "2026-08-31T15:11:38.1129668+00:00", "endpoint": "tunnel", "exception": "HttpRequestException"}
+  ],
+  "recovery_samples": 2,
+  "run_2_allowed": false,
+  "reason": "The runner survived controller completion and completed normally, but the probe health contract requires investigation before Run 2 when health failures occur in consecutive samples. The events are classified as transient external HTTP/network failures, not application failure."
+}

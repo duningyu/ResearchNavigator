@@ -1,0 +1,46 @@
+{
+  "execution_id": "RN223_SOAK_20260831T150852034Z",
+  "events": [
+    {
+      "timestamp": "2026-08-31T15:08:52.0377043+00:00",
+      "endpoint": "https://rn223-public-demo.vercel.app",
+      "exception": "TaskCanceledException",
+      "csv_vercel_http": null,
+      "local_api_http": 200,
+      "tunnel_http": 200,
+      "worker_status": "ONLINE",
+      "classification": "TRANSIENT_EXTERNAL_HTTP_TIMEOUT",
+      "evidence": "runner Invoke-WebRequest uses TimeoutSec 15; local API, tunnel, and worker were healthy in the same sample"
+    },
+    {
+      "timestamp": "2026-08-31T15:10:23.1289748+00:00",
+      "endpoint": "https://rn223-public-demo.vercel.app",
+      "exception": "HttpRequestException",
+      "csv_vercel_http": null,
+      "local_api_http": 200,
+      "tunnel_http": 200,
+      "worker_status": "ONLINE",
+      "classification": "TRANSIENT_EXTERNAL_HTTP_FAILURE",
+      "evidence": "Vercel recovered to HTTP 200 on subsequent samples; local API, tunnel, and worker remained healthy"
+    },
+    {
+      "timestamp": "2026-08-31T15:11:38.1129668+00:00",
+      "endpoint": "https://leaves-paid-diana-colours.trycloudflare.com/api/health",
+      "exception": "HttpRequestException",
+      "csv_vercel_http": 200,
+      "local_api_http": 200,
+      "tunnel_http": null,
+      "worker_status": "ONLINE",
+      "classification": "TRANSIENT_TUNNEL_HTTP_FAILURE",
+      "evidence": "Vercel and local API were HTTP 200 in the same sample; tunnel recovered to HTTP 200 in later samples"
+    }
+  ],
+  "overall_classification": "ISOLATED_TRANSIENT_EXTERNAL_HTTP_EVENTS",
+  "application_failure": false,
+  "probe_failure_from_isolated_events": false,
+  "recovery_evidence": [
+    "2026-08-31T15:11:38.1129668+00:00 Vercel HTTP 200",
+    "2026-08-31T15:13:09.3290057+00:00 Vercel HTTP 200 and tunnel HTTP 200",
+    "2026-08-31T15:13:51.7214064+00:00 Vercel HTTP 200, tunnel HTTP 200"
+  ]
+}

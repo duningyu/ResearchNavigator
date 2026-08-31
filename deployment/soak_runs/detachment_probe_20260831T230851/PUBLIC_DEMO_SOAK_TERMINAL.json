@@ -1,0 +1,13 @@
+{
+  "execution_id": "RN223_SOAK_20260831T150852034Z",
+  "started_at": "2026-08-31T15:08:52.0307132+00:00",
+  "ended_at": "2026-08-31T15:14:33.4101627+00:00",
+  "target_minutes": 5,
+  "elapsed_minutes": 4.99,
+  "sample_count": 5,
+  "exit_reason": "NORMAL_COMPLETION",
+  "exit_code": 0,
+  "normal_completion": true,
+  "fatal_exception": null,
+  "last_sample_timestamp": "2026-08-31T15:13:51.7214064+00:00"
+}

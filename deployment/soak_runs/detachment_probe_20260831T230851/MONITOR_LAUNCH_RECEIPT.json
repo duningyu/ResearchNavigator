@@ -1,0 +1,7 @@
+{
+  "monitor_pid": 8304,
+  "creation_time_utc": "2026-08-31T15:09:13.5561404Z",
+  "probe": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851",
+  "state_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851\\MONITOR_STATE.json",
+  "monitor_log": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851\\MONITOR.log"
+}

@@ -1,0 +1,16 @@
+{
+  "execution_id": "RN223_DETACHMENT_PROBE_20260831T230851",
+  "project": "ResearchNavigator",
+  "version": "2.2.3",
+  "runner_pid": 33472,
+  "runner_creation_time_utc": "2026-08-31T15:08:51.4796582Z",
+  "process_name": "pwsh",
+  "command_line_hash": "recorded_by_runner_identity_not_available",
+  "launched_at_utc": "2026-08-31T15:08:51.4995424+00:00",
+  "duration_minutes": 5,
+  "sample_interval_minutes": 1,
+  "csv_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851\\PUBLIC_DEMO_SOAK.csv",
+  "stdout_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851\\stdout.log",
+  "stderr_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851\\stderr.log",
+  "controller_process_exited_normally": true
+}
