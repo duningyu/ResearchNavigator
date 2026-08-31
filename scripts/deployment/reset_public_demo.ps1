@@ -62,7 +62,6 @@ if (Test-Path -LiteralPath $statePath) {
     throw 'Active public demo state belongs to a different DemoDataDir.'
   }
   & (Join-Path $project 'scripts/deployment/stop_public_demo.ps1') -ProjectRoot $project
-  if ($LASTEXITCODE -ne 0) { throw 'Failed to stop the active public demo before reset.' }
 }
 
 $backupDir = Join-Path $demo '_reset_backups'
