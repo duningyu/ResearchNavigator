@@ -10,6 +10,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path
+$guard = Join-Path $PSScriptRoot 'assert_researchnavigator_context.ps1'
+& $guard -ProjectRoot $project -Quiet
+if ($LASTEXITCODE -ne 0) { throw 'ResearchNavigator execution context guard refused status.' }
 Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 if (-not $OutputPath) { $OutputPath = Join-Path $project 'deployment/public_demo_status.json' }

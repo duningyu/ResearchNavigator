@@ -7,6 +7,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path
+$guard = Join-Path $PSScriptRoot 'assert_researchnavigator_context.ps1'
+& $guard -ProjectRoot $project -Quiet
+if ($LASTEXITCODE -ne 0) { throw 'ResearchNavigator execution context guard refused stop.' }
 Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 $StatePath = [IO.Path]::GetFullPath($StatePath)
@@ -51,17 +54,17 @@ if ($DryRun) {
   exit 0
 }
 
-foreach ($identity in $targets) {
+foreach ($ownedPid in $targets) {
   $current = Get-PublicDemoLiveProcessSnapshot
-  $match = Test-PublicDemoProcessIdentity $identity @($current.processes)
+  $match = Test-PublicDemoProcessIdentity $ownedPid @($current.processes)
   if ($diagnosticLog -and (Test-Path -LiteralPath (Split-Path -Parent $diagnosticLog))) {
     Add-Content -LiteralPath $diagnosticLog -Value (
-      "$(Get-Date -Format o) STOP_MATCH pid=$($identity.pid) depth=$($identity.depth) " +
+      "$(Get-Date -Format o) STOP_MATCH pid=$($ownedPid.pid) depth=$($ownedPid.depth) " +
       "classification=$($match.classification)"
     )
   }
   if ($match.matched) {
-    & taskkill.exe /PID ([int]$identity.pid) /F 2>$null | Out-Null
+    & taskkill.exe /PID ([int]$ownedPid.pid) /F 2>$null | Out-Null
   }
 }
 

@@ -13,6 +13,9 @@ $ErrorActionPreference = 'Stop'
 $markerKind = 'RESEARCH_NAVIGATOR_PUBLIC_DEMO_RUNTIME_V1'
 $markerName = 'PUBLIC_DEMO_RUNTIME.marker'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd('\')
+$guard = Join-Path $PSScriptRoot 'assert_researchnavigator_context.ps1'
+& $guard -ProjectRoot $project -Quiet
+if ($LASTEXITCODE -ne 0) { throw 'ResearchNavigator execution context guard refused reset.' }
 $demo = [IO.Path]::GetFullPath($DemoDataDir).TrimEnd('\')
 $driveRoot = [IO.Path]::GetPathRoot($demo).TrimEnd('\')
 $userHome = [Environment]::GetFolderPath('UserProfile').TrimEnd('\')

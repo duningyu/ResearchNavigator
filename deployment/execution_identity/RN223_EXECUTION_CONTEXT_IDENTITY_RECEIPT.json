@@ -1,0 +1,46 @@
+{
+  "execution_id": "RN223_EXECUTION_CONTEXT_IDENTITY_REPAIR",
+  "status": "PASS",
+  "project": "ResearchNavigator",
+  "version": "2.2.3",
+  "repo_root": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28",
+  "branch": "deployment/rn223-public-demo-hardening-v1",
+  "head_at_repair": "c9cb0584b1cfc73a05ee223f4b0bfd38932817d5",
+  "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
+  "verified_public_deployment_baseline": "e5a8fec6b1e1b06443125f087ebc174a1d55d86f",
+  "ownership_fix_commit": "d6171df",
+  "ownership_evidence_commit": "c9cb058",
+  "lineage_checks": {
+    "frozen_core_ancestor": "PASS",
+    "public_deployment_baseline_ancestor": "PASS",
+    "ownership_fix_ancestor": "PASS",
+    "ownership_evidence_ancestor": "PASS"
+  },
+  "product_fingerprints": {
+    "count": 6,
+    "required_minimum": 4,
+    "status": "PASS",
+    "paths": [
+      "apps/api/research_navigator/__init__.py",
+      "scripts/deployment/start_public_demo.ps1",
+      "deployment/PUBLIC_DEMO_DEPLOYMENT_RECEIPT.json",
+      "scripts/deployment/PublicDemoProcessOwnership.psm1",
+      "tests/deployment/test_public_demo_process_ownership.py",
+      "apps/web/package.json"
+    ]
+  },
+  "negative_active_fingerprint_search": "PASS",
+  "frozen_core_drift_classification": "EXPECTED_RN_PUBLIC_DEMO_AND_DEPLOYMENT_HARDENING",
+  "worktree_classification": {
+    "status": "SAFE_WITH_PRESERVED_USER_CHANGES",
+    "modified": ["apps/web/tsconfig.tsbuildinfo", "scripts/deployment/stop_public_demo.ps1"],
+    "untracked": ["deployment/PUBLIC_DEMO_SOAK.csv", "scripts/deployment/run_public_demo_soak.ps1"]
+  },
+  "guard": {
+    "path": "scripts/deployment/assert_researchnavigator_context.ps1",
+    "status": "PASS",
+    "focused_tests": "5 passed"
+  },
+  "contamination_audit": "deployment/execution_identity/CROSS_PROJECT_CONTAMINATION_AUDIT.md",
+  "generated_at_utc": "2026-08-31T00:00:00Z"
+}

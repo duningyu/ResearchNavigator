@@ -8,6 +8,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd('\')
+$guard = Join-Path $PSScriptRoot 'assert_researchnavigator_context.ps1'
+& $guard -ProjectRoot $project -Quiet
+if ($LASTEXITCODE -ne 0) { throw 'ResearchNavigator execution context guard refused reconciliation.' }
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
 $StatePath = [IO.Path]::GetFullPath($StatePath)
 if (-not $ForensicsDir) { $ForensicsDir = Join-Path $project 'deployment/ownership_forensics' }

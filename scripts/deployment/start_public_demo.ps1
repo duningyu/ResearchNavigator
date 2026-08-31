@@ -13,6 +13,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $markerKind = 'RESEARCH_NAVIGATOR_PUBLIC_DEMO_RUNTIME_V1'
 $project = (Resolve-Path -LiteralPath $ProjectRoot).Path.TrimEnd('\')
+$guard = Join-Path $PSScriptRoot 'assert_researchnavigator_context.ps1'
+& $guard -ProjectRoot $project -Quiet
+if ($LASTEXITCODE -ne 0) { throw 'ResearchNavigator execution context guard refused start.' }
 $demo = [IO.Path]::GetFullPath($DemoDataDir).TrimEnd('\')
 Import-Module (Join-Path $PSScriptRoot 'PublicDemoProcessOwnership.psm1') -Force
 if (-not $StatePath) { $StatePath = Join-Path $project 'deployment/public_demo_state.json' }
