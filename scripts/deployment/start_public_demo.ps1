@@ -187,7 +187,7 @@ New-Item -ItemType Directory -Force -Path $logs | Out-Null
 $databasePath = Join-Path $demo 'research_navigator.db'
 if (-not (Test-Path -LiteralPath $databasePath)) {
   & (Join-Path $project 'scripts/deployment/reset_public_demo.ps1') `
-    -ProjectRoot $project -DemoDataDir $demo -PythonPath $PythonPath
+    -ProjectRoot $project -DemoDataDir $demo -StatePath $StatePath -PythonPath $PythonPath
 }
 
 $databaseUrlPath = $databasePath.Replace('\', '/')

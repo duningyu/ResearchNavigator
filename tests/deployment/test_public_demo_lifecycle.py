@@ -9,6 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 START_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "start_public_demo.ps1"
 STOP_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "stop_public_demo.ps1"
 STATUS_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "status_public_demo.ps1"
+RESTART_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "restart_public_demo_component.ps1"
 
 
 def free_port() -> int:
@@ -93,6 +94,19 @@ def status_arguments(state_path: Path, output_path: Path) -> list[str]:
     ]
 
 
+def restart_arguments(state_path: Path, component: str) -> list[str]:
+    return [
+        "-ProjectRoot",
+        str(PROJECT_ROOT),
+        "-StatePath",
+        str(state_path),
+        "-PythonPath",
+        sys.executable,
+        "-Component",
+        component,
+    ]
+
+
 def write_fake_cloudflared(path: Path) -> None:
     path.write_text(
         "import sys\n"
@@ -147,6 +161,20 @@ def test_start_is_idempotent_stop_is_owned_and_stale_state_recovers(tmp_path: Pa
         assert status_payload["components"]["worker"] == "ONLINE"
         assert status_payload["components"]["cloudflared"] == "ONLINE"
         assert status_payload["database"]["integrity_check"] == "ok"
+
+        worker_restart = run_script(RESTART_SCRIPT, restart_arguments(state_path, "Worker"))
+        assert worker_restart.returncode == 0, worker_restart.stdout + worker_restart.stderr
+        after_worker = json.loads(state_path.read_text(encoding="utf-8-sig"))
+        assert after_worker["worker_pid"] != second_state["worker_pid"]
+        assert after_worker["api_pid"] == second_state["api_pid"]
+        assert after_worker["cloudflared_pid"] == second_state["cloudflared_pid"]
+
+        api_restart = run_script(RESTART_SCRIPT, restart_arguments(state_path, "Api"))
+        assert api_restart.returncode == 0, api_restart.stdout + api_restart.stderr
+        after_api = json.loads(state_path.read_text(encoding="utf-8-sig"))
+        assert after_api["api_pid"] != after_worker["api_pid"]
+        assert after_api["worker_pid"] == after_worker["worker_pid"]
+        assert after_api["cloudflared_pid"] == after_worker["cloudflared_pid"]
 
         stopped = run_script(STOP_SCRIPT, stop_arguments(state_path))
         assert stopped.returncode == 0, f"{stopped.stdout}\n{stopped.stderr}"

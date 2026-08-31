@@ -2,6 +2,7 @@
 param(
   [Parameter(Mandatory)] [string] $ProjectRoot,
   [Parameter(Mandatory)] [string] $DemoDataDir,
+  [string] $StatePath,
   [string] $PythonPath,
   [string] $DemoEmail = 'demo@researchnavigator.local',
   [string] $DemoPassword = 'research-demo-223',
@@ -54,14 +55,19 @@ if (-not (Test-Path -LiteralPath $PythonPath -PathType Leaf)) {
   throw "Python environment not found: $PythonPath"
 }
 
-$statePath = Join-Path $project 'deployment/public_demo_state.json'
-if (Test-Path -LiteralPath $statePath) {
-  $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json
+$effectiveStatePath = if ($StatePath) {
+  [IO.Path]::GetFullPath($StatePath)
+} else {
+  Join-Path $project 'deployment/public_demo_state.json'
+}
+if (Test-Path -LiteralPath $effectiveStatePath) {
+  $state = Get-Content -LiteralPath $effectiveStatePath -Raw | ConvertFrom-Json
   $stateDemo = [IO.Path]::GetFullPath([string]$state.demo_data_dir).TrimEnd('\')
   if (-not $stateDemo.Equals($demo, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'Active public demo state belongs to a different DemoDataDir.'
   }
-  & (Join-Path $project 'scripts/deployment/stop_public_demo.ps1') -ProjectRoot $project
+  & (Join-Path $project 'scripts/deployment/stop_public_demo.ps1') `
+    -ProjectRoot $project -StatePath $effectiveStatePath
 }
 
 $backupDir = Join-Path $demo '_reset_backups'

@@ -22,6 +22,8 @@ def run_reset(data_dir: Path, *, validate_only: bool = False) -> subprocess.Comp
         str(PROJECT_ROOT),
         "-DemoDataDir",
         str(data_dir),
+        "-StatePath",
+        str(data_dir.parent / "isolated_public_demo_state.json"),
         "-PythonPath",
         sys.executable,
     ]
