@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "classification": "EVIDENCE_COPY_WITH_IDENTICAL_EXECUTION_ID",
+  "authoritative_evidence_root": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\deployment\\soak_runs\\detachment_probe_20260831T230851",
+  "probe_execution_id": "RN223_SOAK_20260831T150852034Z",
+  "source_head_at_probe_launch": "f8c0a4f",
+  "current_source_head": "a5beee3926c0213df2490804d59fe419ea1fdd3e",
+  "runner_pid": 33472,
+  "runner_creation_time_utc": "2026-08-31T15:08:51.4796582Z",
+  "started_at": "2026-08-31T15:08:52.0307132+00:00",
+  "ended_at": "2026-08-31T15:14:33.4101627+00:00",
+  "artifacts": [
+    {"path": "PROBE_HTTP_EVENT_AUDIT.json", "execution_id": "RN223_SOAK_20260831T150852034Z", "sha256": "4F1298668632935B38D48C4DD54E828323A68F5904384F851B54C11392A8E729"},
+    {"path": "PROBE_FINAL_CLASSIFICATION.json", "execution_id": "RN223_SOAK_20260831T150852034Z", "sha256": "0F00AB1ED182DD6683BB1EE3157E485C4136DD46B54F88C26CD03C26E48AE188"},
+    {"path": "PUBLIC_DEMO_SOAK_TERMINAL.json", "execution_id": "RN223_SOAK_20260831T150852034Z", "sha256": "868DD5140FBA3647EF90B4E418866794A543B8B2FFA9B010E9ED5345F2759706"}
+  ],
+  "identity_match": true,
+  "run_1_or_run_2_reuse": false
+}

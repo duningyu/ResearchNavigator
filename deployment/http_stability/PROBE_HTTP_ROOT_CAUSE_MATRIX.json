@@ -1,0 +1,18 @@
+{
+  "probe_execution_id": "RN223_SOAK_20260831T150852034Z",
+  "LOCAL_API_FAILURE": {"evidence_for": [], "evidence_against": ["local API HTTP 200 in all 5 samples"], "confidence": "HIGH", "classification": "REJECTED"},
+  "WORKER_FAILURE": {"evidence_for": [], "evidence_against": ["Worker ONLINE in all 5 samples"], "confidence": "HIGH", "classification": "REJECTED"},
+  "CLOUDFLARED_PROCESS_FAILURE": {"evidence_for": [], "evidence_against": ["cloudflared PID and RSS remained stable; later tunnel HTTP 200"], "confidence": "MEDIUM", "classification": "REJECTED"},
+  "QUICK_TUNNEL_EDGE_TRANSIENT": {"evidence_for": ["one tunnel HttpRequestException; later tunnel HTTP 200"], "evidence_against": [], "confidence": "MEDIUM", "classification": "SUPPORTED"},
+  "VERCEL_EDGE_TRANSIENT": {"evidence_for": ["two Vercel transport exceptions followed by two HTTP 200 responses"], "evidence_against": [], "confidence": "MEDIUM", "classification": "SUPPORTED"},
+  "LOCAL_OUTBOUND_NETWORK_TRANSIENT": {"evidence_for": ["Vercel and tunnel transport failures occurred in a short window"], "evidence_against": ["no Windows NIC event correlated in queried window"], "confidence": "LOW_MEDIUM", "classification": "POSSIBLE"},
+  "DNS_TRANSIENT": {"evidence_for": [], "evidence_against": ["DNS detail was not captured"], "confidence": "LOW", "classification": "UNKNOWN"},
+  "TLS_CONNECTION_TRANSIENT": {"evidence_for": [], "evidence_against": ["TLS detail was not captured"], "confidence": "LOW", "classification": "UNKNOWN"},
+  "HEALTH_CHECK_CLIENT_TIMEOUT": {"evidence_for": ["TaskCanceledException; sampler timeout is 15 seconds"], "evidence_against": ["single-request duration was not logged"], "confidence": "MEDIUM", "classification": "SUPPORTED"},
+  "SHARED_CANCELLATION_BUG": {"evidence_for": [], "evidence_against": ["each endpoint is wrapped in its own try/catch; no shared CancellationToken or HttpClient"], "confidence": "HIGH", "classification": "REJECTED"},
+  "SAMPLER_IMPLEMENTATION_BUG": {"evidence_for": ["request durations and inner exceptions are not recorded"], "evidence_against": ["endpoint failures did not cancel runner or other requests"], "confidence": "MEDIUM", "classification": "OBSERVABILITY_GAP_ONLY"},
+  "UNKNOWN": {"evidence_for": ["inner/socket/DNS/TLS details unavailable"], "evidence_against": ["transport transient class is bounded by recovery"], "confidence": "MEDIUM", "classification": "NOT_PRIMARY"},
+  "common_root_cause": "NO_SINGLE_CONFIRMED_CAUSE_REQUIRED",
+  "application_failure": false,
+  "diagnostic_required": true
+}

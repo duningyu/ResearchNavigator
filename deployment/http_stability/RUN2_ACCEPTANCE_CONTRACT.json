@@ -1,0 +1,8 @@
+{
+  "version": "RN223_PUBLIC_PATH_HTTP_STABILITY_CLOSURE_V1",
+  "frozen_before_run_2": true,
+  "strict_local_gate": ["API unexpected death", "Worker unexpected death", "DB corruption", "ownership ambiguity", "runner abnormal exit", "local application failure"],
+  "external_path_gate": {"single_or_short_transient_transport_failure": "record_and_continue", "persistent_unrecovered_public_outage": "FAIL"},
+  "required_metrics": ["attempt_count", "success_count", "failure_count", "availability_ratio", "longest_consecutive_failures", "longest_outage_duration", "recovery_time", "failure_classification"],
+  "run_2_allowed_only_if": ["provenance PASS", "detachment mechanism PASS", "terminal contract PASS", "sampler bug CLOSED_OR_NOT_FOUND", "HTTP diagnostic PASS_NO_EXTERNAL_FAILURE_OR_PASS_WITH_BOUNDED_EXTERNAL_TRANSIENT", "local API healthy", "Worker healthy", "DB integrity ok", "ownership DISJOINT", "no existing soak runner"]
+}
