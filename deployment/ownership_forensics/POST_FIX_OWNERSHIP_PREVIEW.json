@@ -1,0 +1,137 @@
+{
+  "generated_at_utc": "2026-08-31T03:43:01.6168297+00:00",
+  "mode": "DRY_RUN_NO_TERMINATION",
+  "root_time_source": "CANONICAL_CIM_FROM_PRE_FIX_SNAPSHOT",
+  "components": {
+    "api": {
+      "root_trusted": true,
+      "classification": "TRUSTED",
+      "accepted_tree": [
+        {
+          "pid": 24672,
+          "parent_pid": 24876,
+          "creation_time_utc": "2026-08-31T03:00:39.6600140+00:00",
+          "process_name": "python.exe",
+          "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+          "command_line_hash": "9c911df28286baec8c6c1b20469782154bd6c5d76942249da3fe653410040b83",
+          "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000",
+          "depth": 0
+        },
+        {
+          "pid": 27880,
+          "parent_pid": 24672,
+          "creation_time_utc": "2026-08-31T03:00:39.7854350+00:00",
+          "process_name": "python.exe",
+          "executable_path": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "command_line_hash": "f1218a7cd2781ec8fe6e05a85f995300f16b1163ad1ac396e4cb8a0ead41a63a",
+          "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000",
+          "depth": 1
+        },
+        {
+          "pid": 30772,
+          "parent_pid": 24672,
+          "creation_time_utc": "2026-08-31T03:00:39.6813290+00:00",
+          "process_name": "conhost.exe",
+          "executable_path": "C:\\Windows\\system32\\conhost.exe",
+          "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+          "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+          "depth": 1
+        }
+      ],
+      "rejected_edges": []
+    },
+    "worker": {
+      "root_trusted": true,
+      "classification": "TRUSTED",
+      "accepted_tree": [
+        {
+          "pid": 30888,
+          "parent_pid": 24876,
+          "creation_time_utc": "2026-08-31T03:00:39.6839420+00:00",
+          "process_name": "python.exe",
+          "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+          "command_line_hash": "99f9fefa4886a6f7623b0069f03774e991e6c08f475fb9503ca0f38ab3c38884",
+          "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m services.worker.main --poll-seconds 2",
+          "depth": 0
+        },
+        {
+          "pid": 1668,
+          "parent_pid": 30888,
+          "creation_time_utc": "2026-08-31T03:00:39.7076180+00:00",
+          "process_name": "conhost.exe",
+          "executable_path": "C:\\Windows\\system32\\conhost.exe",
+          "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+          "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+          "depth": 1
+        },
+        {
+          "pid": 30956,
+          "parent_pid": 30888,
+          "creation_time_utc": "2026-08-31T03:00:39.7970990+00:00",
+          "process_name": "python.exe",
+          "executable_path": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "command_line_hash": "460858c6cda01f6e3042ed70581c452292e778bb5e40dbe78b8f37b5b78bff34",
+          "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m services.worker.main --poll-seconds 2",
+          "depth": 1
+        }
+      ],
+      "rejected_edges": []
+    },
+    "cloudflared": {
+      "root_trusted": true,
+      "classification": "TRUSTED",
+      "accepted_tree": [
+        {
+          "pid": 27680,
+          "parent_pid": 24876,
+          "creation_time_utc": "2026-08-31T03:00:43.5221400+00:00",
+          "process_name": "cloudflared.exe",
+          "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+          "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba",
+          "command_line": "\"C:\\Program Files (x86)\\cloudflared\\cloudflared.exe\" tunnel --url http://127.0.0.1:8000",
+          "depth": 0
+        },
+        {
+          "pid": 22148,
+          "parent_pid": 27680,
+          "creation_time_utc": "2026-08-31T03:00:43.5476120+00:00",
+          "process_name": "conhost.exe",
+          "executable_path": "C:\\Windows\\system32\\conhost.exe",
+          "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+          "command_line": "\\??\\C:\\Windows\\system32\\conhost.exe 0x4",
+          "depth": 1
+        }
+      ],
+      "rejected_edges": [
+        {
+          "parent_pid": 22148,
+          "child_pid": 10992,
+          "parent_creation_time_utc": "2026-08-31T03:00:43.5476120+00:00",
+          "child_creation_time_utc": "2026-08-31T02:29:50.5727120+00:00",
+          "reason": "IMPOSSIBLE_CAUSAL_PARENT_EDGE"
+        },
+        {
+          "parent_pid": 22148,
+          "child_pid": 20696,
+          "parent_creation_time_utc": "2026-08-31T03:00:43.5476120+00:00",
+          "child_creation_time_utc": "2026-08-31T02:29:50.5430650+00:00",
+          "reason": "IMPOSSIBLE_CAUSAL_PARENT_EDGE"
+        }
+      ]
+    }
+  },
+  "ownership_overlaps": [
+    {
+      "components": "api_worker",
+      "pids": []
+    },
+    {
+      "components": "api_cloudflared",
+      "pids": []
+    },
+    {
+      "components": "worker_cloudflared",
+      "pids": []
+    }
+  ]
+}

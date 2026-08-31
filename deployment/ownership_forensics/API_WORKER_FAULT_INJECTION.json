@@ -1,0 +1,21 @@
+{
+  "tested_at_utc": "2026-08-31T04:30:23.022Z",
+  "browser_channel": "chrome",
+  "api_restart": {
+    "status": "PASS",
+    "offline_observed": true,
+    "recovered_after_retry": true,
+    "api_identity_changed": true,
+    "worker_identity_unchanged": true,
+    "tunnel_identity_unchanged": true
+  },
+  "worker_restart": {
+    "status": "PASS",
+    "pending_job_id": 1,
+    "terminal_status": "succeeded",
+    "worker_identity_changed": true,
+    "api_identity_unchanged": true,
+    "tunnel_identity_unchanged": true
+  },
+  "secrets_recorded": false
+}

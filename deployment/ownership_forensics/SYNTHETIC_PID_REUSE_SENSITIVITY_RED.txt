@@ -1,0 +1,27 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_older_process_with_reused_parent_pid_is_not_descendant _________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-777/test_older_process_with_reused0')
+
+    def test_older_process_with_reused_parent_pid_is_not_descendant(tmp_path: Path) -> None:
+        result = payload(
+            inspect(
+                tmp_path,
+                [
+                    process(500, 10, "2026-08-31T10:30:00Z", name="cloudflared.exe"),
+                    process(600, 500, "2026-08-31T09:59:00Z", name="python.exe"),
+                    process(601, 500, "2026-08-31T10:00:00Z", name="python.exe"),
+                ],
+            )
+        )
+>       assert [item["pid"] for item in result["accepted_tree"]] == [500]
+E       assert [500, 600, 601] == [500]
+E         
+E         Left contains 2 more items, first extra item: 600
+E         Use -v to get more diff
+
+tests\deployment\test_public_demo_process_ownership.py:79: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/deployment/test_public_demo_process_ownership.py::test_older_process_with_reused_parent_pid_is_not_descendant
+1 failed in 2.32s

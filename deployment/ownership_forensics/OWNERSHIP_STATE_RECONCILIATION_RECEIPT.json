@@ -1,0 +1,45 @@
+{
+  "bug_id": "RN223-DEMO-PROC-OWNERSHIP-001",
+  "reconciled_at_utc": "2026-08-31T03:46:32.0387677+00:00",
+  "before_state_sha256": "419014ee1c33e655c2bce4a8896ebf1f5fcb5d74943e4beba375d539f99f351a",
+  "after_state_sha256": "82ac902d7e77f6502e889bc543734db64b32f84454da0974227bbaf45da34a38",
+  "api_root_identity": {
+    "pid": 24672,
+    "creation_time_utc": "2026-08-31T03:00:39.6600140+00:00",
+    "creation_time": "2026-08-31T03:00:39.6600140+00:00",
+    "parent_pid": 24876,
+    "process_name": "python.exe",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "command_line_hash": "9c911df28286baec8c6c1b20469782154bd6c5d76942249da3fe653410040b83"
+  },
+  "worker_root_identity": {
+    "pid": 30888,
+    "creation_time_utc": "2026-08-31T03:00:39.6839420+00:00",
+    "creation_time": "2026-08-31T03:00:39.6839420+00:00",
+    "parent_pid": 24876,
+    "process_name": "python.exe",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "command_line_hash": "99f9fefa4886a6f7623b0069f03774e991e6c08f475fb9503ca0f38ab3c38884"
+  },
+  "cloudflared_root_identity": {
+    "pid": 27680,
+    "creation_time_utc": "2026-08-31T03:00:43.5221400+00:00",
+    "creation_time": "2026-08-31T03:00:43.5221400+00:00",
+    "parent_pid": 24876,
+    "process_name": "cloudflared.exe",
+    "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+    "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+    "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba"
+  },
+  "accepted_descendant_count": {
+    "api": 2,
+    "worker": 2,
+    "cloudflared": 1
+  },
+  "rejected_impossible_edge_count": 2,
+  "pid_reuse_detections": 0,
+  "ownership_disjointness": "DISJOINT",
+  "processes_terminated": 0
+}

@@ -1,0 +1,110 @@
+{
+  "version": "2.2.3",
+  "source_commit": "e478b4d69e22b15030b7400f0f6c75b157499d6d",
+  "deployment_revision": "RN223_PUBLIC_DEMO_HARDENING_V1",
+  "vercel_origin": "https://rn223-public-demo.vercel.app",
+  "tunnel_origin": "https://doe-mapping-threaded-live.trycloudflare.com",
+  "api_port": 8000,
+  "api_pid": 24672,
+  "worker_pid": 30888,
+  "cloudflared_pid": 27680,
+  "api_process": {
+    "pid": 24672,
+    "creation_time": "2026-08-31T03:00:39.6600145Z",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe"
+  },
+  "worker_process": {
+    "pid": 30888,
+    "creation_time": "2026-08-31T03:00:39.6839428Z",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe"
+  },
+  "cloudflared_process": {
+    "pid": 27680,
+    "creation_time": "2026-08-31T03:00:43.5221406Z",
+    "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe"
+  },
+  "api_process_tree": [
+    {
+      "pid": 24672,
+      "parent_pid": 24876,
+      "depth": 0,
+      "creation_time": "2026-08-31T03:00:39.6600145Z",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000"
+    },
+    {
+      "pid": 27880,
+      "parent_pid": 24672,
+      "depth": 1,
+      "creation_time": "2026-08-31T03:00:39.7854356Z",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 8000"
+    }
+  ],
+  "worker_process_tree": [
+    {
+      "pid": 30888,
+      "parent_pid": 24876,
+      "depth": 0,
+      "creation_time": "2026-08-31T03:00:39.6839428Z",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m services.worker.main --poll-seconds 2"
+    },
+    {
+      "pid": 30956,
+      "parent_pid": 30888,
+      "depth": 1,
+      "creation_time": "2026-08-31T03:00:39.7970997Z",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m services.worker.main --poll-seconds 2"
+    }
+  ],
+  "cloudflared_process_tree": [
+    {
+      "pid": 27680,
+      "parent_pid": 24876,
+      "depth": 0,
+      "creation_time": "2026-08-31T03:00:43.5221406Z",
+      "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "command_line": "\"C:\\Program Files (x86)\\cloudflared\\cloudflared.exe\" tunnel --url http://127.0.0.1:8000"
+    },
+    {
+      "pid": 20696,
+      "parent_pid": 22148,
+      "depth": 2,
+      "creation_time": "2026-08-31T02:29:50.5430657Z",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 49278"
+    },
+    {
+      "pid": 10992,
+      "parent_pid": 22148,
+      "depth": 2,
+      "creation_time": "2026-08-31T02:29:50.5727129Z",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line": "\"E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe\" -m services.worker.main --poll-seconds 2"
+    },
+    {
+      "pid": 9464,
+      "parent_pid": 20696,
+      "depth": 3,
+      "creation_time": "2026-08-31T02:29:50.6560293Z",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn research_navigator.main:app --host 127.0.0.1 --port 49278"
+    },
+    {
+      "pid": 30404,
+      "parent_pid": 10992,
+      "depth": 3,
+      "creation_time": "2026-08-31T02:29:50.6735529Z",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line": "\"C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m services.worker.main --poll-seconds 2"
+    }
+  ],
+  "demo_data_dir": "E:\\AI_Projects\\ResearchNavigator_2.2.3_PUBLIC_DEMO_RUNTIME",
+  "share_url": "https://rn223-public-demo.vercel.app/?rn_backend=https%3A%2F%2Fdoe-mapping-threaded-live.trycloudflare.com",
+  "started_at": "2026-08-31T03:00:52.3616682Z",
+  "cloudflare_tunnel_type": "QUICK_TUNNEL",
+  "random_hostname": true,
+  "sla": "none"
+}

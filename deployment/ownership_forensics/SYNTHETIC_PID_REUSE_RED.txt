@@ -1,0 +1,204 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+_________ test_older_process_with_reused_parent_pid_is_not_descendant _________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-775/test_older_process_with_reused0')
+
+    def test_older_process_with_reused_parent_pid_is_not_descendant(tmp_path: Path) -> None:
+>       result = payload(
+            inspect(
+                tmp_path,
+                [
+                    process(500, 10, "2026-08-31T10:30:00Z", name="cloudflared.exe"),
+                    process(600, 500, "2026-08-31T09:59:00Z", name="python.exe"),
+                    process(601, 500, "2026-08-31T10:00:00Z", name="python.exe"),
+                ],
+            )
+        )
+
+tests\deployment\test_public_demo_process_ownership.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+result = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n")
+
+    def payload(result: subprocess.CompletedProcess[str]) -> dict[str, object]:
+>       assert result.returncode == 0, f"{result.stdout}\n{result.stderr}"
+E       AssertionError: 
+E         Usage: pwsh[.exe] [-Login] [[-File] <filePath> [args]]
+E                           [-Command { - | <script-block> [-args <arg-array>]
+E                                         | <string> [<CommandParameters>] } ]
+E                           [-CommandWithArgs <string> [<CommandParameters>]
+E                           [-ConfigurationName <string>] [-ConfigurationFile <filePath>]
+E                           [-CustomPipeName <string>] [-EncodedCommand <Base64EncodedCommand>]
+E                           [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
+E                           [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+E                           [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+E                           [-SettingsFile <filePath>] [-SSHServerMode] [-STA]
+E                           [-Version] [-WindowStyle <style>]
+E                           [-WorkingDirectory <directoryPath>]
+E         
+E                pwsh[.exe] -h | -Help | -? | /?
+E         
+E         PowerShell Online Help https://aka.ms/powershell-docs
+E         
+E         All parameters are case-insensitive.
+E         
+E         The argument 'E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\scripts\deployment\inspect_process_ownership.ps1' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+E         
+E       assert 64 == 0
+E        +  where 64 = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n").returncode
+
+tests\deployment\test_public_demo_process_ownership.py:64: AssertionError
+___________ test_valid_causal_child_and_grandchild_are_descendants ____________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-775/test_valid_causal_child_and_gr0')
+
+    def test_valid_causal_child_and_grandchild_are_descendants(tmp_path: Path) -> None:
+>       result = payload(
+            inspect(
+                tmp_path,
+                [
+                    process(500, 10, "2026-08-31T10:30:00Z"),
+                    process(600, 500, "2026-08-31T10:30:01Z"),
+                    process(601, 600, "2026-08-31T10:30:02Z"),
+                ],
+            )
+        )
+
+tests\deployment\test_public_demo_process_ownership.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+result = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n")
+
+    def payload(result: subprocess.CompletedProcess[str]) -> dict[str, object]:
+>       assert result.returncode == 0, f"{result.stdout}\n{result.stderr}"
+E       AssertionError: 
+E         Usage: pwsh[.exe] [-Login] [[-File] <filePath> [args]]
+E                           [-Command { - | <script-block> [-args <arg-array>]
+E                                         | <string> [<CommandParameters>] } ]
+E                           [-CommandWithArgs <string> [<CommandParameters>]
+E                           [-ConfigurationName <string>] [-ConfigurationFile <filePath>]
+E                           [-CustomPipeName <string>] [-EncodedCommand <Base64EncodedCommand>]
+E                           [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
+E                           [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+E                           [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+E                           [-SettingsFile <filePath>] [-SSHServerMode] [-STA]
+E                           [-Version] [-WindowStyle <style>]
+E                           [-WorkingDirectory <directoryPath>]
+E         
+E                pwsh[.exe] -h | -Help | -? | /?
+E         
+E         PowerShell Online Help https://aka.ms/powershell-docs
+E         
+E         All parameters are case-insensitive.
+E         
+E         The argument 'E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\scripts\deployment\inspect_process_ownership.ps1' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+E         
+E       assert 64 == 0
+E        +  where 64 = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n").returncode
+
+tests\deployment\test_public_demo_process_ownership.py:64: AssertionError
+__________ test_same_pid_with_different_creation_time_is_pid_reused ___________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-775/test_same_pid_with_different_c0')
+
+    def test_same_pid_with_different_creation_time_is_pid_reused(tmp_path: Path) -> None:
+>       result = payload(
+            inspect(
+                tmp_path,
+                [process(700, 10, "2026-08-31T11:00:00Z")],
+                root_pid=700,
+                root_creation="2026-08-31T10:00:00Z",
+            )
+        )
+
+tests\deployment\test_public_demo_process_ownership.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+result = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n")
+
+    def payload(result: subprocess.CompletedProcess[str]) -> dict[str, object]:
+>       assert result.returncode == 0, f"{result.stdout}\n{result.stderr}"
+E       AssertionError: 
+E         Usage: pwsh[.exe] [-Login] [[-File] <filePath> [args]]
+E                           [-Command { - | <script-block> [-args <arg-array>]
+E                                         | <string> [<CommandParameters>] } ]
+E                           [-CommandWithArgs <string> [<CommandParameters>]
+E                           [-ConfigurationName <string>] [-ConfigurationFile <filePath>]
+E                           [-CustomPipeName <string>] [-EncodedCommand <Base64EncodedCommand>]
+E                           [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
+E                           [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+E                           [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+E                           [-SettingsFile <filePath>] [-SSHServerMode] [-STA]
+E                           [-Version] [-WindowStyle <style>]
+E                           [-WorkingDirectory <directoryPath>]
+E         
+E                pwsh[.exe] -h | -Help | -? | /?
+E         
+E         PowerShell Online Help https://aka.ms/powershell-docs
+E         
+E         All parameters are case-insensitive.
+E         
+E         The argument 'E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\scripts\deployment\inspect_process_ownership.ps1' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+E         
+E       assert 64 == 0
+E        +  where 64 = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n").returncode
+
+tests\deployment\test_public_demo_process_ownership.py:64: AssertionError
+___________ test_mixed_tree_does_not_traverse_through_invalid_edge ____________
+
+tmp_path = WindowsPath('C:/Users/ASUS/AppData/Local/Temp/pytest-of-ASUS/pytest-775/test_mixed_tree_does_not_trave0')
+
+    def test_mixed_tree_does_not_traverse_through_invalid_edge(tmp_path: Path) -> None:
+>       result = payload(
+            inspect(
+                tmp_path,
+                [
+                    process(500, 10, "2026-08-31T10:30:00Z"),
+                    process(600, 500, "2026-08-31T10:30:01Z"),
+                    process(602, 600, "2026-08-31T10:30:02Z"),
+                    process(601, 500, "2026-08-31T10:00:00Z"),
+                    process(603, 601, "2026-08-31T10:30:03Z"),
+                ],
+            )
+        )
+
+tests\deployment\test_public_demo_process_ownership.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+result = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n")
+
+    def payload(result: subprocess.CompletedProcess[str]) -> dict[str, object]:
+>       assert result.returncode == 0, f"{result.stdout}\n{result.stderr}"
+E       AssertionError: 
+E         Usage: pwsh[.exe] [-Login] [[-File] <filePath> [args]]
+E                           [-Command { - | <script-block> [-args <arg-array>]
+E                                         | <string> [<CommandParameters>] } ]
+E                           [-CommandWithArgs <string> [<CommandParameters>]
+E                           [-ConfigurationName <string>] [-ConfigurationFile <filePath>]
+E                           [-CustomPipeName <string>] [-EncodedCommand <Base64EncodedCommand>]
+E                           [-ExecutionPolicy <ExecutionPolicy>] [-InputFormat {Text | XML}]
+E                           [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+E                           [-NoProfileLoadTime] [-OutputFormat {Text | XML}]
+E                           [-SettingsFile <filePath>] [-SSHServerMode] [-STA]
+E                           [-Version] [-WindowStyle <style>]
+E                           [-WorkingDirectory <directoryPath>]
+E         
+E                pwsh[.exe] -h | -Help | -? | /?
+E         
+E         PowerShell Online Help https://aka.ms/powershell-docs
+E         
+E         All parameters are case-insensitive.
+E         
+E         The argument 'E:\AI_Projects\ResearchNavigator_2.2.0_ENV_CLOSURE\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\scripts\deployment\inspect_process_ownership.ps1' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+E         
+E       assert 64 == 0
+E        +  where 64 = CompletedProcess(args=['pwsh', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'E:\\AI_Projects\\ResearchNavigato...ipt file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.\n").returncode
+
+tests\deployment\test_public_demo_process_ownership.py:64: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/deployment/test_public_demo_process_ownership.py::test_older_process_with_reused_parent_pid_is_not_descendant
+FAILED tests/deployment/test_public_demo_process_ownership.py::test_valid_causal_child_and_grandchild_are_descendants
+FAILED tests/deployment/test_public_demo_process_ownership.py::test_same_pid_with_different_creation_time_is_pid_reused
+FAILED tests/deployment/test_public_demo_process_ownership.py::test_mixed_tree_does_not_traverse_through_invalid_edge
+4 failed in 3.38s

@@ -1,0 +1,63 @@
+{
+  "bug_id": "RN223-DEMO-PROC-OWNERSHIP-001",
+  "tested_at_utc": "2026-08-31T04:15:03.2076170+00:00",
+  "pre": {
+    "api": {
+      "pid": 24672,
+      "creation_time_utc": "2026-08-31T03:00:39.6600140+00:00",
+      "creation_time": "2026-08-31T03:00:39.6600140+00:00",
+      "parent_pid": 24876,
+      "process_name": "python.exe",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line_hash": "9c911df28286baec8c6c1b20469782154bd6c5d76942249da3fe653410040b83"
+    },
+    "worker": {
+      "pid": 30888,
+      "creation_time_utc": "2026-08-31T03:00:39.6839420+00:00",
+      "creation_time": "2026-08-31T03:00:39.6839420+00:00",
+      "parent_pid": 24876,
+      "process_name": "python.exe",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line_hash": "99f9fefa4886a6f7623b0069f03774e991e6c08f475fb9503ca0f38ab3c38884"
+    },
+    "cloudflared": {
+      "pid": 27680,
+      "creation_time_utc": "2026-08-31T03:00:43.5221400+00:00",
+      "creation_time": "2026-08-31T03:00:43.5221400+00:00",
+      "parent_pid": 24876,
+      "process_name": "cloudflared.exe",
+      "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba"
+    },
+    "tunnel_url": "https://doe-mapping-threaded-live.trycloudflare.com"
+  },
+  "after_stop": {
+    "api_identity_unchanged": true,
+    "worker_identity_unchanged": true,
+    "cloudflared_alive": false,
+    "local_health": 200,
+    "old_tunnel_status": "HTTP_530"
+  },
+  "after_restart": {
+    "api_identity_unchanged": true,
+    "worker_identity_unchanged": true,
+    "cloudflared": {
+      "pid": 32556,
+      "creation_time_utc": "2026-08-31T04:14:08.2365940+00:00",
+      "creation_time": "2026-08-31T04:14:08.2365940+00:00",
+      "parent_pid": 30312,
+      "process_name": "cloudflared.exe",
+      "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba"
+    },
+    "tunnel_url": "https://gratuit-bridges-action-teams.trycloudflare.com",
+    "public_health": 200
+  },
+  "intermediate_attempt": "INTERRUPTED_BY_VALIDATION_PTY_CTRL_C",
+  "old_and_new_tunnel_differ": true,
+  "status": "PASS"
+}
