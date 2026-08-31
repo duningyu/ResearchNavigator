@@ -8,6 +8,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 START_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "start_public_demo.ps1"
 STOP_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "stop_public_demo.ps1"
+STATUS_SCRIPT = PROJECT_ROOT / "scripts" / "deployment" / "status_public_demo.ps1"
 
 
 def free_port() -> int:
@@ -77,6 +78,21 @@ def stop_arguments(state_path: Path) -> list[str]:
     return ["-ProjectRoot", str(PROJECT_ROOT), "-StatePath", str(state_path)]
 
 
+def status_arguments(state_path: Path, output_path: Path) -> list[str]:
+    return [
+        "-ProjectRoot",
+        str(PROJECT_ROOT),
+        "-StatePath",
+        str(state_path),
+        "-PythonPath",
+        sys.executable,
+        "-EmitJson",
+        "-OutputPath",
+        str(output_path),
+        "-SkipExternalChecks",
+    ]
+
+
 def write_fake_cloudflared(path: Path) -> None:
     path.write_text(
         "import sys\n"
@@ -122,12 +138,25 @@ def test_start_is_idempotent_stop_is_owned_and_stale_state_recovers(tmp_path: Pa
         for key in ("api_pid", "worker_pid", "cloudflared_pid", "started_at"):
             assert second_state[key] == first_state[key]
 
+        status_path = tmp_path / "public_demo_status.json"
+        running_status = run_script(STATUS_SCRIPT, status_arguments(state_path, status_path))
+        assert running_status.returncode == 0, f"{running_status.stdout}\n{running_status.stderr}"
+        status_payload = json.loads(status_path.read_text(encoding="utf-8-sig"))
+        assert status_payload["status"] == "DEGRADED"
+        assert status_payload["components"]["local_api"] == "ONLINE"
+        assert status_payload["components"]["worker"] == "ONLINE"
+        assert status_payload["components"]["cloudflared"] == "ONLINE"
+        assert status_payload["database"]["integrity_check"] == "ok"
+
         stopped = run_script(STOP_SCRIPT, stop_arguments(state_path))
         assert stopped.returncode == 0, f"{stopped.stdout}\n{stopped.stderr}"
         assert not state_path.exists()
         assert sentinel.poll() is None
         for key in ("api_pid", "worker_pid", "cloudflared_pid"):
             assert not process_alive(int(first_state[key]))
+        stopped_status = run_script(STATUS_SCRIPT, status_arguments(state_path, status_path))
+        assert stopped_status.returncode == 0
+        assert json.loads(status_path.read_text(encoding="utf-8-sig"))["status"] == "OFFLINE"
 
         state_path.write_text(json.dumps(first_state), encoding="utf-8")
         recovered = run_script(

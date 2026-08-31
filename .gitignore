@@ -23,6 +23,7 @@ uploads/
 vector_index/
 backups/
 deployment/public_demo_state.json
+deployment/public_demo_status.json
 deployment/PUBLIC_DEMO_DEPLOYMENT_RECEIPT.json
 
 # Secrets
