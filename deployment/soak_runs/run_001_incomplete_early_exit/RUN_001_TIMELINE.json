@@ -1,0 +1,23 @@
+{
+  "execution_id": "RN223_SOAK_RUN_001",
+  "timezone": "UTC",
+  "events": [
+    {"event": "runner_created", "timestamp": "2026-08-31T13:18:31.096612Z", "detail": "PID 2416; local creation time 21:18:31.0966129+08:00"},
+    {"event": "first_sample", "timestamp": "2026-08-31T13:18:31.9859989Z", "elapsed_minutes": 0.0},
+    {"event": "sample", "timestamp": "2026-08-31T13:23:39.1903030Z", "elapsed_minutes": 5.12},
+    {"event": "sample", "timestamp": "2026-08-31T13:28:43.9044375Z", "elapsed_minutes": 10.2},
+    {"event": "sample", "timestamp": "2026-08-31T13:33:48.7201824Z", "elapsed_minutes": 15.28},
+    {"event": "sample", "timestamp": "2026-08-31T13:38:55.9732785Z", "elapsed_minutes": 20.4},
+    {"event": "sample", "timestamp": "2026-08-31T13:43:59.2248794Z", "elapsed_minutes": 25.45},
+    {"event": "sample", "timestamp": "2026-08-31T13:49:02.8522172Z", "elapsed_minutes": 30.51},
+    {"event": "sample", "timestamp": "2026-08-31T13:54:22.6983529Z", "elapsed_minutes": 35.85},
+    {"event": "last_sample", "timestamp": "2026-08-31T13:59:26.7820752Z", "elapsed_minutes": 40.91},
+    {"event": "system_reboot_initiated", "timestamp": "2026-08-31T14:04:11Z", "detail": "Kernel-Power Event 109, Power Action Reboot"},
+    {"event": "event_log_stopped", "timestamp": "2026-08-31T14:04:06Z", "detail": "EventLog 6006"},
+    {"event": "event_log_started", "timestamp": "2026-08-31T14:04:35Z", "detail": "EventLog 6005; startup time 11 seconds"},
+    {"event": "monitor_observation", "timestamp": "2026-08-31T14:33:29.2369058Z", "detail": "PID absent; PROCESS_EXITED_EARLY"}
+  ],
+  "last_observed_alive_bound": "2026-08-31T13:59:30Z",
+  "pid_disappearance": "not directly timestamped; bounded by reboot sequence",
+  "codex_disconnect_timestamp": "not available from disk evidence"
+}

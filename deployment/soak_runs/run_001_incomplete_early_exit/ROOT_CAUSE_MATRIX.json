@@ -1,0 +1,18 @@
+{
+  "run": "RUN_001",
+  "classification": "INCOMPLETE_EARLY_EXIT",
+  "candidates": {
+    "APPLICATION_COMPONENT_FAILURE": {"evidence_for": [], "evidence_against": ["9/9 samples healthy", "API/worker/tunnel remained healthy at last sample"], "classification": "REJECTED", "confidence": "HIGH"},
+    "SOAK_RUNNER_INTERNAL_EXCEPTION": {"evidence_for": [], "evidence_against": ["stderr empty", "no exception or terminal error in stdout"], "classification": "NOT_SUPPORTED", "confidence": "MEDIUM"},
+    "SOAK_DURATION_LOGIC_DEFECT": {"evidence_for": [], "evidence_against": ["runner uses AddMinutes(DurationMinutes) and 5-minute sleep"], "classification": "REJECTED", "confidence": "HIGH"},
+    "CODEX_SESSION_PROCESS_OWNERSHIP": {"evidence_for": ["runner was launched from a detached PowerShell process"], "evidence_against": ["direct reboot evidence explains termination"], "classification": "NOT_PRIMARY", "confidence": "MEDIUM"},
+    "EXTERNAL_COMMAND_TIMEOUT": {"evidence_for": [], "evidence_against": ["runner has no timeout/wait wrapper in implementation"], "classification": "REJECTED", "confidence": "HIGH"},
+    "WINDOWS_SLEEP_OR_RESTART": {"evidence_for": ["Kernel-Power Event 109 Power Action Reboot", "EventLog stop/start around same window"], "evidence_against": [], "classification": "CONFIRMED", "confidence": "HIGH"},
+    "MANUAL_TERMINATION": {"evidence_for": [], "evidence_against": ["reboot events provide a direct alternative cause"], "classification": "NOT_SUPPORTED", "confidence": "MEDIUM"},
+    "MONITOR_INTERFERENCE": {"evidence_for": [], "evidence_against": ["monitor started after runner exit", "CSV remained unchanged", "monitor code has no Stop-Process or shared-handle operations"], "classification": "REJECTED", "confidence": "HIGH"},
+    "RESOURCE_EXHAUSTION": {"evidence_for": [], "evidence_against": ["no relevant resource event; component RSS stable"], "classification": "NOT_SUPPORTED", "confidence": "MEDIUM"},
+    "UNKNOWN": {"evidence_for": [], "evidence_against": ["reboot cause is directly evidenced"], "classification": "REJECTED", "confidence": "HIGH"}
+  },
+  "component_failure_before_runner_exit": {"api": false, "worker": false, "tunnel": false, "database": "unknown_but_no_failure_evidence"},
+  "monitor_non_interference": "PASS"
+}

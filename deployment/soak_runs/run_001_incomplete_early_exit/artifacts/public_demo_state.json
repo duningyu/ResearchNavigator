@@ -1,0 +1,151 @@
+{
+  "version": "2.2.3",
+  "source_commit": "91a30d369c50e76170cf38295188f957e92c0859",
+  "deployment_revision": "RN223_PUBLIC_DEMO_HARDENING_V1",
+  "vercel_origin": "https://rn223-public-demo.vercel.app",
+  "tunnel_origin": "https://top-navy-engines-helena.trycloudflare.com",
+  "api_port": 8000,
+  "api_pid": 11304,
+  "worker_pid": 3440,
+  "cloudflared_pid": 17124,
+  "api_process": {
+    "pid": 11304,
+    "creation_time_utc": "2026-08-31T13:17:33.0698830+00:00",
+    "creation_time": "2026-08-31T13:17:33.0698830+00:00",
+    "parent_pid": 20256,
+    "process_name": "python.exe",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "command_line_hash": "9c911df28286baec8c6c1b20469782154bd6c5d76942249da3fe653410040b83"
+  },
+  "worker_process": {
+    "pid": 3440,
+    "creation_time_utc": "2026-08-31T13:17:33.0851260+00:00",
+    "creation_time": "2026-08-31T13:17:33.0851260+00:00",
+    "parent_pid": 20256,
+    "process_name": "python.exe",
+    "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+    "command_line_hash": "99f9fefa4886a6f7623b0069f03774e991e6c08f475fb9503ca0f38ab3c38884"
+  },
+  "cloudflared_process": {
+    "pid": 17124,
+    "creation_time_utc": "2026-08-31T13:17:35.5107050+00:00",
+    "creation_time": "2026-08-31T13:17:35.5107050+00:00",
+    "parent_pid": 20256,
+    "process_name": "cloudflared.exe",
+    "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+    "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+    "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba"
+  },
+  "api_process_tree": [
+    {
+      "pid": 11304,
+      "creation_time_utc": "2026-08-31T13:17:33.0698830+00:00",
+      "creation_time": "2026-08-31T13:17:33.0698830+00:00",
+      "parent_pid": 20256,
+      "process_name": "python.exe",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line_hash": "9c911df28286baec8c6c1b20469782154bd6c5d76942249da3fe653410040b83",
+      "depth": 0,
+      "killable": true
+    },
+    {
+      "pid": 3792,
+      "creation_time_utc": "2026-08-31T13:17:33.0839180+00:00",
+      "creation_time": "2026-08-31T13:17:33.0839180+00:00",
+      "parent_pid": 11304,
+      "process_name": "conhost.exe",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "executable_path": "C:\\Windows\\system32\\conhost.exe",
+      "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+      "depth": 1,
+      "killable": false
+    },
+    {
+      "pid": 23328,
+      "creation_time_utc": "2026-08-31T13:17:33.1227150+00:00",
+      "creation_time": "2026-08-31T13:17:33.1227150+00:00",
+      "parent_pid": 11304,
+      "process_name": "python.exe",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "executable_path": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line_hash": "f1218a7cd2781ec8fe6e05a85f995300f16b1163ad1ac396e4cb8a0ead41a63a",
+      "depth": 1,
+      "killable": true
+    }
+  ],
+  "worker_process_tree": [
+    {
+      "pid": 3440,
+      "creation_time_utc": "2026-08-31T13:17:33.0851260+00:00",
+      "creation_time": "2026-08-31T13:17:33.0851260+00:00",
+      "parent_pid": 20256,
+      "process_name": "python.exe",
+      "executable": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "executable_path": "E:\\AI_Projects\\ResearchNavigator_2.2.0_ENV_CLOSURE\\ResearchNavigator_2.2.0_evidence_platform_2026-08-28\\.venv\\Scripts\\python.exe",
+      "command_line_hash": "99f9fefa4886a6f7623b0069f03774e991e6c08f475fb9503ca0f38ab3c38884",
+      "depth": 0,
+      "killable": true
+    },
+    {
+      "pid": 8472,
+      "creation_time_utc": "2026-08-31T13:17:33.0953940+00:00",
+      "creation_time": "2026-08-31T13:17:33.0953940+00:00",
+      "parent_pid": 3440,
+      "process_name": "conhost.exe",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "executable_path": "C:\\Windows\\system32\\conhost.exe",
+      "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+      "depth": 1,
+      "killable": false
+    },
+    {
+      "pid": 9840,
+      "creation_time_utc": "2026-08-31T13:17:33.1285110+00:00",
+      "creation_time": "2026-08-31T13:17:33.1285110+00:00",
+      "parent_pid": 3440,
+      "process_name": "python.exe",
+      "executable": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "executable_path": "C:\\Users\\ASUS\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "command_line_hash": "460858c6cda01f6e3042ed70581c452292e778bb5e40dbe78b8f37b5b78bff34",
+      "depth": 1,
+      "killable": true
+    }
+  ],
+  "cloudflared_process_tree": [
+    {
+      "pid": 17124,
+      "creation_time_utc": "2026-08-31T13:17:35.5107050+00:00",
+      "creation_time": "2026-08-31T13:17:35.5107050+00:00",
+      "parent_pid": 20256,
+      "process_name": "cloudflared.exe",
+      "executable": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "executable_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+      "command_line_hash": "904d6cd45c39dafdaf1a10d6f8ff4470e435f2200a19b2322c0238ddb5de1cba",
+      "depth": 0,
+      "killable": true
+    },
+    {
+      "pid": 4604,
+      "creation_time_utc": "2026-08-31T13:17:35.5707090+00:00",
+      "creation_time": "2026-08-31T13:17:35.5707090+00:00",
+      "parent_pid": 17124,
+      "process_name": "conhost.exe",
+      "executable": "C:\\Windows\\system32\\conhost.exe",
+      "executable_path": "C:\\Windows\\system32\\conhost.exe",
+      "command_line_hash": "b4359116b59ef8fd3343f3c7d5a2f144b7f60a36d8c928e85ef8003dcd9f8fc1",
+      "depth": 1,
+      "killable": false
+    }
+  ],
+  "cloudflared_path": "C:\\Program Files (x86)\\cloudflared\\cloudflared.exe",
+  "cloudflared_argument_prefix": [],
+  "demo_data_dir": "E:\\AI_Projects\\ResearchNavigator_2.2.3_PUBLIC_DEMO_RUNTIME",
+  "share_url": "https://rn223-public-demo.vercel.app/?rn_backend=https%3A%2F%2Ftop-navy-engines-helena.trycloudflare.com",
+  "started_at": "2026-08-31T13:17:47.4523668Z",
+  "cloudflare_tunnel_type": "QUICK_TUNNEL",
+  "random_hostname": true,
+  "sla": "none"
+}
