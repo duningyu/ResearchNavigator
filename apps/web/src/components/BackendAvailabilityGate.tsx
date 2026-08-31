@@ -55,6 +55,12 @@ export function BackendAvailabilityGate({ children, forcePublicDemo = false }: P
     if (managed) void checkBackend();
   }, [checkBackend, managed]);
 
+  useEffect(() => {
+    if (!managed || state !== 'BACKEND_ONLINE') return undefined;
+    const timer = window.setInterval(() => void checkBackend(), 15_000);
+    return () => window.clearInterval(timer);
+  }, [checkBackend, managed, state]);
+
   if (!managed || state === 'BACKEND_ONLINE') return children;
 
   const connecting = state === 'BACKEND_CONNECTING';

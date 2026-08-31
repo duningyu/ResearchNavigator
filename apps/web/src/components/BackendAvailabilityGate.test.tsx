@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackendAvailabilityGate } from './BackendAvailabilityGate';
 
@@ -20,6 +20,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
 });
 
@@ -62,6 +63,22 @@ describe('public demo backend availability gate', () => {
     render(<BackendAvailabilityGate forcePublicDemo><div>workspace</div></BackendAvailabilityGate>);
 
     await waitFor(() => expect(screen.getByText('workspace')).toBeVisible());
+  });
+
+  it('moves an already-open workspace offline when a later health poll fails', async () => {
+    vi.useFakeTimers();
+    window.sessionStorage.setItem('rn_backend_origin', 'https://demo.trycloudflare.com');
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(response(200))
+      .mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    vi.stubGlobal('fetch', fetchMock);
+    render(<BackendAvailabilityGate forcePublicDemo><div>workspace</div></BackendAvailabilityGate>);
+
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('workspace')).toBeVisible();
+    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
+    expect(screen.getByTestId('backend-status')).toHaveTextContent('BACKEND_OFFLINE');
+    vi.useRealTimers();
   });
 
   it('rejects an invalid backend hostname without making a request', () => {
