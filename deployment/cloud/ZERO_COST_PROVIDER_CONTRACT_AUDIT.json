@@ -1,0 +1,62 @@
+{
+  "receipt": "ZERO_COST_PROVIDER_CONTRACT_AUDIT",
+  "project": "ResearchNavigator",
+  "baseline_commit": "d838c0176c8a0e8d7787cb7b373d3096aa50669d",
+  "audit_scope": "machine_local_contract_only",
+  "provider_auth_requested": false,
+  "provider_provisioning_attempted": false,
+  "application_contract": {
+    "frontend": "static Vite build",
+    "backend": "FastAPI API plus polling worker",
+    "database": "SQLite WAL plus FTS5, single-host write architecture",
+    "runtime_state": "RN_DATA_DIR containing database, uploads, vector_index, backups",
+    "current_storage": "local filesystem; backup ZIP contains database and file directories"
+  },
+  "provider_findings": {
+    "northflank": {
+      "fit": "candidate_for_single_host_container_or_managed_database_audit",
+      "official_contract": "Developer Sandbox advertises one project with services, jobs, and addons; pricing advertises two free services, one free database, and two free cron jobs",
+      "blocking_validation": "account-specific limits, regions, volume semantics, and actual database compatibility remain unverified",
+      "source": "https://northflank.com/pricing"
+    },
+    "vercel": {
+      "fit": "static_frontend_only_until_backend_contract_changes",
+      "official_contract": "Hobby is free and personal/non-commercial; function duration is plan-limited and Hobby usage pauses after included limits",
+      "blocking_validation": "not a durable SQLite/worker host and not accepted as the transaction database",
+      "source": "https://vercel.com/docs/plans/hobby"
+    },
+    "cloudflare_r2": {
+      "fit": "candidate_for_backup/upload/vector object storage adapter",
+      "official_contract": "Standard free tier lists 10 GB-month storage, 1 million Class A operations, 10 million Class B operations, and free egress",
+      "blocking_validation": "credentials, bucket, lifecycle, encryption, consistency, and restore workflow are not provisioned or tested",
+      "source": "https://developers.cloudflare.com/r2/pricing/"
+    }
+  },
+  "postgres_compatibility_audit": {
+    "status": "NOT_READY",
+    "evidence": [
+      "ADR-0002 accepts SQLite WAL plus FTS5 and explicitly excludes PostgreSQL/Redis",
+      "application backup service requires file-backed SQLite",
+      "database layer installs SQLite PRAGMA hooks",
+      "tests and migrations are SQLite-specific",
+      "fresh Alembic check reports existing FTS auxiliary table and model index drift"
+    ],
+    "required_future_work": "separate adapter/migration design with parity tests; no Frozen Core modification in this execution"
+  },
+  "cloud_storage_audit": {
+    "status": "ADAPTER_DESIGN_REQUIRED",
+    "objects": ["uploads", "vector_index", "backup_archives"],
+    "requirements": [
+      "content-addressed or versioned object keys",
+      "server-side secret handling",
+      "manifest and SHA256 verification",
+      "bounded retry and idempotent upload",
+      "restore-to-local validation before activation",
+      "no Authorization or provider secrets in receipts"
+    ]
+  },
+  "current_gate": "ZERO_COST_PROVIDER_CONTRACT",
+  "next_action": "implement and unit-test provider-neutral storage/database adapter seams before requesting provider authentication",
+  "frozen_core_modified": false,
+  "generated_at_utc": "2026-09-01T03:58:00Z"
+}
