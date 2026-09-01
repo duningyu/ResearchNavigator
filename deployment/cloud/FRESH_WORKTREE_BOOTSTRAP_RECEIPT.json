@@ -1,0 +1,54 @@
+{
+  "receipt": "FRESH_WORKTREE_BOOTSTRAP_RECEIPT",
+  "project": "ResearchNavigator",
+  "version": "2.2.3",
+  "worktree": "E:\\AI_Projects\\_worktrees\\ResearchNavigator\\rn223-zero-cost-cloud-v1",
+  "branch": "deployment/rn223-zero-cost-cloud-v1",
+  "baseline_commit": "d838c0176c8a0e8d7787cb7b373d3096aa50669d",
+  "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
+  "context_guard": "PASS",
+  "node_modules": {
+    "classification": "EXPECTED_IGNORED_DEPENDENCY_STATE",
+    "copied_from_old_worktree": false,
+    "bootstrap": "corepack pnpm install --frozen-lockfile",
+    "lockfile_sha256": "04f164b42fce439c1a8d0b4657dc3a0faf033840818ff0829703953227485c83",
+    "result": "PASS"
+  },
+  "frontend": {
+    "typecheck": "PASS",
+    "vitest": "PASS_29_TESTS",
+    "build": "PASS"
+  },
+  "backups": {
+    "classification": "BASELINE_SOURCE_PACKAGING_DEFECT",
+    "required_source": "apps/api/research_navigator/backups",
+    "runtime_data_copied": false,
+    "recovered_files": [
+      {
+        "path": "apps/api/research_navigator/backups/__init__.py",
+        "sha256": "d4d19658e05d7270bd760c84bad0d79986d2640e8ddff108bef8e3e891739f3b"
+      },
+      {
+        "path": "apps/api/research_navigator/backups/service.py",
+        "sha256": "1242053de1e16f779119f69ff1780cd2abd9898005cab4f4ef969e6aa4277908"
+      }
+    ],
+    "provenance": "exact_sha256_match_to_authoritative_verified_worktree",
+    "result": "REPAIRED"
+  },
+  "backend": {
+    "bootstrap": "uv sync --frozen --extra dev",
+    "lockfile_sha256": "70e1b207b09868c32dc5609943ecf605b9956b9101180a61c10a428b30ee4ba8",
+    "pytest": "PASS_220_TESTS",
+    "ruff_apps_api": "PASS",
+    "mypy": "PASS",
+    "compileall": "PASS",
+    "alembic_upgrade_head": "PASS_ON_FRESH_SQLITE_RUNTIME",
+    "alembic_check": "KNOWN_BASELINE_DRIFT",
+    "alembic_drift": "FTS_auxiliary_tables_and_model_indexes",
+    "root_ruff": "KNOWN_BASELINE_FAILURE_13_ERRORS_IN_DEPLOYMENT_TESTS"
+  },
+  "reproducibility": "PASS_WITH_DOCUMENTED_BASELINE_FINDINGS",
+  "no_secrets": true,
+  "generated_at_utc": "2026-09-01T03:55:06.603Z"
+}

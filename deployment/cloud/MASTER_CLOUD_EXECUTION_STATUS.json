@@ -1,0 +1,22 @@
+{
+  "master_execution": "RN223_ZERO_COST_CLOUD_DEPLOYMENT_V1",
+  "project": "ResearchNavigator",
+  "version": "2.2.3",
+  "cloud_root": "E:\\AI_Projects\\_worktrees\\ResearchNavigator\\rn223-zero-cost-cloud-v1",
+  "branch": "deployment/rn223-zero-cost-cloud-v1",
+  "base_commit": "d838c0176c8a0e8d7787cb7b373d3096aa50669d",
+  "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
+  "status": "IN_PROGRESS",
+  "current_gate": "ZERO_COST_PROVIDER_CONTRACT",
+  "completed_gates": [
+    "CLOUD_BASELINE_RECOVERY",
+    "CLOUD_WORKTREE_BOOTSTRAP"
+  ],
+  "bootstrap_result": "PASS_WITH_DOCUMENTED_BASELINE_FINDINGS",
+  "bootstrap_receipt": "deployment/cloud/FRESH_WORKTREE_BOOTSTRAP_RECEIPT.json",
+  "known_baseline_findings": [
+    "root Ruff reports 13 pre-existing errors in deployment test files",
+    "Alembic check reports pre-existing FTS auxiliary table and model index drift"
+  ],
+  "updated_timestamp_utc": "2026-09-01T03:55:06.603Z"
+}
