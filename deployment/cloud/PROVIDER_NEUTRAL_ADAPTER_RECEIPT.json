@@ -1,0 +1,21 @@
+{
+  "receipt": "PROVIDER_NEUTRAL_ADAPTER_RECEIPT",
+  "execution": "RN223_ZERO_COST_CLOUD_DEPLOYMENT_V1",
+  "phase": "RN223_PROVIDER_NEUTRAL_DATA_PLANE_ADAPTERS",
+  "status": "PASS_WITH_FREE_TIER_CONSTRAINTS",
+  "database": "SQLite local path preserved; PostgreSQL URL/dialect seam added; psycopg3 declared; secrets redacted",
+  "search": "SQLite FTS5 isolated from PostgreSQL built-in text search; deterministic golden corpus recorded; Chinese limitation explicit",
+  "worker": "existing atomic conditional UPDATE claim audited and covered by two-worker integration test",
+  "storage": "LocalStorage default integrated for document writes/deletes; R2 S3-compatible seam has fake transport tests",
+  "roles": "RN_SERVICE_ROLE contract remains api|worker; API owns migrations; worker does not migrate; API binds 0.0.0.0:${PORT:-8000}",
+  "frozen_core_modified": false,
+  "provider_auth_requested": false,
+  "next_gate": "NORTHFLANK_PROVISIONING",
+  "evidence": [
+    "deployment/cloud/POSTGRES_COMPATIBILITY_AUDIT.json",
+    "deployment/cloud/SEARCH_BACKEND_COMPATIBILITY_AUDIT.json",
+    "deployment/cloud/SEARCH_SEMANTIC_GOLDEN.json",
+    "deployment/cloud/CLOUD_STORAGE_AUDIT.json"
+  ],
+  "generated_at_utc": "2026-09-01T05:00:00Z"
+}

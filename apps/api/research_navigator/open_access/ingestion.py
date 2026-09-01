@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
+from research_navigator.data_plane.storage import LocalStorage
 from research_navigator.documents.index import index_document
 from research_navigator.documents.parser import parse_pdf
 from research_navigator.documents.security import DocumentSecurityError, validate_pdf_upload
@@ -59,11 +58,11 @@ def ingest_open_access_pdf(
         raise DocumentSecurityError(f"PDF parsing failed: {type(exc).__name__}") from exc
     has_text = any(page.text.strip() for page in parsed.pages)
 
-    directory = Path(settings.upload_dir) / str(user_id) / str(paper.id) / "oa"
-    directory.mkdir(parents=True, exist_ok=True)
-    stored_path = directory / f"{validated.sha256}.pdf"
+    storage_key = f"{user_id}/{paper.id}/oa/{validated.sha256}.pdf"
+    storage = LocalStorage(settings.upload_dir)
+    stored_path = settings.upload_dir / storage_key
     if not stored_path.exists():
-        stored_path.write_bytes(fetched.data)
+        storage.put(storage_key, fetched.data)
 
     document = PaperDocument(
         user_id=user_id,

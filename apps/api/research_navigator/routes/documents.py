@@ -18,6 +18,7 @@ from fastapi import (
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.orm import Session
 
+from research_navigator.data_plane.storage import LocalStorage
 from research_navigator.deps import get_current_user, get_db
 from research_navigator.documents.index import index_document, search_document_chunks
 from research_navigator.documents.parser import parse_pdf
@@ -101,11 +102,11 @@ async def upload_paper(
             status_code=422, detail=f"PDF parsing failed: {type(exc).__name__}"
         ) from exc
 
-    directory = Path(request.app.state.settings.upload_dir) / str(user.id) / str(paper_id)
-    directory.mkdir(parents=True, exist_ok=True)
-    stored_path = directory / f"{validated.sha256}.pdf"
+    storage_key = f"{user.id}/{paper_id}/{validated.sha256}.pdf"
+    storage = LocalStorage(request.app.state.settings.upload_dir)
+    stored_path = request.app.state.settings.upload_dir / storage_key
     if not stored_path.exists():
-        stored_path.write_bytes(data)
+        storage.put(storage_key, data)
 
     existing = session.scalar(
         select(PaperDocument).where(
@@ -238,14 +239,16 @@ def delete_document(
     upload_root = Path(request.app.state.settings.upload_dir).resolve()
     if not stored_path.is_relative_to(upload_root):
         raise HTTPException(status_code=409, detail="Stored document path is outside upload root")
-    session.execute(
-        text("DELETE FROM paper_chunks_fts WHERE document_id = :document_id"),
-        {"document_id": str(document.id)},
-    )
+    if session.bind is not None and session.bind.dialect.name == "sqlite":
+        session.execute(
+            text("DELETE FROM paper_chunks_fts WHERE document_id = :document_id"),
+            {"document_id": str(document.id)},
+        )
     session.delete(document)
     session.commit()
     try:
-        stored_path.unlink(missing_ok=True)
+        relative_key = stored_path.relative_to(upload_root).as_posix()
+        LocalStorage(upload_root).delete(relative_key)
     except OSError as exc:
         raise HTTPException(
             status_code=500,

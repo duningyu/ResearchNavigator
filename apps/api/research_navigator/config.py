@@ -59,6 +59,8 @@ class Settings:
     public_demo_max_active_jobs: int = 5
     public_demo_max_query_length: int = 200
     public_demo_max_job_payload_bytes: int = 16_384
+    storage_backend: str = "local"
+    r2_bucket: str | None = None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -114,6 +116,8 @@ class Settings:
             public_demo_max_job_payload_bytes=int(
                 os.getenv("RN_PUBLIC_DEMO_MAX_JOB_PAYLOAD_BYTES", "16384")
             ),
+            storage_backend=os.getenv("RN_STORAGE_BACKEND", "local").strip().lower(),
+            r2_bucket=os.getenv("R2_BUCKET") or None,
         )
 
     def ensure_directories(self) -> None:

@@ -46,21 +46,22 @@ def index_document(
         )
         session.add(row)
         session.flush()
-        session.execute(
-            text(
-                "INSERT INTO paper_chunks_fts "
-                "(chunk_id, document_id, paper_id, user_id, section, text) "
-                "VALUES (:chunk_id, :document_id, :paper_id, :user_id, :section, :text)"
-            ),
-            {
-                "chunk_id": str(row.id),
-                "document_id": str(document.id),
-                "paper_id": str(document.paper_id),
-                "user_id": "" if document.user_id is None else str(document.user_id),
-                "section": row.section,
-                "text": row.text,
-            },
-        )
+        if session.bind is not None and session.bind.dialect.name == "sqlite":
+            session.execute(
+                text(
+                    "INSERT INTO paper_chunks_fts "
+                    "(chunk_id, document_id, paper_id, user_id, section, text) "
+                    "VALUES (:chunk_id, :document_id, :paper_id, :user_id, :section, :text)"
+                ),
+                {
+                    "chunk_id": str(row.id),
+                    "document_id": str(document.id),
+                    "paper_id": str(document.paper_id),
+                    "user_id": "" if document.user_id is None else str(document.user_id),
+                    "section": row.section,
+                    "text": row.text,
+                },
+            )
     return len(chunks)
 
 
@@ -89,7 +90,8 @@ def search_document_chunks(
         return []
     lexical_by_id: dict[int, float] = {}
     fts_query = _fts_query(query)
-    if fts_query:
+    is_sqlite = session.bind is not None and session.bind.dialect.name == "sqlite"
+    if fts_query and is_sqlite:
         rows = session.execute(
             text(
                 "SELECT CAST(chunk_id AS INTEGER) AS chunk_id, bm25(paper_chunks_fts) AS rank "
@@ -106,6 +108,21 @@ def search_document_chunks(
         )
         for chunk_id, rank in rows:
             lexical_by_id[int(chunk_id)] = 1.0 / (1.0 + abs(float(rank)))
+    elif query.strip() and not is_sqlite:
+        rows = session.execute(
+            text(
+                "SELECT id, ts_rank(to_tsvector('simple', coalesce(text, '')), "
+                "websearch_to_tsquery('simple', :query)) AS rank "
+                "FROM paper_chunks WHERE paper_id = :paper_id "
+                "AND (user_id = :user_id OR user_id IS NULL) "
+                "AND to_tsvector('simple', coalesce(text, '')) @@ "
+                "websearch_to_tsquery('simple', :query) "
+                "ORDER BY rank DESC, id ASC LIMIT :limit"
+            ),
+            {"query": query, "paper_id": paper_id, "user_id": user_id, "limit": max(20, top_k * 5)},
+        )
+        for chunk_id, rank in rows:
+            lexical_by_id[int(chunk_id)] = float(rank)
     query_vector = hashing_vector(query)
     candidates = [
         HybridCandidate(

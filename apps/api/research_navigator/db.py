@@ -10,6 +10,7 @@ from sqlalchemy import Engine, create_engine, event, text
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from research_navigator.data_plane.database import database_dialect
 from research_navigator.models import Base
 
 
@@ -20,14 +21,15 @@ class Database:
 
     @classmethod
     def from_url(cls, url: str, *, echo: bool = False) -> Database:
+        dialect = database_dialect(url)
         kwargs: dict[str, object] = {"future": True, "echo": echo}
-        if url.startswith("sqlite"):
+        if dialect.name == "sqlite":
             kwargs["connect_args"] = {"check_same_thread": False, "timeout": 30}
             if url.endswith(":memory:"):
                 kwargs["poolclass"] = StaticPool
         engine = create_engine(url, **kwargs)
 
-        if url.startswith("sqlite"):
+        if dialect.name == "sqlite":
 
             @event.listens_for(engine, "connect")
             def _set_sqlite_pragmas(dbapi_connection: object, _: object) -> None:

@@ -1,0 +1,20 @@
+{
+  "receipt": "SEARCH_BACKEND_COMPATIBILITY_AUDIT",
+  "status": "PASS_WITH_DOCUMENTED_CHINESE_LIMITATION",
+  "local_backend": "SQLite FTS5 unicode61 plus existing deterministic dense hash ranking",
+  "cloud_backend": "PostgreSQL built-in to_tsvector/websearch_to_tsquery with simple configuration plus same dense rank",
+  "external_search_service": false,
+  "semantic_preservation": [
+    "user and paper scope filters are applied before/within lexical retrieval",
+    "hybrid ranking remains the existing rank_hybrid contract",
+    "numeric lexical scores are not required to be equal across engines",
+    "deterministic tie ordering remains chunk id ascending"
+  ],
+  "chinese_evidence": {
+    "corpus": "deployment/cloud/SEARCH_SEMANTIC_GOLDEN.json",
+    "finding": "SQLite unicode61 is not a Chinese word segmenter; PostgreSQL simple configuration also does not provide meaningful Chinese tokenization",
+    "claim_boundary": "Chinese semantic parity is not claimed; meaningful Chinese search requires a separately approved tokenizer/backend"
+  },
+  "sqlite_fts_sql_guard": "FTS5 insert/search/delete branches execute only when SQLAlchemy dialect is sqlite",
+  "secrets_logged": false
+}

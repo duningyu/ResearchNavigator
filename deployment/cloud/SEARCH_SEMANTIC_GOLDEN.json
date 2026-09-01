@@ -1,0 +1,17 @@
+{
+  "receipt": "SEARCH_SEMANTIC_GOLDEN",
+  "purpose": "deterministic corpus and expected semantic properties, not cross-engine numeric equality",
+  "corpus": [
+    {"id": "en-1", "user_id": 7, "text": "future window anomaly warning"},
+    {"id": "en-2", "user_id": 7, "text": "industrial time series forecasting"},
+    {"id": "scope-1", "user_id": 8, "text": "future window anomaly warning"},
+    {"id": "zh-1", "user_id": 7, "text": "未来窗口异常预警"}
+  ],
+  "expected_properties": [
+    "en-1 is eligible for user 7 query future window anomaly",
+    "scope-1 is never returned for user 7",
+    "zh-1 is retained as a documented tokenizer limitation case",
+    "dense fallback may rank a lexical miss but must not bypass ownership filters"
+  ],
+  "numeric_score_equality_required": false
+}

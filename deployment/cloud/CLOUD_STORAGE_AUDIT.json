@@ -1,0 +1,12 @@
+{
+  "receipt": "CLOUD_STORAGE_AUDIT",
+  "status": "PASS_WITH_FREE_TIER_CONSTRAINTS",
+  "default_backend": "local",
+  "objects": ["uploads", "vector_index", "backup_archives"],
+  "key_contract": "user-scoped relative keys with traversal rejection; content-addressed PDF names remain unchanged",
+  "local_backend": "LocalStorage rooted at RN_UPLOAD_DIR",
+  "r2_backend": "R2Storage over an injected S3-compatible transport; no live credentials required for local mode",
+  "security": ["path traversal rejected", "cross-user keys are explicit", "provider secrets are not logged", "quota must be checked before live provisioning"],
+  "tests": ["tests/unit/test_data_plane_adapters.py"],
+  "live_r2_validation": "pending provider authentication and bucket selection"
+}

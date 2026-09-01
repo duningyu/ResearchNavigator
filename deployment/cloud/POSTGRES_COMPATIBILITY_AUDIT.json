@@ -1,0 +1,20 @@
+{
+  "receipt": "POSTGRES_COMPATIBILITY_AUDIT",
+  "status": "PASS_WITH_FREE_TIER_CONSTRAINTS",
+  "scope": "machine_local_no_live_postgres",
+  "driver": "psycopg3",
+  "supported_url_examples": ["postgresql+psycopg://user:***@host/db"],
+  "dialect_contract": {
+    "sqlite": "SQLite PRAGMA and FTS5 enabled",
+    "postgresql": "No SQLite PRAGMA or FTS5 SQL; PostgreSQL built-in text search only"
+  },
+  "migration_ownership": "API release migration step only; worker never migrates",
+  "known_baseline_finding": "Alembic check reports existing FTS auxiliary-table and model-index drift; not repaired in cloud branch",
+  "tests": [
+    "tests/unit/test_data_plane_adapters.py::test_database_dialect_contract_and_redaction",
+    "tests/unit/test_database.py",
+    "tests/integration/test_worker_claim.py"
+  ],
+  "secrets_logged": false,
+  "frozen_core_modified": false
+}
