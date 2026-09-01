@@ -103,10 +103,13 @@ async def upload_paper(
         ) from exc
 
     storage_key = f"{user.id}/{paper_id}/{validated.sha256}.pdf"
-    storage = LocalStorage(request.app.state.settings.upload_dir)
-    stored_path = request.app.state.settings.upload_dir / storage_key
-    if not stored_path.exists():
-        storage.put(storage_key, data)
+    storage = request.app.state.storage
+    storage.put(storage_key, data)
+    stored_path = (
+        request.app.state.settings.upload_dir / storage_key
+        if request.app.state.settings.storage_backend == "local"
+        else None
+    )
 
     existing = session.scalar(
         select(PaperDocument).where(
@@ -124,7 +127,7 @@ async def upload_paper(
         source_type="user_upload",
         evidence_level="user_uploaded_fulltext",
         original_filename=validated.safe_filename,
-        stored_path=str(stored_path),
+        stored_path=str(stored_path or storage_key),
         mime_type="application/pdf",
         sha256=validated.sha256,
         size_bytes=validated.size_bytes,
@@ -235,6 +238,11 @@ def delete_document(
     )
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found")
+    if request.app.state.settings.storage_backend != "local":
+        session.delete(document)
+        session.commit()
+        request.app.state.storage.delete(document.stored_path)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
     stored_path = Path(document.stored_path).resolve()
     upload_root = Path(request.app.state.settings.upload_dir).resolve()
     if not stored_path.is_relative_to(upload_root):

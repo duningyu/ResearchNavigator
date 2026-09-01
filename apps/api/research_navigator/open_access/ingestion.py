@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
-from research_navigator.data_plane.storage import LocalStorage
+from research_navigator.data_plane.storage import DurableStorage, LocalStorage
 from research_navigator.documents.index import index_document
 from research_navigator.documents.parser import parse_pdf
 from research_navigator.documents.security import DocumentSecurityError, validate_pdf_upload
@@ -25,6 +25,7 @@ def ingest_open_access_pdf(
     fetched: PdfFetchResult,
     acquisition_run_id: str,
     user_confirmed_limited_license: bool = False,
+    storage: DurableStorage | None = None,
 ) -> PaperDocument:
     if candidate.access_decision == "requires_user_confirmation":
         if not user_confirmed_limited_license:
@@ -59,10 +60,13 @@ def ingest_open_access_pdf(
     has_text = any(page.text.strip() for page in parsed.pages)
 
     storage_key = f"{user_id}/{paper.id}/oa/{validated.sha256}.pdf"
-    storage = LocalStorage(settings.upload_dir)
-    stored_path = settings.upload_dir / storage_key
-    if not stored_path.exists():
-        storage.put(storage_key, fetched.data)
+    resolved_storage = storage or LocalStorage(settings.upload_dir)
+    resolved_storage.put(storage_key, fetched.data)
+    stored_path = (
+        settings.upload_dir / storage_key
+        if isinstance(resolved_storage, LocalStorage)
+        else None
+    )
 
     document = PaperDocument(
         user_id=user_id,
@@ -70,7 +74,7 @@ def ingest_open_access_pdf(
         source_type="open_access_repository",
         evidence_level="open_fulltext" if has_text else "not_available",
         original_filename=validated.safe_filename,
-        stored_path=str(stored_path),
+        stored_path=str(stored_path or storage_key),
         mime_type=fetched.content_type,
         sha256=validated.sha256,
         size_bytes=validated.size_bytes,

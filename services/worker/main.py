@@ -102,6 +102,30 @@ def _claim_job(session: Session, *, worker_id: str) -> Job | None:
     return job
 
 
+def _claim_job_by_id(session: Session, *, job_id: int, worker_id: str) -> Job | None:
+    """Atomically claim one specific pending job for a bounded executor."""
+    now = datetime.now(UTC)
+    claimed_id = session.scalar(
+        update(Job)
+        .where(Job.id == job_id, Job.status == "pending")
+        .values(
+            status="running",
+            locked_by=worker_id,
+            started_at=now,
+            attempt_count=Job.attempt_count + 1,
+        )
+        .returning(Job.id)
+    )
+    if claimed_id is None:
+        return None
+    job = session.get(Job, claimed_id)
+    if job is None:
+        raise RuntimeError("Claimed job disappeared")
+    _event(session, job, "started", {"worker_id": worker_id})
+    session.commit()
+    return job
+
+
 def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, object]:
     payload = json.loads(job.payload_json)
     if not isinstance(payload, dict):
@@ -193,6 +217,53 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
     raise RuntimeError(f"Unsupported job type: {job.job_type!r}")
 
 
+def _complete_claimed_job(session: Session, job: Job, *, settings: Settings) -> None:
+    """Execute and persist one already-claimed job using the shared state machine."""
+    try:
+        result = _execute_job(session, job, settings=settings)
+        terminal_status = str(result.pop("__terminal_status", "succeeded"))
+        if terminal_status not in {"succeeded", "partial", "cancelled"}:
+            raise ValueError(f"Unsupported terminal status: {terminal_status}")
+        job.result_json = json.dumps(result, ensure_ascii=False)
+        job.status = terminal_status
+        job.finished_at = datetime.now(UTC)
+        job.error = None
+        _event(session, job, terminal_status, result)
+    except Exception as exc:
+        job.error = f"{type(exc).__name__}: {exc}"
+        if job.attempt_count < job.max_attempts:
+            job.status = "pending"
+            _event(session, job, "retry_scheduled", {"error": job.error})
+        else:
+            job.status = "failed"
+            job.finished_at = datetime.now(UTC)
+            _event(session, job, "failed", {"error": job.error})
+    finally:
+        job.locked_by = None
+        session.commit()
+
+
+def execute_job(
+    database: Database,
+    *,
+    job_id: int,
+    worker_id: str,
+    settings: Settings | None = None,
+) -> bool:
+    """Bounded executor seam for serverless triggers and the local poller.
+
+    A trigger may safely retry this call: only a pending row can be claimed,
+    and the claim plus terminal transition are durable database state changes.
+    """
+    resolved_settings = settings or Settings.from_env()
+    with database.session() as session:
+        job = _claim_job_by_id(session, job_id=job_id, worker_id=worker_id)
+        if job is None:
+            return False
+        _complete_claimed_job(session, job, settings=resolved_settings)
+        return True
+
+
 def run_once(
     database: Database,
     *,
@@ -205,29 +276,7 @@ def run_once(
         job = _claim_job(session, worker_id=identity)
         if job is None:
             return None
-
-        try:
-            result = _execute_job(session, job, settings=resolved_settings)
-            terminal_status = str(result.pop("__terminal_status", "succeeded"))
-            if terminal_status not in {"succeeded", "partial", "cancelled"}:
-                raise ValueError(f"Unsupported terminal status: {terminal_status}")
-            job.result_json = json.dumps(result, ensure_ascii=False)
-            job.status = terminal_status
-            job.finished_at = datetime.now(UTC)
-            job.error = None
-            _event(session, job, terminal_status, result)
-        except Exception as exc:
-            job.error = f"{type(exc).__name__}: {exc}"
-            if job.attempt_count < job.max_attempts:
-                job.status = "pending"
-                _event(session, job, "retry_scheduled", {"error": job.error})
-            else:
-                job.status = "failed"
-                job.finished_at = datetime.now(UTC)
-                _event(session, job, "failed", {"error": job.error})
-        finally:
-            job.locked_by = None
-            session.commit()
+        _complete_claimed_job(session, job, settings=resolved_settings)
         return job.id
 
 

@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from services.worker.main import _claim_job, run_once
+from services.worker.main import _claim_job, execute_job, run_once
 
 from research_navigator.config import Settings
 from research_navigator.db import Database
@@ -77,3 +77,26 @@ def test_claim_uses_a_single_atomic_transition(tmp_path: Path) -> None:
         assert job.locked_by == "worker-a"
         assert job.attempt_count == 1
         assert _claim_job(session, worker_id="worker-b") is None
+
+
+def test_bounded_executor_is_idempotent_for_retried_trigger(tmp_path: Path) -> None:
+    settings = settings_for(tmp_path)
+    database = Database.from_url(settings.database_url)
+    database.init()
+    with database.session() as session:
+        user = User(email="executor@example.com", password_hash="x", display_name="Executor")
+        session.add(user)
+        session.flush()
+        row = Job(user_id=user.id, job_type="noop", payload_json='{"value": 3}')
+        session.add(row)
+        session.commit()
+        job_id = row.id
+
+    assert execute_job(database, job_id=job_id, worker_id="serverless-1", settings=settings)
+    assert not execute_job(database, job_id=job_id, worker_id="serverless-retry", settings=settings)
+
+    with database.session() as session:
+        job = session.get(Job, job_id)
+        assert job is not None
+        assert job.status == "succeeded"
+        assert job.attempt_count == 1

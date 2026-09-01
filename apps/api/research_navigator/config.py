@@ -48,6 +48,11 @@ class Settings:
     max_pdf_bytes: int
     session_ttl_hours: int
     environment: str
+    # Optional deployment seam fields keep legacy direct Settings(...) construction
+    # local-SQLite compatible while from_env() supplies Turso values explicitly.
+    database_backend: str = "sqlite"
+    turso_database_url: str | None = None
+    turso_auth_token: str | None = None
     openalex_api_key: str | None = None
     analysis_provider: str = "deterministic"
     analysis_prompt_version: str = "paper-analysis-v2"
@@ -65,13 +70,31 @@ class Settings:
     @classmethod
     def from_env(cls) -> Settings:
         data_dir = Path(os.getenv("RN_DATA_DIR", "runtime")).expanduser().resolve()
-        database_url = os.getenv(
-            "RN_DATABASE_URL",
-            f"sqlite+pysqlite:///{(data_dir / 'research_navigator.db').as_posix()}",
-        )
+        database_backend = os.getenv("DATABASE_BACKEND", "sqlite").strip().lower()
+        turso_database_url = os.getenv("TURSO_DATABASE_URL") or None
+        turso_auth_token = os.getenv("TURSO_AUTH_TOKEN") or None
+        if database_backend == "turso":
+            if not turso_database_url:
+                raise ValueError("TURSO_DATABASE_URL is required for turso backend")
+            if not turso_auth_token:
+                raise ValueError("TURSO_AUTH_TOKEN is required for turso backend")
+            database_url = os.getenv(
+                "RN_DATABASE_URL",
+                f"sqlite+libsql://{turso_database_url}?secure=true",
+            )
+        elif database_backend == "sqlite":
+            database_url = os.getenv(
+                "RN_DATABASE_URL",
+                f"sqlite+pysqlite:///{(data_dir / 'research_navigator.db').as_posix()}",
+            )
+        else:
+            raise ValueError(f"Unsupported database backend: {database_backend!r}")
         return cls(
             data_dir=data_dir,
             database_url=database_url,
+            database_backend=database_backend,
+            turso_database_url=turso_database_url,
+            turso_auth_token=turso_auth_token,
             upload_dir=Path(os.getenv("RN_UPLOAD_DIR", data_dir / "uploads"))
             .expanduser()
             .resolve(),

@@ -23,9 +23,15 @@ class Database:
     def from_url(cls, url: str, *, echo: bool = False) -> Database:
         dialect = database_dialect(url)
         kwargs: dict[str, object] = {"future": True, "echo": echo}
-        if dialect.name == "sqlite":
+        if dialect.name in {"sqlite", "turso"}:
             kwargs["connect_args"] = {"check_same_thread": False, "timeout": 30}
-            if url.endswith(":memory:"):
+            if dialect.name == "turso":
+                import os
+
+                token = os.getenv("TURSO_AUTH_TOKEN")
+                if token:
+                    kwargs["connect_args"]["auth_token"] = token  # type: ignore[index]
+            elif url.endswith(":memory:"):
                 kwargs["poolclass"] = StaticPool
         engine = create_engine(url, **kwargs)
 

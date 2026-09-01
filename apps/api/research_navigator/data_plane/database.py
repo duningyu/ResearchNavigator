@@ -23,6 +23,8 @@ def database_dialect(database_url: str) -> DatabaseDialect:
     except Exception as exc:
         raise ValueError("Invalid database URL") from exc
     if parsed.get_backend_name() == "sqlite":
+        if parsed.get_driver_name() == "libsql":
+            return DatabaseDialect("turso", "libsql", True, False)
         return DatabaseDialect("sqlite", parsed.get_driver_name(), True, False)
     if parsed.get_backend_name() == "postgresql":
         return DatabaseDialect("postgresql", parsed.get_driver_name(), False, True)
