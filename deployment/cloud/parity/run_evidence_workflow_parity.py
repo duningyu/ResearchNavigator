@@ -8,6 +8,7 @@ it is not a second implementation of the workflow.
 from __future__ import annotations
 
 import argparse
+import asyncio
 import hashlib
 import json
 import subprocess
@@ -17,7 +18,7 @@ from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import Path
 
-from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfgen.canvas import Canvas  # type: ignore[import-untyped]
 from services.worker.main import run_once
 
 from research_navigator.config import Settings
@@ -112,7 +113,7 @@ def _safe_receipt(execution_id: str) -> dict[str, object]:
     }
 
 
-def prepare() -> int:
+async def prepare_async() -> int:
     settings = _settings()
     data = _pdf()
     execution_id = str(uuid.uuid4())
@@ -120,7 +121,7 @@ def prepare() -> int:
     receipt = _safe_receipt(execution_id)
     with tempfile.TemporaryDirectory(prefix=f"rn223-parity-{execution_id}-"):
         app = create_app(settings)
-        with app.router.lifespan_context(app):
+        async with app.router.lifespan_context(app):
             database: Database = app.state.database
             storage = app.state.storage
             if not isinstance(storage, R2Storage):
@@ -202,6 +203,10 @@ def prepare() -> int:
         "fixture_sha256": receipt["fixture_sha256"],
     }, separators=(",", ":")))
     return 0
+
+
+def prepare() -> int:
+    return asyncio.run(prepare_async())
 
 
 def config_preflight() -> int:

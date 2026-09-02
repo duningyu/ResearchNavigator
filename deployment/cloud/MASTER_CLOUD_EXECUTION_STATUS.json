@@ -97,15 +97,16 @@
   "r2_parity_harness": "IMPLEMENTED_STATIC_VALIDATION_PASS",
   "r2_parity_runner": "deployment/cloud/parity/run_evidence_workflow_parity.py",
   "r2_parity_wrapper": "scripts/deployment/run_cloud_evidence_parity.ps1",
+  "r2_parity_lifecycle_contract": "PASS",
   "r2_parity_last_failure": {
-    "failure_stage": "PYTHON_IMPORT_BOOTSTRAP",
-    "failure_classification": "CLOUD_PARITY_RUNNER_IMPORT_BOOTSTRAP_FAILURE",
+    "failure_stage": "APPLICATION_LIFESPAN_BOOTSTRAP",
+    "failure_classification": "CLOUD_PARITY_LIFESPAN_CONTEXT_PROTOCOL_MISMATCH",
     "provider_reached": false,
     "turso_live_status": "NOT_RUN",
     "r2_application_live_status": "NOT_RUN",
     "evidence_workflow_live_status": "NOT_RUN",
     "credentials_exposed": false,
-    "root_cause": "file-path invocation omitted project root from Python import path"
+    "root_cause": "async lifespan context was entered with synchronous with"
   },
   "r2_runtime_wiring_validation": {
     "boto3_transport": "IMPLEMENTED",
@@ -141,7 +142,7 @@
   ],
   "adapter_receipt": "deployment/cloud/PROVIDER_NEUTRAL_ADAPTER_RECEIPT.json",
   "adapter_validation": {
-    "full_pytest": "231 passed",
+    "full_pytest": "234 passed",
     "ruff_targeted": "PASS",
     "mypy": "PASS",
     "compileall": "PASS",
