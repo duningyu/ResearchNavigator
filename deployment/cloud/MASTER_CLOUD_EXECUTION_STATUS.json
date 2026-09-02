@@ -4,7 +4,7 @@
   "version": "2.2.3",
   "cloud_root": "E:\\AI_Projects\\_worktrees\\ResearchNavigator\\rn223-zero-cost-cloud-v1",
   "branch": "deployment/rn223-zero-cost-cloud-v1",
-  "base_commit": "a231f36fcd41f3e7ecd70cb89506cd6fd19fee2a",
+  "base_commit": "a8254a5ffc45eade8595852c449c2f3cab6d31ef",
   "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
   "status": "R2_EVIDENCE_WORKFLOW_PARITY",
   "current_gate": "R2_EVIDENCE_WORKFLOW_PARITY",
@@ -99,15 +99,21 @@
   "r2_parity_wrapper": "scripts/deployment/run_cloud_evidence_parity.ps1",
   "r2_parity_lifecycle_contract": "PASS",
   "r2_parity_last_failure": {
-    "failure_stage": "APPLICATION_LIFESPAN_BOOTSTRAP",
-    "failure_classification": "CLOUD_PARITY_LIFESPAN_CONTEXT_PROTOCOL_MISMATCH",
+    "failure_stage": "DATABASE_URL_PARSE",
+    "failure_classification": "CLOUD_PARITY_TURSO_DATABASE_URL_PARSE_FAILURE",
     "provider_reached": false,
     "turso_live_status": "NOT_RUN",
     "r2_application_live_status": "NOT_RUN",
     "evidence_workflow_live_status": "NOT_RUN",
     "credentials_exposed": false,
-    "root_cause": "async lifespan context was entered with synchronous with"
+    "root_cause": "raw libsql provider URL was blindly prefixed, producing a malformed sqlite+libsql double scheme",
+    "historical_previous_failure": "CLOUD_PARITY_LIFESPAN_CONTEXT_PROTOCOL_MISMATCH"
   },
+  "turso_url_normalization": "IMPLEMENTED_STATIC_VALIDATION_PASS",
+  "turso_url_contract": "raw libsql:// provider URL normalizes to sqlite+libsql://...?...secure=true; auth token remains connect_args-only",
+  "windows_libsql_runtime": "BLOCKED_DEPENDENCY_NOT_INSTALLED",
+  "windows_libsql_runtime_evidence": "sqlalchemy-libsql metadata and sqlite+libsql dialect unavailable in project .venv; no live provider request made",
+  "cloud_parity_preflight": "BLOCKED_WINDOWS_LIBSQL_RUNTIME",
   "r2_runtime_wiring_validation": {
     "boto3_transport": "IMPLEMENTED",
     "api_storage_injection": "PASS",
@@ -159,5 +165,5 @@
     "wsl_monitor": "deployment/cloud/wsl/WSL_INSTALL_MONITOR_STATE.json",
     "wsl_forensic_receipt": "deployment/cloud/wsl/WSL_STUCK_PROVISIONING_RECOVERY_RECEIPT.json"
   },
-  "updated_timestamp_utc": "2026-09-02T06:00:00Z"
+  "updated_timestamp_utc": "2026-09-02T06:30:00Z"
 }

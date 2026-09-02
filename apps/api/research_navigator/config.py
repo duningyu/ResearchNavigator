@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from urllib.parse import urlsplit
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -22,6 +23,19 @@ def _as_csv(value: str | None, default: tuple[str, ...]) -> tuple[str, ...]:
     if value is None:
         return default
     return tuple(item.strip() for item in value.split(",") if item.strip())
+
+
+def normalize_turso_database_url(provider_url: str) -> str:
+    """Convert Turso's provider URL into the SQLAlchemy libsql URL shape."""
+    value = provider_url.strip()
+    parsed = urlsplit(value)
+    if parsed.scheme.lower() != "libsql" or not parsed.hostname:
+        raise ValueError("TURSO_DATABASE_URL must be a libsql:// provider URL")
+    if parsed.username or parsed.password or parsed.port:
+        raise ValueError("TURSO_DATABASE_URL must not contain credentials or a port")
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+        raise ValueError("TURSO_DATABASE_URL must not contain a path or query")
+    return f"sqlite+libsql://{parsed.hostname}?secure=true"
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,9 +97,8 @@ class Settings:
                 raise ValueError("TURSO_DATABASE_URL is required for turso backend")
             if not turso_auth_token:
                 raise ValueError("TURSO_AUTH_TOKEN is required for turso backend")
-            database_url = os.getenv(
-                "RN_DATABASE_URL",
-                f"sqlite+libsql://{turso_database_url}?secure=true",
+            database_url = os.getenv("RN_DATABASE_URL") or normalize_turso_database_url(
+                turso_database_url
             )
         elif database_backend == "sqlite":
             database_url = os.getenv(

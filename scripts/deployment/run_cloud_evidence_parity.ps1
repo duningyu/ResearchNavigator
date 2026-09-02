@@ -23,6 +23,8 @@ $env:PYTHONPATH = "$applicationRoot;$projectRoot;$parityDir"
 if ($PreflightOnly) {
   & $python -c "import boto3, botocore, sqlalchemy, research_navigator, reportlab, services.worker.main; from services.worker.main import run_once; import run_evidence_workflow_parity; print('WORKER_IMPORT=PASS'); print('PARITY_RUNNER_IMPORT=PASS')"
   if ($LASTEXITCODE -ne 0) { throw 'Parity runtime dependencies are unavailable.' }
+  & $python -c "from research_navigator.config import normalize_turso_database_url; from research_navigator.data_plane.database import database_dialect; from sqlalchemy import create_engine; import platform; import importlib.metadata as metadata; url=normalize_turso_database_url('libsql://example.turso.io'); assert url == 'sqlite+libsql://example.turso.io?secure=true'; assert database_dialect(url).name == 'turso'; print('TURSO_URL_NORMALIZATION=PASS'); print('SQLALCHEMY_LIBSQL_DIALECT=PASS'); print('TARGET_OS=' + platform.system()); print('SQLALCHEMY_LIBSQL_VERSION=' + metadata.version('sqlalchemy-libsql')); engine=create_engine(url); engine.dispose(); print('WINDOWS_LIBSQL_RUNTIME=PASS')"
+  if ($LASTEXITCODE -ne 0) { throw 'Turso URL/dialect/runtime compatibility preflight failed.' }
   $runner = Join-Path $projectRoot 'deployment/cloud/parity/run_evidence_workflow_parity.py'
   $receiptDir = Join-Path $projectRoot 'deployment/cloud'
   if (-not (Test-Path -LiteralPath $runner -PathType Leaf)) { throw 'Parity runner is unavailable.' }
