@@ -18,6 +18,7 @@ from research_navigator.analysis.acquisition import (
 from research_navigator.analysis.service import accessible_text, run_paper_analysis
 from research_navigator.authors.service import refresh_author_cards
 from research_navigator.config import Settings
+from research_navigator.data_plane.storage import DurableStorage
 from research_navigator.datasets.service import refresh_dataset_cards
 from research_navigator.models import Job, JobEvent, Paper, ResearchProject
 from research_navigator.open_access.base import OpenAccessResolution, PaperIdentity
@@ -107,6 +108,7 @@ async def execute_evidence_workflow(
     pdf_fetcher: Fetcher,
     analysis_provider: Any | None = None,
     prompt_version: str = "paper-analysis-v2",
+    storage: DurableStorage | None = None,
 ) -> EvidenceWorkflowExecution:
     """Execute one workflow from its current persisted job.
 
@@ -283,6 +285,7 @@ async def execute_evidence_workflow(
                     fetched=fetched,
                     acquisition_run_id=acquisition_run_id or f"job-{job.id}",
                     user_confirmed_limited_license=confirm_limited,
+                    storage=storage,
                 )
                 session.commit()
                 document_id = document.id

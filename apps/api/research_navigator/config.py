@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -66,6 +66,11 @@ class Settings:
     public_demo_max_job_payload_bytes: int = 16_384
     storage_backend: str = "local"
     r2_bucket: str | None = None
+    r2_account_id: str | None = None
+    r2_access_key_id: str | None = field(default=None, repr=False)
+    r2_secret_access_key: str | None = field(default=None, repr=False)
+    r2_endpoint: str | None = None
+    r2_region: str = "auto"
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -89,7 +94,7 @@ class Settings:
             )
         else:
             raise ValueError(f"Unsupported database backend: {database_backend!r}")
-        return cls(
+        instance = cls(
             data_dir=data_dir,
             database_url=database_url,
             database_backend=database_backend,
@@ -141,7 +146,25 @@ class Settings:
             ),
             storage_backend=os.getenv("RN_STORAGE_BACKEND", "local").strip().lower(),
             r2_bucket=os.getenv("R2_BUCKET") or None,
+            r2_account_id=os.getenv("R2_ACCOUNT_ID") or None,
+            r2_access_key_id=os.getenv("R2_ACCESS_KEY_ID") or None,
+            r2_secret_access_key=os.getenv("R2_SECRET_ACCESS_KEY") or None,
+            r2_endpoint=os.getenv("R2_ENDPOINT") or None,
+            r2_region=os.getenv("R2_REGION", "auto"),
         )
+
+        if instance.storage_backend == "r2":
+            missing = [
+                name for name, value in {
+                    "R2_BUCKET": instance.r2_bucket,
+                    "R2_ACCOUNT_ID": instance.r2_account_id,
+                    "R2_ACCESS_KEY_ID": instance.r2_access_key_id,
+                    "R2_SECRET_ACCESS_KEY": instance.r2_secret_access_key,
+                }.items() if not value
+            ]
+            if missing:
+                raise ValueError("R2 credentials/configuration required: " + ", ".join(missing))
+        return instance
 
     def ensure_directories(self) -> None:
         for path in (self.data_dir, self.upload_dir, self.vector_dir, self.backup_dir):

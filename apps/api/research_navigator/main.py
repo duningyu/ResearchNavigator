@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from research_navigator.analysis.providers import build_analysis_provider
 from research_navigator.backups.service import apply_pending_restore
 from research_navigator.config import Settings
-from research_navigator.data_plane.storage import build_storage
+from research_navigator.data_plane.storage import build_runtime_storage
 from research_navigator.db import Database
 from research_navigator.open_access import build_open_access_resolver, build_pdf_fetcher
 from research_navigator.routes import (
@@ -52,10 +52,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         database = Database.from_url(resolved.database_url)
         database.init()
         app.state.settings = resolved
-        app.state.storage = build_storage(
-            backend=resolved.storage_backend,
-            local_root=resolved.upload_dir,
-        )
+        app.state.storage = build_runtime_storage(resolved)
         app.state.database = database
         app.state.search_service = build_search_service(resolved)
         app.state.oa_resolver = build_open_access_resolver(resolved)

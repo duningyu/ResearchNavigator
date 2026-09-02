@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Protocol
+from typing import Protocol, cast
 
 
 class StorageKeyError(ValueError):
@@ -58,6 +59,76 @@ class S3Transport(Protocol):
     def delete_object(self, *, bucket: str, key: str) -> None: ...
 
 
+class _ReadableBody(Protocol):
+    def read(self) -> bytes: ...
+
+    def close(self) -> None: ...
+
+
+class _Boto3Client(Protocol):
+    def put_object(self, *, Bucket: str, Key: str, Body: bytes) -> object: ...
+
+    def get_object(self, *, Bucket: str, Key: str) -> Mapping[str, object]: ...
+
+    def head_object(self, *, Bucket: str, Key: str) -> Mapping[str, object]: ...
+
+    def delete_object(self, *, Bucket: str, Key: str) -> object: ...
+
+
+class S3TransportWithStat(S3Transport, Protocol):
+    def stat_object(self, *, bucket: str, key: str) -> dict[str, object]: ...
+
+
+class RuntimeStorageSettings(Protocol):
+    @property
+    def storage_backend(self) -> str: ...
+
+    @property
+    def upload_dir(self) -> Path: ...
+
+    @property
+    def r2_account_id(self) -> str | None: ...
+
+    @property
+    def r2_access_key_id(self) -> str | None: ...
+
+    @property
+    def r2_secret_access_key(self) -> str | None: ...
+
+    @property
+    def r2_endpoint(self) -> str | None: ...
+
+    @property
+    def r2_region(self) -> str: ...
+
+    @property
+    def r2_bucket(self) -> str | None: ...
+
+
+class Boto3R2Transport:
+    """Minimal S3-compatible transport for Cloudflare R2."""
+
+    def __init__(self, client: _Boto3Client) -> None:
+        self.client = client
+
+    def put_object(self, *, bucket: str, key: str, data: bytes) -> None:
+        self.client.put_object(Bucket=bucket, Key=key, Body=data)
+
+    def get_object(self, *, bucket: str, key: str) -> bytes:
+        response = self.client.get_object(Bucket=bucket, Key=key)
+        body = cast(_ReadableBody, response["Body"])
+        try:
+            return body.read()
+        finally:
+            body.close()
+
+    def stat_object(self, *, bucket: str, key: str) -> dict[str, object]:
+        return dict(self.client.head_object(Bucket=bucket, Key=key))
+
+    def delete_object(self, *, bucket: str, key: str) -> None:
+        self.client.delete_object(Bucket=bucket, Key=key)
+
+
 class R2Storage:
     def __init__(self, *, bucket: str, transport: S3Transport) -> None:
         self.bucket = bucket
@@ -69,8 +140,47 @@ class R2Storage:
     def get(self, key: str) -> bytes:
         return self.transport.get_object(bucket=self.bucket, key=_safe_key(key))
 
+    def stat(self, key: str) -> dict[str, object]:
+        if not hasattr(self.transport, "stat_object"):
+            raise NotImplementedError("R2 transport does not support stat")
+        return cast(S3TransportWithStat, self.transport).stat_object(
+            bucket=self.bucket, key=_safe_key(key)
+        )
+
     def delete(self, key: str) -> None:
         self.transport.delete_object(bucket=self.bucket, key=_safe_key(key))
+
+
+def build_runtime_storage(settings: RuntimeStorageSettings) -> DurableStorage:
+    """Build the configured storage once at the API/worker composition boundary."""
+    backend = settings.storage_backend
+    if backend.strip().lower() != "r2":
+        return build_storage(
+            backend=backend,
+            local_root=settings.upload_dir,
+        )
+
+    import boto3  # type: ignore[import-untyped]
+    from botocore.config import Config  # type: ignore[import-untyped]
+
+    account_id = settings.r2_account_id
+    endpoint = settings.r2_endpoint or (
+        f"https://{account_id}.r2.cloudflarestorage.com"
+    )
+    client = boto3.client(
+        "s3",
+        endpoint_url=endpoint,
+        region_name=settings.r2_region,
+        aws_access_key_id=settings.r2_access_key_id,
+        aws_secret_access_key=settings.r2_secret_access_key,
+        config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
+    )
+    return build_storage(
+        backend="r2",
+        local_root=settings.upload_dir,
+        r2_bucket=settings.r2_bucket,
+        r2_transport=Boto3R2Transport(client),
+    )
 
 
 def build_storage(*, backend: str, local_root: Path, r2_bucket: str | None = None,

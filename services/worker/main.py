@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from research_navigator.analysis.providers import build_analysis_provider
 from research_navigator.analysis.service import run_paper_analysis
 from research_navigator.config import Settings
+from research_navigator.data_plane.storage import build_runtime_storage
 from research_navigator.db import Database
 from research_navigator.evidence.backfill import execute_abstract_backfill
 from research_navigator.evidence.workflow import execute_evidence_workflow
@@ -187,6 +188,7 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
                 pdf_fetcher=build_pdf_fetcher(settings),
                 analysis_provider=build_analysis_provider(settings),
                 prompt_version=settings.analysis_prompt_version,
+                storage=build_runtime_storage(settings),
             )
         )
         result = dict(workflow_execution.result)

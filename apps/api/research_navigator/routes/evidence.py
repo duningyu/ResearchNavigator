@@ -166,6 +166,7 @@ async def run_evidence_workflow(
             pdf_fetcher=request.app.state.pdf_fetcher,
             analysis_provider=request.app.state.analysis_provider,
             prompt_version=request.app.state.settings.analysis_prompt_version,
+            storage=request.app.state.storage,
         )
         finalize_execution(session, row, execution)
     except Exception as exc:
