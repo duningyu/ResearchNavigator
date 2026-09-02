@@ -78,3 +78,31 @@ def test_installed_libsql_dialect_loads_without_connecting() -> None:
 
     assert engine.dialect.driver == "libsql"
     engine.dispose()
+
+
+def test_turso_effective_dbapi_connect_contract_without_network(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pytest.importorskip("sqlalchemy_libsql")
+
+    monkeypatch.setenv("TURSO_AUTH_TOKEN", "TEST_TOKEN_NOT_SECRET")
+    database = Database.from_url("sqlite+libsql://example.turso.io?secure=true")
+    captured: dict[str, object] = {}
+
+    def intercepted_connect(*args: object, **kwargs: object) -> object:
+        captured["argument_types"] = tuple(type(value).__name__ for value in args)
+        captured["keyword_names"] = frozenset(kwargs)
+        raise RuntimeError("intercepted before network")
+
+    monkeypatch.setattr(database.engine.dialect.loaded_dbapi, "connect", intercepted_connect)
+    with pytest.raises(RuntimeError, match="intercepted before network"):
+        database.engine.connect()
+    database.dispose()
+
+    assert captured["argument_types"] == ("str",)
+    # sqlalchemy-libsql generates its own remote URI/thread flags from the URL;
+    # the application must not add SQLite-only values such as ``timeout``.
+    assert captured["keyword_names"] == frozenset(
+        {"auth_token", "check_same_thread", "uri"}
+    )
+    assert "timeout" not in captured["keyword_names"]
