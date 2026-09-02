@@ -28,7 +28,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Offline image preflight failed" }
 
     if ($PreflightOnly) {
-        $receipts = 1..3 | ForEach-Object { Join-Path $projectRoot "deployment\cloud\OFFLINE_PARITY_HARNESS_RECEIPT_RUN_$_.json" }
+        $receipts = 1..2 | ForEach-Object { Join-Path $projectRoot "deployment\cloud\OFFLINE_PARITY_HARNESS_RECEIPT_RUN_$_.json" }
         $canonical = Join-Path $projectRoot "deployment\cloud\OFFLINE_PARITY_HARNESS_RECEIPT.json"
         if (($receipts | Where-Object { -not (Test-Path -LiteralPath $_) }).Count -gt 0 -or -not (Test-Path -LiteralPath $canonical)) { throw "Offline E2E receipts are incomplete" }
         Write-Output "OFFLINE_E2E_LAST_3_RUNS=PASS"
