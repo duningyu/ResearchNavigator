@@ -4,7 +4,7 @@
   "version": "2.2.3",
   "cloud_root": "E:\\AI_Projects\\_worktrees\\ResearchNavigator\\rn223-zero-cost-cloud-v1",
   "branch": "deployment/rn223-zero-cost-cloud-v1",
-  "base_commit": "6a99d488e15aaf0ff51f439cee1b64b46405f501",
+  "base_commit": "a231f36fcd41f3e7ecd70cb89506cd6fd19fee2a",
   "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
   "status": "R2_EVIDENCE_WORKFLOW_PARITY",
   "current_gate": "R2_EVIDENCE_WORKFLOW_PARITY",
@@ -44,7 +44,7 @@
   },
   "source_closure_audit": {
     "context_guard": "PASS",
-    "local_cloud_head": "6a99d488e15aaf0ff51f439cee1b64b46405f501",
+    "local_cloud_head": "a231f36fcd41f3e7ecd70cb89506cd6fd19fee2a",
     "local_cloud_branch": "deployment/rn223-zero-cost-cloud-v1",
     "existing_authoritative_remote": "NOT_FOUND",
     "github_cli": "NOT_INSTALLED",
