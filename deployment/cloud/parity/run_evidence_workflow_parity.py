@@ -11,6 +11,9 @@ import argparse
 import asyncio
 import hashlib
 import json
+import os
+import re
+import shutil
 import subprocess
 import tempfile
 import uuid
@@ -34,6 +37,33 @@ from research_navigator.security import hash_password
 
 ROOT = Path(__file__).resolve().parents[3]
 RECEIPT = ROOT / "deployment/cloud/R2_EVIDENCE_WORKFLOW_PARITY_RECEIPT.json"
+_FULL_SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
+
+
+def _resolve_source_commit() -> tuple[str, str]:
+    supplied = os.environ.get("RN_SOURCE_COMMIT")
+    if supplied is not None:
+        commit = supplied.strip()
+        if not _FULL_SHA_RE.fullmatch(commit):
+            raise RuntimeError("RN_SOURCE_COMMIT has invalid full SHA format")
+        source = (
+            "HOST_CONTEXT_GUARD"
+            if os.environ.get("RN_SOURCE_COMMIT_SOURCE") == "HOST_CONTEXT_GUARD"
+            else "ENVIRONMENT"
+        )
+        return commit, source
+    if shutil.which("git") is None:
+        raise RuntimeError("Source commit unavailable: RN_SOURCE_COMMIT unset and git unavailable")
+    commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    if not _FULL_SHA_RE.fullmatch(commit):
+        raise RuntimeError("git returned invalid full SHA format")
+    return commit, "LOCAL_GIT"
+
+
+def resolve_source_commit() -> str:
+    return _resolve_source_commit()[0]
 
 
 def _pdf() -> bytes:
@@ -86,12 +116,12 @@ def _fetched(data: bytes) -> PdfFetchResult:
 
 
 def _safe_receipt(execution_id: str) -> dict[str, object]:
+    source_commit, source_commit_source = _resolve_source_commit()
     return {
         "receipt_type": "R2_EVIDENCE_WORKFLOW_PARITY_RECEIPT",
         "execution_id": execution_id,
-        "source_commit": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
-        ).strip(),
+        "source_commit": source_commit,
+        "source_commit_source": source_commit_source,
         "database_backend": "turso",
         "storage_backend": "r2",
         "bucket": "researchnav-documents",

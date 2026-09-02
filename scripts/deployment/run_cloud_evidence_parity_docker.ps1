@@ -12,6 +12,12 @@ if ((Split-Path -Leaf $projectRoot) -ne 'rn223-zero-cost-cloud-v1') { throw 'Une
 $guard = Join-Path $projectRoot 'scripts/deployment/assert_researchnavigator_context.ps1'
 & powershell -NoProfile -ExecutionPolicy Bypass -File $guard -ProjectRoot $projectRoot -Quiet
 if ($LASTEXITCODE -ne 0) { throw 'Context guard failed.' }
+$hostRoot = (& git -C $projectRoot rev-parse --show-toplevel).Trim()
+$hostBranch = (& git -C $projectRoot branch --show-current).Trim()
+$hostCommit = (& git -C $projectRoot rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($hostCommit)) { throw 'Host git source resolution failed.' }
+if ((Resolve-Path -LiteralPath $hostRoot).Path -ne (Resolve-Path -LiteralPath $projectRoot).Path -or $hostBranch -ne 'deployment/rn223-zero-cost-cloud-v1') { throw 'Host git context mismatch.' }
+if ($hostCommit -notmatch '^[0-9a-fA-F]{40}$') { throw 'Host git commit format invalid.' }
 
 $dockerImage = 'python:3.12.11-slim-bookworm'
 $mount = "$projectRoot`:/workspace"
@@ -26,6 +32,10 @@ from research_navigator.config import normalize_turso_database_url
 from research_navigator.data_plane.database import database_dialect
 import run_evidence_workflow_parity
 import services.worker.main
+import os
+assert len(os.environ.get("RN_SOURCE_COMMIT", "")) == 40
+assert os.environ.get("RN_SOURCE_COMMIT_SOURCE") == "HOST_CONTEXT_GUARD"
+assert run_evidence_workflow_parity.resolve_source_commit() == os.environ["RN_SOURCE_COMMIT"]
 url = normalize_turso_database_url("libsql://example.turso.io")
 assert database_dialect(url).name == "turso"
 engine = create_engine(url)
@@ -35,10 +45,15 @@ print("SQLALCHEMY_LIBSQL_INSTALLED=PASS")
 print("SQLALCHEMY_LIBSQL_DIALECT=PASS")
 print("WORKER_IMPORT=PASS")
 print("PARITY_RUNNER_IMPORT=PASS")
+print("SOURCE_COMMIT_INPUT=PASS")
+print("SOURCE_COMMIT_RESOLUTION=PASS")
+print("CONTAINER_GIT=NOT_REQUIRED_FOR_PARITY_RUNTIME")
 print("LINUX_PLATFORM=" + platform.system())
 print("CLOUD_PARITY_PREFLIGHT=PASS")
 '@
 $pythonCheckB64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($pythonCheck))
+$env:RN_SOURCE_COMMIT = $hostCommit
+$env:RN_SOURCE_COMMIT_SOURCE = 'HOST_CONTEXT_GUARD'
 $preflight = @(
   'set -eu',
   'export UV_PROJECT_ENVIRONMENT=/tmp/rn-venv',
@@ -50,12 +65,12 @@ $preflight = @(
 ) -join ' && '
 
 if ($PreflightOnly) {
-  & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace $dockerImage sh -lc $preflight
+  & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE $dockerImage sh -lc $preflight
   if ($LASTEXITCODE -ne 0) { throw 'Linux Docker parity preflight failed.' }
   exit 0
 }
 
-& docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace $dockerImage sh -lc $preflight
+& docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE $dockerImage sh -lc $preflight
 if ($LASTEXITCODE -ne 0) { throw 'Linux Docker parity preflight failed; credentials were not requested.' }
 
 $env:DATABASE_BACKEND = 'turso'
@@ -78,10 +93,10 @@ try {
   }
   $runner = '/workspace/deployment/cloud/parity/run_evidence_workflow_parity.py'
   $live = $preflight + ' && /tmp/rn-venv/bin/python ' + $runner + ' prepare'
-  & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env DATABASE_BACKEND --env RN_STORAGE_BACKEND --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN --env R2_ACCOUNT_ID --env R2_ACCESS_KEY_ID --env R2_SECRET_ACCESS_KEY --env R2_BUCKET --env R2_ENDPOINT $dockerImage sh -lc $live
+  & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env DATABASE_BACKEND --env RN_STORAGE_BACKEND --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN --env R2_ACCOUNT_ID --env R2_ACCESS_KEY_ID --env R2_SECRET_ACCESS_KEY --env R2_BUCKET --env R2_ENDPOINT $dockerImage sh -lc $live
   exit $LASTEXITCODE
 }
 finally {
-  foreach ($name in @('DATABASE_BACKEND','RN_STORAGE_BACKEND','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }
+  foreach ($name in @('DATABASE_BACKEND','RN_STORAGE_BACKEND','RN_SOURCE_COMMIT','RN_SOURCE_COMMIT_SOURCE','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }
   foreach ($ptr in $ptrs) { if ($ptr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) } }
 }
