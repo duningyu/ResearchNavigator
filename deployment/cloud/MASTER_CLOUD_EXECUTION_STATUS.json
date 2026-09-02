@@ -118,6 +118,22 @@
   "windows_libsql_runtime": "BLOCKED_DEPENDENCY_NOT_INSTALLED",
   "windows_libsql_runtime_evidence": "sqlalchemy-libsql metadata and sqlite+libsql dialect unavailable in project .venv; no live provider request made",
   "cloud_parity_preflight": "PASS_LOCAL_DOCKER_LINUX",
+  "offline_parity_harness": {
+    "status": "PASS",
+    "receipt": "deployment/cloud/OFFLINE_PARITY_HARNESS_RECEIPT.json",
+    "last_three_runs": "PASS",
+    "runtime_mode": "OFFLINE_PROVIDER_DOUBLE",
+    "cloud_parity_claim": "NOT_A_LIVE_PROVIDER_CLAIM",
+    "network_mode": "none",
+    "cloud_provider_calls": 0,
+    "secret_prompt_count": 0,
+    "fresh_process_reload": "PASS",
+    "temp_workspace_removed": "PASS",
+    "content_integrity": "PASS",
+    "cleanup": "PASS",
+    "source_provenance": "RN_SOURCE_COMMIT_FROM_HOST_CONTEXT_GUARD",
+    "live_turso_r2": "NOT_RUN"
+  },
   "linux_parity_runtime_selection": "LOCAL_DOCKER",
   "docker_probe": {
     "client_available": true,

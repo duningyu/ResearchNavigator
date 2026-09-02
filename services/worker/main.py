@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from research_navigator.analysis.providers import build_analysis_provider
 from research_navigator.analysis.service import run_paper_analysis
 from research_navigator.config import Settings
-from research_navigator.data_plane.storage import build_runtime_storage
+from research_navigator.data_plane.storage import DurableStorage, build_runtime_storage
 from research_navigator.db import Database
 from research_navigator.evidence.backfill import execute_abstract_backfill
 from research_navigator.evidence.workflow import execute_evidence_workflow
@@ -127,7 +127,13 @@ def _claim_job_by_id(session: Session, *, job_id: int, worker_id: str) -> Job | 
     return job
 
 
-def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, object]:
+def _execute_job(
+    session: Any,
+    job: Job,
+    *,
+    settings: Settings,
+    storage: DurableStorage | None = None,
+) -> dict[str, object]:
     payload = json.loads(job.payload_json)
     if not isinstance(payload, dict):
         raise ValueError("Job payload must be an object")
@@ -188,7 +194,7 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
                 pdf_fetcher=build_pdf_fetcher(settings),
                 analysis_provider=build_analysis_provider(settings),
                 prompt_version=settings.analysis_prompt_version,
-                storage=build_runtime_storage(settings),
+                storage=storage or build_runtime_storage(settings),
             )
         )
         result = dict(workflow_execution.result)
@@ -219,10 +225,16 @@ def _execute_job(session: Any, job: Job, *, settings: Settings) -> dict[str, obj
     raise RuntimeError(f"Unsupported job type: {job.job_type!r}")
 
 
-def _complete_claimed_job(session: Session, job: Job, *, settings: Settings) -> None:
+def _complete_claimed_job(
+    session: Session,
+    job: Job,
+    *,
+    settings: Settings,
+    storage: DurableStorage | None = None,
+) -> None:
     """Execute and persist one already-claimed job using the shared state machine."""
     try:
-        result = _execute_job(session, job, settings=settings)
+        result = _execute_job(session, job, settings=settings, storage=storage)
         terminal_status = str(result.pop("__terminal_status", "succeeded"))
         if terminal_status not in {"succeeded", "partial", "cancelled"}:
             raise ValueError(f"Unsupported terminal status: {terminal_status}")
@@ -251,6 +263,7 @@ def execute_job(
     job_id: int,
     worker_id: str,
     settings: Settings | None = None,
+    storage: DurableStorage | None = None,
 ) -> bool:
     """Bounded executor seam for serverless triggers and the local poller.
 
@@ -262,7 +275,7 @@ def execute_job(
         job = _claim_job_by_id(session, job_id=job_id, worker_id=worker_id)
         if job is None:
             return False
-        _complete_claimed_job(session, job, settings=resolved_settings)
+        _complete_claimed_job(session, job, settings=resolved_settings, storage=storage)
         return True
 
 
@@ -271,6 +284,7 @@ def run_once(
     *,
     worker_id: str | None = None,
     settings: Settings | None = None,
+    storage: DurableStorage | None = None,
 ) -> int | None:
     identity = worker_id or f"{socket.gethostname()}:{os.getpid()}"
     resolved_settings = settings or Settings.from_env()
@@ -278,7 +292,7 @@ def run_once(
         job = _claim_job(session, worker_id=identity)
         if job is None:
             return None
-        _complete_claimed_job(session, job, settings=resolved_settings)
+        _complete_claimed_job(session, job, settings=resolved_settings, storage=storage)
         return job.id
 
 

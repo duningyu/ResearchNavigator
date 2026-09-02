@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -42,17 +42,23 @@ from research_navigator.routes import (
 from research_navigator.scholarly.service import build_search_service
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    *,
+    database_factory: Callable[[Settings], Database] | None = None,
+    storage_factory: Callable[[Settings], object] | None = None,
+) -> FastAPI:
     resolved = settings or Settings.from_env()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         resolved.ensure_directories()
         apply_pending_restore(resolved)
-        database = Database.from_url(resolved.database_url)
+        database_builder = database_factory or (lambda item: Database.from_url(item.database_url))
+        database = database_builder(resolved)
         database.init()
         app.state.settings = resolved
-        app.state.storage = build_runtime_storage(resolved)
+        app.state.storage = (storage_factory or build_runtime_storage)(resolved)
         app.state.database = database
         app.state.search_service = build_search_service(resolved)
         app.state.oa_resolver = build_open_access_resolver(resolved)
