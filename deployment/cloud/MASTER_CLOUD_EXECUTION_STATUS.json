@@ -6,8 +6,8 @@
   "branch": "deployment/rn223-zero-cost-cloud-v1",
   "base_commit": "a8254a5ffc45eade8595852c449c2f3cab6d31ef",
   "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
-  "status": "R2_EVIDENCE_WORKFLOW_PARITY",
-  "current_gate": "R2_EVIDENCE_WORKFLOW_PARITY",
+  "status": "WAITING_USER_LINUX_PARITY_SECRET_ENTRY_LOCAL",
+  "current_gate": "WAITING_USER_LINUX_PARITY_SECRET_ENTRY_LOCAL",
   "northflank_cli": {
     "version": "0.12.2",
     "installed": true,
@@ -113,7 +113,27 @@
   "turso_url_contract": "raw libsql:// provider URL normalizes to sqlite+libsql://...?...secure=true; auth token remains connect_args-only",
   "windows_libsql_runtime": "BLOCKED_DEPENDENCY_NOT_INSTALLED",
   "windows_libsql_runtime_evidence": "sqlalchemy-libsql metadata and sqlite+libsql dialect unavailable in project .venv; no live provider request made",
-  "cloud_parity_preflight": "BLOCKED_WINDOWS_LIBSQL_RUNTIME",
+  "cloud_parity_preflight": "PASS_LOCAL_DOCKER_LINUX",
+  "linux_parity_runtime_selection": "LOCAL_DOCKER",
+  "docker_probe": {
+    "client_available": true,
+    "server_available": true,
+    "server_os": "linux",
+    "architecture": "x86_64",
+    "docker_context": "desktop-linux",
+    "repair_attempted": false
+  },
+  "docker_linux_parity_wrapper": "scripts/deployment/run_cloud_evidence_parity_docker.ps1",
+  "docker_linux_preflight": {
+    "python": "PASS_PYTHON_3.12",
+    "dependency_lock": "PASS_UV_LOCK_FROZEN_EXTRA_DEV",
+    "sqlalchemy_libsql": "PASS_0.2.0",
+    "dialect": "PASS",
+    "worker_import": "PASS",
+    "parity_runner_import": "PASS",
+    "provider_calls": "NOT_RUN",
+    "credentials_prompted": false
+  },
   "r2_runtime_wiring_validation": {
     "boto3_transport": "IMPLEMENTED",
     "api_storage_injection": "PASS",
@@ -165,5 +185,5 @@
     "wsl_monitor": "deployment/cloud/wsl/WSL_INSTALL_MONITOR_STATE.json",
     "wsl_forensic_receipt": "deployment/cloud/wsl/WSL_STUCK_PROVISIONING_RECOVERY_RECEIPT.json"
   },
-  "updated_timestamp_utc": "2026-09-02T06:30:00Z"
+  "updated_timestamp_utc": "2026-09-02T07:00:00Z"
 }
