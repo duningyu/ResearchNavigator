@@ -18,6 +18,7 @@ from research_navigator.models import Base
 class Database:
     engine: Engine
     session_factory: sessionmaker[Session]
+    backend_name: str = "sqlite"
 
     @classmethod
     def from_url(cls, url: str, *, echo: bool = False) -> Database:
@@ -46,22 +47,26 @@ class Database:
                 cursor.close()
 
         factory = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
-        return cls(engine=engine, session_factory=factory)
+        return cls(
+            engine=engine,
+            session_factory=factory,
+            backend_name=dialect.name,
+        )
 
     def init(self) -> None:
         Base.metadata.create_all(self.engine)
-        if self.engine.dialect.name == "sqlite":
-            with self.engine.begin() as connection:
+        with self.engine.begin() as connection:
+            if self.backend_name == "sqlite":
                 connection.execute(text("PRAGMA foreign_keys=ON"))
                 connection.execute(text("PRAGMA journal_mode=WAL"))
-                connection.execute(
-                    text(
-                        "CREATE VIRTUAL TABLE IF NOT EXISTS paper_chunks_fts "
-                        "USING fts5(chunk_id UNINDEXED, document_id UNINDEXED, "
-                        "paper_id UNINDEXED, user_id UNINDEXED, section, text, "
-                        "tokenize='unicode61')"
-                    )
+            connection.execute(
+                text(
+                    "CREATE VIRTUAL TABLE IF NOT EXISTS paper_chunks_fts "
+                    "USING fts5(chunk_id UNINDEXED, document_id UNINDEXED, "
+                    "paper_id UNINDEXED, user_id UNINDEXED, section, text, "
+                    "tokenize='unicode61')"
                 )
+            )
 
     @contextmanager
     def session(self) -> Iterator[Session]:

@@ -102,7 +102,77 @@ def test_turso_effective_dbapi_connect_contract_without_network(
     assert captured["argument_types"] == ("str",)
     # sqlalchemy-libsql generates its own remote URI/thread flags from the URL;
     # the application must not add SQLite-only values such as ``timeout``.
-    assert captured["keyword_names"] == frozenset(
+    keyword_names = captured["keyword_names"]
+    assert isinstance(keyword_names, frozenset)
+    assert keyword_names == frozenset(
         {"auth_token", "check_same_thread", "uri"}
     )
-    assert "timeout" not in captured["keyword_names"]
+    assert "timeout" not in keyword_names
+
+
+def test_turso_init_skips_local_sqlite_pragmas_and_keeps_schema_bootstrap(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    statements: list[str] = []
+
+    class FakeConnection:
+        def execute(self, statement: object) -> None:
+            statements.append(str(statement))
+
+    class FakeBegin:
+        def __enter__(self) -> FakeConnection:
+            return FakeConnection()
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+    class FakeEngine:
+        dialect = type("Dialect", (), {"name": "sqlite", "driver": "libsql"})()
+
+        def begin(self) -> FakeBegin:
+            return FakeBegin()
+
+    monkeypatch.setattr(
+        "research_navigator.db.Base.metadata.create_all", lambda _engine: None
+    )
+    monkeypatch.setattr(
+        "research_navigator.db.create_engine", lambda _url, **_kwargs: FakeEngine()
+    )
+
+    Database.from_url("sqlite+libsql://example.turso.io?secure=true").init()
+
+    assert not any(statement.startswith("PRAGMA ") for statement in statements)
+    assert any("CREATE VIRTUAL TABLE" in statement for statement in statements)
+
+
+def test_real_libsql_dialect_init_sql_contract_without_network(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pytest.importorskip("sqlalchemy_libsql")
+
+    statements: list[str] = []
+
+    class RecordingConnection:
+        def execute(self, statement: object) -> None:
+            statements.append(str(statement))
+
+    class RecordingBegin:
+        def __enter__(self) -> RecordingConnection:
+            return RecordingConnection()
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+    monkeypatch.setenv("TURSO_AUTH_TOKEN", "TEST_TOKEN_NOT_SECRET")
+    database = Database.from_url("sqlite+libsql://example.turso.io?secure=true")
+    monkeypatch.setattr(
+        "research_navigator.db.Base.metadata.create_all", lambda _engine: None
+    )
+    monkeypatch.setattr(database.engine, "begin", lambda: RecordingBegin())
+
+    assert database.engine.dialect.driver == "libsql"
+    database.init()
+    database.dispose()
+
+    assert not any(statement.startswith("PRAGMA ") for statement in statements)
+    assert sum("CREATE VIRTUAL TABLE" in statement for statement in statements) == 1
