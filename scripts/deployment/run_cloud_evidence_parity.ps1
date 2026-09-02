@@ -14,8 +14,14 @@ $guard = Join-Path $projectRoot 'scripts/deployment/assert_researchnavigator_con
 if ($LASTEXITCODE -ne 0) { throw 'Context guard failed.' }
 $python = Join-Path $projectRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python -PathType Leaf)) { throw 'Project .venv Python is unavailable.' }
+$parityDir = Join-Path $projectRoot 'deployment/cloud/parity'
+$applicationRoot = Join-Path $projectRoot 'apps/api'
+$workerModule = Join-Path $projectRoot 'services/worker/main.py'
+if (-not (Test-Path -LiteralPath $applicationRoot -PathType Container)) { throw 'Application root is unavailable.' }
+if (-not (Test-Path -LiteralPath $workerModule -PathType Leaf)) { throw 'Worker module is unavailable.' }
+$env:PYTHONPATH = "$applicationRoot;$projectRoot;$parityDir"
 if ($PreflightOnly) {
-  & $python -c "import boto3, botocore, sqlalchemy, research_navigator, reportlab"
+  & $python -c "import boto3, botocore, sqlalchemy, research_navigator, reportlab, services.worker.main; from services.worker.main import run_once; import run_evidence_workflow_parity; print('WORKER_IMPORT=PASS'); print('PARITY_RUNNER_IMPORT=PASS')"
   if ($LASTEXITCODE -ne 0) { throw 'Parity runtime dependencies are unavailable.' }
   $runner = Join-Path $projectRoot 'deployment/cloud/parity/run_evidence_workflow_parity.py'
   $receiptDir = Join-Path $projectRoot 'deployment/cloud'
@@ -55,6 +61,6 @@ try {
   & $python (Join-Path $projectRoot 'deployment/cloud/parity/run_evidence_workflow_parity.py') reload --execution-id $state.execution_id --job-id $state.job_id --document-id $state.document_id --fixture-sha256 $state.fixture_sha256
   exit $LASTEXITCODE
 } finally {
-  foreach ($name in @('DATABASE_BACKEND','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT','RN_STORAGE_BACKEND')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }
+  foreach ($name in @('DATABASE_BACKEND','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT','RN_STORAGE_BACKEND','PYTHONPATH')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }
   foreach ($ptr in $ptrs) { if ($ptr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) } }
 }
