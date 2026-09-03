@@ -6,8 +6,35 @@
   "branch": "deployment/rn223-zero-cost-cloud-v1",
   "base_commit": "1b60cd6e5d66043bfdbf76811fba3f24fb63dee1",
   "frozen_core_commit": "0db09b07b3b9aa8efa8ff080c296f15bf08f5e97",
-  "status": "WAITING_USER_LINUX_PARITY_SECRET_ENTRY_LOCAL",
-  "current_gate": "WAITING_USER_LINUX_PARITY_SECRET_ENTRY_LOCAL",
+  "status": "WAITING_USER_TURSO_SCHEMA_BOOTSTRAP_SECRET_ENTRY_LOCAL",
+  "current_gate": "WAITING_USER_TURSO_SCHEMA_BOOTSTRAP_SECRET_ENTRY_LOCAL",
+  "transport_discrimination": {
+    "transport_protocol": "HRANA_HTTP_V3",
+    "production_endpoint_shape": "/v3/pipeline",
+    "previous_websocket_probe_authority": "NONE",
+    "docker_stdlib_http": "PASS_HTTP_RESPONSE",
+    "docker_urllib3_http": "PASS_HTTP_RESPONSE",
+    "docker_curl_http": "NOT_AVAILABLE_NOT_INSTALLED",
+    "libsql_invalid_token_probe": "EXPECTED_AUTH_FAILURE_STRUCTURED_HTTP_RESPONSE",
+    "host_http_probe": "NO_HTTP_RESPONSE_CLIENT_ERROR",
+    "classification": "TURSO_HRANA_HTTP_TRANSPORT_PASS",
+    "application_code_change_required": false,
+    "selected_next_runtime": "LOCAL_DOCKER_LINUX",
+    "r2_probe": "NOT_RUN",
+    "live_parity": "NOT_RUN"
+  },
+  "minimal_turso_probe_preflight": {
+    "failure_stage": "TURSO_MINIMAL_PROBE_PREFLIGHT",
+    "failure_classification": "POWERSHELL_DOCKER_PYTHON_C_ARGUMENT_SPLIT",
+    "provider_reached": false,
+    "credentials_prompted": false,
+    "credentials_exposed": false,
+    "old_invocation": "python -c <inline code> through PowerShell and Docker shell",
+    "actual_received_code_shape": "import",
+    "minimal_patch": "project Python file invocation with --preflight/--live",
+    "preflight_result": "PASS",
+    "live_probe": "NOT_RUN"
+  },
   "northflank_cli": {
     "version": "0.12.2",
     "installed": true,
@@ -80,7 +107,24 @@
   "secret_scope": "GLOBAL",
   "secret_scope_finding": "BROADER_THAN_MINIMUM_IDEAL_NOT_DEPLOYMENT_BLOCKER",
   "secret_metadata_ui_check": "BLOCKED_TOOLING",
-  "turso_secret_runtime_validation": "PENDING",
+  "turso_secret_runtime_validation": "MINIMAL_SELECT_1_PASS",
+  "turso_schema_bootstrap": {
+    "schema_authority": "ALEMBIC",
+    "preflight": "PASS",
+    "live_status": "NOT_RUN",
+    "credentials_prompted": false,
+    "provider_calls": 0,
+    "wrapper": "scripts/deployment/run_turso_schema_bootstrap_docker.ps1",
+    "audit_mode": "READ_ONLY_SCHEMA_FORENSIC",
+    "migration_writes": "FORBIDDEN",
+    "receipt_path": "deployment/cloud/runtime_receipts/TURSO_SCHEMA_BOOTSTRAP_MIGRATION_RECEIPT.json",
+    "source_mount": "READ_ONLY",
+    "evidence_mount": "WRITABLE_DEDICATED_MOUNT",
+    "previous_failure_classification": "TURSO_SCHEMA_STATE_INCONSISTENT_EXISTING_UNVERSIONED_SCHEMA",
+    "previous_receipt_failure": "SCHEMA_BOOTSTRAP_RECEIPT_READONLY_MOUNT_FAILURE",
+    "metadata_semantics": "SCHEMA_VERSION_METADATA_AMBIGUOUS",
+    "next_action": "LOCAL_INTERACTIVE_READ_ONLY_TURSO_SCHEMA_FORENSIC_AUDIT"
+  },
   "r2_zero_cost_contract": "deployment/cloud/R2_ZERO_COST_PROVIDER_CONTRACT.json",
   "r2_account_state": "USER_ATTESTED_SUBSCRIPTION_ACTIVE",
   "r2_subscription_active": "USER_ATTESTED_NOT_MACHINE_VERIFIED",
@@ -209,5 +253,8 @@
     "wsl_monitor": "deployment/cloud/wsl/WSL_INSTALL_MONITOR_STATE.json",
     "wsl_forensic_receipt": "deployment/cloud/wsl/WSL_STUCK_PROVISIONING_RECOVERY_RECEIPT.json"
   },
-  "updated_timestamp_utc": "2026-09-02T07:00:00Z"
+  "schema_bootstrap_target": "researchnavigator-rn223",
+  "schema_bootstrap_mode": "IMPLEMENTED_NOT_LIVE",
+  "old_database_status": "QUARANTINED_EMPTY_NONAUTHORITATIVE_SCHEMA",
+  "updated_timestamp_utc": "2026-09-03T00:00:00Z"
 }
