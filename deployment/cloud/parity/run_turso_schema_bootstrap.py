@@ -16,6 +16,7 @@ import sys
 import tempfile
 import uuid
 from pathlib import Path
+from typing import cast
 from urllib.parse import urlsplit
 
 from alembic.config import Config
@@ -751,7 +752,9 @@ def verify_bootstrap() -> int:
                 "fts_structures": snapshot["fts"],
                 "triggers": any(
                     item.get("type") == "trigger"
-                    for item in snapshot["schema_objects"]
+                    for item in cast(
+                        list[dict[str, object]], snapshot["schema_objects"]
+                    )
                     if isinstance(item, dict)
                 ),
             }
