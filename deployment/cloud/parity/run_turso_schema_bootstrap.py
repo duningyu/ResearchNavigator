@@ -98,11 +98,27 @@ def _code_head() -> str:
     return ScriptDirectory.from_config(config).get_current_head()
 
 
+def _reference_index_names() -> set[str] | None:
+    path = _reference_path("head")
+    if not path.is_file():
+        return None
+    reference = json.loads(path.read_text(encoding="utf-8"))
+    objects = reference.get("schema_objects", [])
+    if not isinstance(objects, list):
+        raise BootstrapSchemaSnapshotError("REFERENCE_SCHEMA_OBJECTS_INVALID")
+    return {
+        str(item["name"])
+        for item in objects
+        if isinstance(item, dict)
+        and item.get("type") == "index"
+        and item.get("name")
+        and not str(item["name"]).startswith("sqlite_autoindex_")
+    }
+
+
 def _expected_indexes() -> set[str]:
-    names: set[str] = set()
-    for table in Base.metadata.tables.values():
-        names.update(index.name for index in table.indexes if index.name)
-    return names
+    reference_names = _reference_index_names()
+    return reference_names if reference_names is not None else set()
 
 
 def _receipt_path() -> Path:
@@ -189,6 +205,7 @@ def _schema_snapshot(database: Database) -> dict[str, object]:
         fts_names = {str(row[0]) for row in fts_rows}
         row_counts = _row_counts(connection, tables)
     expected_tables = set(Base.metadata.tables)
+    reference_indexes = _reference_index_names()
     expected_indexes = _expected_indexes()
     fts_ok = "paper_chunks_fts" in fts_names
     return {
@@ -203,8 +220,14 @@ def _schema_snapshot(database: Database) -> dict[str, object]:
         "alembic_revision": current,
         "required_tables": expected_tables <= tables,
         "required_tables_missing": sorted(expected_tables - tables),
-        "required_indexes": expected_indexes <= indexes,
-        "required_indexes_missing": sorted(expected_indexes - indexes),
+        "required_indexes": (
+            reference_indexes is not None and expected_indexes <= indexes
+        ),
+        "required_indexes_missing": (
+            sorted(expected_indexes - indexes)
+            if reference_indexes is not None
+            else ["REFERENCE_INDEX_CONTRACT_UNAVAILABLE"]
+        ),
         "fts": fts_ok,
         "fts_objects": sorted(fts_names),
     }
@@ -279,25 +302,39 @@ def _schema_fingerprint(snapshot: dict[str, object]) -> dict[str, object]:
                     for column in value.get("columns", [])
                 ],
                 "primary_key": value.get("primary_key"),
-                "foreign_keys": value.get("foreign_keys", []),
-                "unique_constraints": value.get("unique_constraints", []),
-                "indexes": value.get("indexes", []),
+                "foreign_keys": _sorted_metadata(value.get("foreign_keys", [])),
+                "unique_constraints": _sorted_metadata(
+                    value.get("unique_constraints", [])
+                ),
+                "indexes": _sorted_metadata(value.get("indexes", [])),
             }
     objects = []
     for value in snapshot.get("schema_objects", []):
         if not isinstance(value, dict) or _ignored_schema_artifact(str(value.get("name", ""))):
             continue
-        objects.append({
+        item = {
             "name": value.get("name"),
             "type": value.get("type"),
             "tbl_name": value.get("tbl_name"),
-            "sql": _canonical_sql(value.get("sql")),
-        })
+        }
+        if value.get("type") in {"trigger", "view"}:
+            item["sql"] = _canonical_sql(value.get("sql"))
+        objects.append(item)
+    objects.sort(key=lambda item: (str(item.get("type")), str(item.get("name"))))
     fts = sorted(
         str(name) for name in snapshot.get("fts_objects", [])
         if str(name) == "paper_chunks_fts"
     )
     return {"tables": sorted(normalized), "structure": normalized, "objects": objects, "fts": fts}
+
+
+def _sorted_metadata(value: object) -> object:
+    if not isinstance(value, list):
+        return value
+    return sorted(
+        value,
+        key=lambda item: json.dumps(item, sort_keys=True, default=str),
+    )
 
 
 def _compare_reference(snapshot: dict[str, object], revision: str) -> str:
@@ -665,11 +702,109 @@ def bootstrap() -> int:
             database.dispose()
 
 
+def verify_bootstrap() -> int:
+    """Verify an already-migrated RN223 database without performing writes."""
+    raw_url = os.environ.get("TURSO_DATABASE_URL", "")
+    token = os.environ.get("TURSO_AUTH_TOKEN", "")
+    source_commit = os.environ.get("RN_SOURCE_COMMIT", "unknown")
+    result: dict[str, object] = {
+        "audit_mode": "ALEMBIC_BOOTSTRAP_POST_MIGRATION_VERIFY",
+        "source_commit": source_commit,
+        "schema_authority": "ALEMBIC",
+        "safe_database_host": _safe_host(raw_url),
+        "target_database": "researchnavigator-rn223",
+        "old_database_untouched": True,
+        "migration_writes_attempted": False,
+        "ddl_executed": False,
+        "secret_exposure": False,
+        "frozen_core": "UNCHANGED",
+    }
+    failure_stage = "CREDENTIAL_INPUT"
+    database: Database | None = None
+    try:
+        if not raw_url or not token:
+            raise RuntimeError("BOOTSTRAP_CREDENTIALS_MISSING")
+        failure_stage = "TARGET_IDENTITY"
+        _bootstrap_target_identity(raw_url)
+        failure_stage = "DATABASE_CONSTRUCTION"
+        normalized = normalize_turso_database_url(raw_url)
+        database = Database.from_url(normalized)
+        failure_stage = "POST_MIGRATION_VERIFY"
+        snapshot = _schema_snapshot(database)
+        head = _code_head()
+        schema_matches_head = _compare_reference(snapshot, "head")
+        result.update(
+            {
+                "alembic_code_head": head,
+                "alembic_version_table_present": snapshot[
+                    "alembic_version_table_present"
+                ],
+                "alembic_version_row_count": snapshot[
+                    "alembic_version_row_count"
+                ],
+                "alembic_current_revision": snapshot[
+                    "alembic_current_revision"
+                ],
+                "schema_matches_head": schema_matches_head,
+                "required_tables": snapshot["required_tables"],
+                "required_indexes": snapshot["required_indexes"],
+                "fts_structures": snapshot["fts"],
+                "triggers": any(
+                    item.get("type") == "trigger"
+                    for item in snapshot["schema_objects"]
+                    if isinstance(item, dict)
+                ),
+            }
+        )
+        if (
+            snapshot["alembic_current_revision"] != head
+            or schema_matches_head != "EXACT"
+            or not snapshot["required_tables"]
+            or not snapshot["required_indexes"]
+            or not snapshot["fts"]
+        ):
+            raise RuntimeError("BOOTSTRAP_SCHEMA_VERIFICATION_FAILED")
+        database.init()
+        result.update(
+            {
+                "database_init": "PASS",
+                "final_status": "ALEMBIC_BOOTSTRAP_VERIFY_PASS",
+            }
+        )
+        _write_receipt(result)
+        print("TURSO_SCHEMA_BOOTSTRAP_VERIFY=PASS")
+        return 0
+    except Exception as exc:
+        result.update(
+            {
+                "failure_stage": failure_stage,
+                "failure_classification": (
+                    "SCHEMA_SNAPSHOT_PARSE_FAILURE"
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else type(exc).__name__
+                ),
+                "safe_error_message": (
+                    str(exc)
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else type(exc).__name__
+                ),
+                "final_status": "ERROR_SAFE_REDACTED",
+            }
+        )
+        _write_receipt(result)
+        print("TURSO_SCHEMA_BOOTSTRAP_VERIFY=ERROR_SAFE_REDACTED")
+        return 1
+    finally:
+        if database is not None:
+            database.dispose()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--preflight", action="store_true")
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--bootstrap", action="store_true")
+    parser.add_argument("--verify-bootstrap", action="store_true")
     parser.add_argument("--receipt-preflight", action="store_true")
     parser.add_argument("--reference", choices=("0001", "head"))
     parser.add_argument("--output")
@@ -680,6 +815,7 @@ def main() -> int:
             args.preflight,
             args.live,
             args.bootstrap,
+            args.verify_bootstrap,
             args.receipt_preflight,
             args.reference,
         )
@@ -692,6 +828,8 @@ def main() -> int:
         return receipt_preflight()
     if args.bootstrap:
         return bootstrap()
+    if args.verify_bootstrap:
+        return verify_bootstrap()
     if args.reference:
         if not args.output:
             parser.error("--reference requires --output")

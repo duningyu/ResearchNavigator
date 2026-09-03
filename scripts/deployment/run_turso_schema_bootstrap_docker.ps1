@@ -2,6 +2,7 @@ param(
     [switch]$PreflightOnly,
     [switch]$LiveOnly,
     [switch]$Bootstrap,
+    [switch]$VerifyBootstrap,
     [switch]$PromptHarness
 )
 
@@ -16,8 +17,8 @@ $guard = Join-Path $projectRoot 'scripts/deployment/assert_researchnavigator_con
 if ($LASTEXITCODE -ne 0) { throw 'Context guard failed.' }
 $commit = (& git -C $projectRoot rev-parse HEAD).Trim()
 if ($commit -notmatch '^[0-9a-fA-F]{40}$') { throw 'Source commit resolution failed.' }
-$modeCount = @($PreflightOnly, $LiveOnly, $Bootstrap).Where({ $_ }).Count
-if ($modeCount -ne 1) { throw 'Choose exactly one of -PreflightOnly, -LiveOnly, or -Bootstrap.' }
+$modeCount = @($PreflightOnly, $LiveOnly, $Bootstrap, $VerifyBootstrap).Where({ $_ }).Count
+if ($modeCount -ne 1) { throw 'Choose exactly one of -PreflightOnly, -LiveOnly, -Bootstrap, or -VerifyBootstrap.' }
 if ($PromptHarness -and $PreflightOnly) { throw '-PromptHarness cannot be used with -PreflightOnly.' }
 $evidenceDir = Join-Path $projectRoot 'deployment/cloud/runtime_receipts'
 New-Item -ItemType Directory -Force -Path $evidenceDir | Out-Null
@@ -32,14 +33,14 @@ if ($PreflightOnly) {
     if ($LASTEXITCODE -ne 0) { throw 'Schema preflight failed; credentials were not requested.' }
     exit 0
 }
-if ($Bootstrap) {
+if ($Bootstrap -or $VerifyBootstrap) {
     Write-Output 'BOOTSTRAP_CONTEXT=PASS'
 } else {
     Write-Output 'LIVE_ONLY_CONTEXT=PASS'
 }
 Write-Output "CACHED_IMAGE=$image"
 if ($PromptHarness) {
-    if ($Bootstrap) { Write-Output 'BOOTSTRAP_SECRET_PROMPT_REACHED=PASS' }
+    if ($Bootstrap -or $VerifyBootstrap) { Write-Output 'BOOTSTRAP_SECRET_PROMPT_REACHED=PASS' }
     else { Write-Output 'LIVE_SECRET_PROMPT_REACHED=PASS' }
     exit 0
 }
@@ -51,6 +52,8 @@ try {
     $env:TURSO_AUTH_TOKEN = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr)
     if ($Bootstrap) {
         & docker run @mounts --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN $image /opt/rn-venv/bin/python /workspace/deployment/cloud/parity/run_turso_schema_bootstrap.py --bootstrap
+    } elseif ($VerifyBootstrap) {
+        & docker run @mounts --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN $image /opt/rn-venv/bin/python /workspace/deployment/cloud/parity/run_turso_schema_bootstrap.py --verify-bootstrap
     } else {
         & docker run @mounts --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN $image /opt/rn-venv/bin/python /workspace/deployment/cloud/parity/run_turso_schema_bootstrap.py --live
     }

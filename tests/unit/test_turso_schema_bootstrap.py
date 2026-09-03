@@ -113,3 +113,35 @@ def test_bootstrap_rejects_any_existing_business_table() -> None:
 def test_bootstrap_allows_empty_target_with_empty_version_table() -> None:
     snapshot = {"current_tables": ["alembic_version"]}
     assert bootstrap._assert_bootstrap_target_empty(snapshot) == "PASS"
+
+
+def test_schema_fingerprint_ignores_foreign_key_order() -> None:
+    base = {
+        "columns": [],
+        "primary_key": {},
+        "foreign_keys": [
+            {"referred_table": "users", "constrained_columns": ["user_id"]},
+            {"referred_table": "projects", "constrained_columns": ["project_id"]},
+        ],
+        "unique_constraints": [],
+        "indexes": [],
+    }
+    reversed_structure = dict(base)
+    reversed_structure["foreign_keys"] = list(reversed(base["foreign_keys"]))
+    left = {"schema_structure": {"jobs": base}, "schema_objects": [], "fts_objects": []}
+    right = {
+        "schema_structure": {"jobs": reversed_structure},
+        "schema_objects": [],
+        "fts_objects": [],
+    }
+    assert bootstrap._schema_fingerprint(left) == bootstrap._schema_fingerprint(right)
+
+
+def test_required_indexes_follow_migration_reference(monkeypatch) -> None:
+    monkeypatch.setattr(
+        bootstrap,
+        "_reference_index_names",
+        lambda: {"ix_migration_index"},
+        raising=False,
+    )
+    assert bootstrap._expected_indexes() == {"ix_migration_index"}
