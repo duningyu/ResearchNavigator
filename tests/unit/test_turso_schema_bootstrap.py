@@ -4,6 +4,93 @@ import pytest
 from deployment.cloud.parity import run_turso_schema_bootstrap as bootstrap
 
 
+class _FakeResult:
+    def __init__(self, scalar=None) -> None:
+        self._scalar = scalar
+
+    def scalar_one(self):
+        return self._scalar
+
+    def scalar_one_or_none(self):
+        return None
+
+    def mappings(self):
+        return self
+
+    def all(self):
+        return []
+
+
+class _FakeConnection:
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return False
+
+    def execute(self, statement, *_args, **_kwargs):
+        if "COUNT(*) FROM alembic_version" in str(statement):
+            return _FakeResult("not-a-count")
+        return _FakeResult()
+
+
+class _FakeEngine:
+    def connect(self):
+        return _FakeConnection()
+
+
+class _FakeInspector:
+    def get_table_names(self):
+        return ["alembic_version"]
+
+    def get_indexes(self, _table):
+        return []
+
+    def get_columns(self, _table):
+        return []
+
+    def get_pk_constraint(self, _table):
+        return {}
+
+    def get_foreign_keys(self, _table):
+        return []
+
+    def get_unique_constraints(self, _table):
+        return []
+
+
+class _FakeDatabase:
+    engine = _FakeEngine()
+
+
+def test_schema_snapshot_rejects_invalid_count_with_explicit_error(monkeypatch) -> None:
+    monkeypatch.setattr(bootstrap, "inspect", lambda _connection: _FakeInspector())
+    with pytest.raises(bootstrap.BootstrapSchemaSnapshotError, match="COUNT"):
+        bootstrap._schema_snapshot(_FakeDatabase())
+
+
+@pytest.mark.parametrize("value", [0, "0", 12, "12"])
+def test_schema_count_accepts_integer_and_numeric_string(value) -> None:
+    assert bootstrap._coerce_schema_count(value, "synthetic") >= 0
+
+
+@pytest.mark.parametrize("value", [None, "", "not-a-count", True])
+def test_schema_count_rejects_invalid_metadata_explicitly(value) -> None:
+    with pytest.raises(bootstrap.BootstrapSchemaSnapshotError, match="COUNT"):
+        bootstrap._coerce_schema_count(value, "synthetic")
+
+
+@pytest.mark.parametrize("table", ["sqlite_sequence", "alembic_version", "paper_chunks_fts_data"])
+def test_empty_guard_ignores_non_business_schema_objects(table) -> None:
+    assert bootstrap._assert_bootstrap_target_empty({"current_tables": [table]}) == "PASS"
+
+
+@pytest.mark.parametrize("table", ["papers", "users"])
+def test_empty_guard_rejects_business_tables(table) -> None:
+    with pytest.raises(bootstrap.BootstrapTargetNotEmptyError):
+        bootstrap._assert_bootstrap_target_empty({"current_tables": [table]})
+
+
 def test_bootstrap_accepts_only_new_rn223_database() -> None:
     assert bootstrap._bootstrap_target_identity(
         "libsql://researchnavigator-rn223-duningyu.aws-us-east-1.turso.io"

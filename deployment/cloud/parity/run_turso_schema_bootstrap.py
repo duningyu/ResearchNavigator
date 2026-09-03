@@ -40,6 +40,24 @@ class BootstrapTargetNotEmptyError(RuntimeError):
     pass
 
 
+class BootstrapSchemaSnapshotError(RuntimeError):
+    pass
+
+
+def _coerce_schema_count(value: object, field: str) -> int:
+    if isinstance(value, bool):
+        raise BootstrapSchemaSnapshotError(
+            f"SCHEMA_SNAPSHOT_COUNT_INVALID:{field}:bool"
+        )
+    if isinstance(value, int) and value >= 0:
+        return value
+    if isinstance(value, str) and value.strip().isdigit():
+        return int(value.strip())
+    raise BootstrapSchemaSnapshotError(
+        f"SCHEMA_SNAPSHOT_COUNT_INVALID:{field}:{type(value).__name__}"
+    )
+
+
 def _bootstrap_target_identity(raw_url: str) -> str:
     host = (urlsplit(raw_url).hostname or "").lower()
     if not host or not host.startswith("researchnavigator-rn223-"):
@@ -102,11 +120,14 @@ def _row_counts(connection, tables: set[str]) -> dict[str, int | str]:
         if table == "alembic_version" or table.startswith("sqlite_"):
             continue
         try:
-            counts[table] = int(
+            counts[table] = _coerce_schema_count(
                 connection.execute(
                     text(f"SELECT COUNT(*) FROM {_safe_identifier(table)}")
-                ).scalar_one()
+                ).scalar_one(),
+                f"table:{table}",
             )
+        except BootstrapSchemaSnapshotError:
+            raise
         except Exception:
             counts[table] = "UNAVAILABLE"
     return counts
@@ -119,10 +140,11 @@ def _schema_snapshot(database: Database) -> dict[str, object]:
         current = None
         version_row_count: int | None = None
         if "alembic_version" in tables:
-            version_row_count = int(
+            version_row_count = _coerce_schema_count(
                 connection.execute(
                     text("SELECT COUNT(*) FROM alembic_version")
-                ).scalar_one()
+                ).scalar_one(),
+                "alembic_version",
             )
             current = connection.execute(
                 text("SELECT version_num FROM alembic_version")
@@ -464,9 +486,17 @@ def live() -> int:
                 "schema_authority": "ALEMBIC",
                 "safe_database_host": _safe_host(raw_url),
                 "audit_mode": "READ_ONLY_SCHEMA_FORENSIC",
-                "failure_classification": "TURSO_SCHEMA_FORENSIC_AUDIT_FAILURE",
+                "failure_classification": (
+                    "SCHEMA_SNAPSHOT_PARSE_FAILURE"
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else "TURSO_SCHEMA_FORENSIC_AUDIT_FAILURE"
+                ),
                 "error_type": type(exc).__name__,
-                "safe_error_message": type(exc).__name__,
+                "safe_error_message": (
+                    str(exc)
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else type(exc).__name__
+                ),
                 "secret_exposure": False,
                 "frozen_core": "UNCHANGED",
                 "final_status": "ERROR_SAFE_REDACTED",
@@ -614,8 +644,16 @@ def bootstrap() -> int:
         result.update(
             {
                 "failure_stage": failure_stage,
-                "failure_classification": type(exc).__name__,
-                "safe_error_message": type(exc).__name__,
+                "failure_classification": (
+                    "SCHEMA_SNAPSHOT_PARSE_FAILURE"
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else type(exc).__name__
+                ),
+                "safe_error_message": (
+                    str(exc)
+                    if isinstance(exc, BootstrapSchemaSnapshotError)
+                    else type(exc).__name__
+                ),
                 "final_status": "ERROR_SAFE_REDACTED",
             }
         )
