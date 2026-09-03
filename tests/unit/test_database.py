@@ -142,7 +142,7 @@ def test_turso_init_skips_local_sqlite_pragmas_and_keeps_schema_bootstrap(
     Database.from_url("sqlite+libsql://example.turso.io?secure=true").init()
 
     assert not any(statement.startswith("PRAGMA ") for statement in statements)
-    assert any("CREATE VIRTUAL TABLE" in statement for statement in statements)
+    assert statements == []
 
 
 def test_real_libsql_dialect_init_sql_contract_without_network(
@@ -175,4 +175,4 @@ def test_real_libsql_dialect_init_sql_contract_without_network(
     database.dispose()
 
     assert not any(statement.startswith("PRAGMA ") for statement in statements)
-    assert sum("CREATE VIRTUAL TABLE" in statement for statement in statements) == 1
+    assert statements == []

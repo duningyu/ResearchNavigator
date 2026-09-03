@@ -6,6 +6,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from research_navigator.data_plane.database import database_dialect
 from research_navigator.models import Base
 
 config = context.config
@@ -28,10 +29,20 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    sqlalchemy_url = config.get_main_option("sqlalchemy.url")
+    if not sqlalchemy_url:
+        raise RuntimeError("sqlalchemy.url is required for migrations")
+    connect_args: dict[str, object] = {}
+    if database_dialect(sqlalchemy_url).name == "turso":
+        token = os.getenv("TURSO_AUTH_TOKEN")
+        if not token:
+            raise RuntimeError("TURSO_AUTH_TOKEN is required for Turso migrations")
+        connect_args["auth_token"] = token
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        connect_args=connect_args,
     )
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)

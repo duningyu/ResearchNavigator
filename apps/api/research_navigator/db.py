@@ -54,11 +54,16 @@ class Database:
         )
 
     def init(self) -> None:
+        # Alembic is the schema authority for the remote Turso database.  The
+        # local SQLite bootstrap remains intentionally unchanged, including
+        # its file/journal and FTS setup.
+        if self.backend_name != "sqlite":
+            return
+
         Base.metadata.create_all(self.engine)
         with self.engine.begin() as connection:
-            if self.backend_name == "sqlite":
-                connection.execute(text("PRAGMA foreign_keys=ON"))
-                connection.execute(text("PRAGMA journal_mode=WAL"))
+            connection.execute(text("PRAGMA foreign_keys=ON"))
+            connection.execute(text("PRAGMA journal_mode=WAL"))
             connection.execute(
                 text(
                     "CREATE VIRTUAL TABLE IF NOT EXISTS paper_chunks_fts "
