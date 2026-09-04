@@ -15,12 +15,13 @@ import re
 import sys
 import tempfile
 import uuid
+from collections.abc import Iterable, Mapping, Sized
 from pathlib import Path
 from typing import cast
 from urllib.parse import urlsplit
 
 from alembic.config import Config
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import create_engine, event, inspect, text
 
 from alembic import command
 from research_navigator.config import normalize_turso_database_url
@@ -131,6 +132,71 @@ def _safe_identifier(value: str) -> str:
     return '"' + value.replace('"', '""') + '"'
 
 
+_SAFE_SCHEMA_MAPPING_KEYS = {"name", "type", "tbl_name", "sql"}
+
+
+def _diagnose_schema_objects(schema_objects: object) -> dict[str, object]:
+    """Capture schema-row shape without exposing schema values.
+
+    This helper deliberately does not perform the production ``dict(row)``
+    conversion.  It is used immediately before that conversion so a later
+    exception can carry safe structural evidence without changing its type or
+    control flow.
+    """
+    diagnostic: dict[str, object] = {
+        "stage": "SCHEMA_OBJECTS_BEFORE_DICT_CONVERSION",
+        "result_type": type(schema_objects).__name__,
+        "row_count_observed": None,
+        "first_row_type": None,
+        "first_row_length": None,
+        "first_row_has_mapping": False,
+        "first_row_mapping_keys": [],
+        "first_row_mapping_key_count": None,
+        "first_row_element_type_names": [],
+        "dict_row_attempted": False,
+        "dict_row_success": None,
+        "dict_row_exception_type": None,
+        "mapping_conversion_attempted": False,
+        "mapping_conversion_success": None,
+        "mapping_conversion_exception_type": None,
+        "mapping_diagnostic_exception_type": None,
+    }
+    try:
+        rows = cast(list[object], schema_objects)
+        diagnostic["row_count_observed"] = len(rows)
+        if not rows:
+            return diagnostic
+        first_row = rows[0]
+        diagnostic["first_row_type"] = type(first_row).__name__
+        try:
+            diagnostic["first_row_length"] = len(cast(Sized, first_row))
+        except Exception as exc:
+            diagnostic.setdefault("diagnostic_exception_type", type(exc).__name__)
+        try:
+            diagnostic["first_row_has_mapping"] = hasattr(first_row, "_mapping")
+            mapping: object = getattr(first_row, "_mapping", first_row)
+            if isinstance(mapping, Mapping):
+                keys = [str(key) for key in mapping]
+                diagnostic["first_row_mapping_key_count"] = len(keys)
+                if set(keys) <= _SAFE_SCHEMA_MAPPING_KEYS:
+                    diagnostic["first_row_mapping_keys"] = sorted(keys)
+                else:
+                    diagnostic["first_row_mapping_keys"] = []
+        except Exception as exc:
+            diagnostic["mapping_diagnostic_exception_type"] = type(exc).__name__
+            diagnostic.setdefault("diagnostic_exception_type", type(exc).__name__)
+        try:
+            diagnostic["first_row_element_type_names"] = [
+                type(element).__name__
+                for element in cast(Iterable[object], first_row)
+            ]
+        except Exception as exc:
+            diagnostic.setdefault("diagnostic_exception_type", type(exc).__name__)
+    except Exception as exc:
+        diagnostic.setdefault("diagnostic_exception_type", type(exc).__name__)
+    return diagnostic
+
+
 def _row_counts(connection, tables: set[str]) -> dict[str, int | str]:
     counts: dict[str, int | str] = {}
     for table in sorted(tables):
@@ -148,6 +214,11 @@ def _row_counts(connection, tables: set[str]) -> dict[str, int | str]:
         except Exception:
             counts[table] = "UNAVAILABLE"
     return counts
+
+
+def _safe_readonly_diagnostic(exc: BaseException) -> dict[str, object] | None:
+    value = getattr(exc, "_rn223_readonly_diagnostic", None)
+    return value if isinstance(value, dict) else None
 
 
 def _schema_snapshot(database: Database) -> dict[str, object]:
@@ -209,12 +280,23 @@ def _schema_snapshot(database: Database) -> dict[str, object]:
     reference_indexes = _reference_index_names()
     expected_indexes = _expected_indexes()
     fts_ok = "paper_chunks_fts" in fts_names
+    readonly_diagnostic = _diagnose_schema_objects(schema_objects)
+    readonly_diagnostic["dict_row_attempted"] = True
+    try:
+        materialized_schema_objects = [dict(row) for row in schema_objects]
+    except Exception as exc:
+        readonly_diagnostic["dict_row_success"] = False
+        readonly_diagnostic["dict_row_exception_type"] = type(exc).__name__
+        exc.__dict__["_rn223_readonly_diagnostic"] = readonly_diagnostic
+        raise
+    readonly_diagnostic["dict_row_success"] = True
     return {
         "current_tables": sorted(tables),
         "current_table_count": len(tables),
         "row_counts": row_counts,
         "schema_structure": structure,
-        "schema_objects": [dict(row) for row in schema_objects],
+        "schema_objects": materialized_schema_objects,
+        "readonly_diagnostic": readonly_diagnostic,
         "alembic_version_table_present": "alembic_version" in tables,
         "alembic_version_row_count": version_row_count,
         "alembic_current_revision": current,
@@ -475,9 +557,65 @@ def live() -> int:
     if not raw_url or not token:
         print("TURSO_SCHEMA_BOOTSTRAP=ERROR_SAFE_REDACTED")
         return 2
+    source_commit = os.environ.get("RN_SOURCE_COMMIT", "unknown")
+    target_database = "researchnavigator-rn223"
+    target_host = _safe_host(raw_url).lower()
+    target_host_match = target_host.startswith(f"{target_database}-")
+    try:
+        target_database_identity = _bootstrap_target_identity(raw_url)
+    except BootstrapTargetIdentityError:
+        _write_receipt(
+            {
+                "audit_mode": "READ_ONLY_SCHEMA_FORENSIC",
+                "source_commit": source_commit,
+                "target_database": target_database,
+                "target_database_identity": "FAIL",
+                "target_host_match": target_host_match,
+                "provider_reads": 0,
+                "provider_writes": 0,
+                "migration_writes_attempted": False,
+                "secret_exposure": False,
+                "frozen_core": "UNCHANGED",
+                "failure_classification": "TARGET_IDENTITY_FAILURE",
+                "error_type": "BootstrapTargetIdentityError",
+                "safe_error_message": "TURSO_BOOTSTRAP_TARGET_IDENTITY_UNRESOLVED",
+                "final_status": "ERROR_SAFE_REDACTED",
+            }
+        )
+        print("TURSO_SCHEMA_FORENSIC_AUDIT=ERROR_SAFE_REDACTED")
+        return 1
     normalized = normalize_turso_database_url(raw_url)
     database = Database.from_url(normalized)
-    source_commit = os.environ.get("RN_SOURCE_COMMIT", "unknown")
+    provider_query_ids: list[str] = []
+
+    def count_read(
+        _conn: object,
+        _cursor: object,
+        statement: object,
+        _parameters: object,
+        _context: object,
+        _executemany: bool,
+    ) -> None:
+        normalized_statement = str(statement).lstrip().upper()
+        if normalized_statement.startswith(("SELECT", "WITH")):
+            if "COUNT(*) FROM ALEMBIC_VERSION" in normalized_statement:
+                query_id = "ALEMBIC_VERSION_COUNT"
+            elif "VERSION_NUM FROM ALEMBIC_VERSION" in normalized_statement:
+                query_id = "ALEMBIC_VERSION_REVISION"
+            elif (
+                "SQLITE_SCHEMA" in normalized_statement
+                and "PAPER_CHUNKS_FTS" in normalized_statement
+            ):
+                query_id = "FTS_OBJECTS"
+            elif "SQLITE_SCHEMA" in normalized_statement:
+                query_id = "SCHEMA_OBJECTS"
+            elif "COUNT(*)" in normalized_statement:
+                query_id = "TABLE_ROW_COUNT"
+            else:
+                query_id = "METADATA_READ"
+            provider_query_ids.append(query_id)
+
+    event.listen(database.engine, "before_cursor_execute", count_read)
     try:
         before = _schema_snapshot(database)
         head = _code_head()
@@ -510,6 +648,12 @@ def live() -> int:
             "source_commit": source_commit,
             "schema_authority": "ALEMBIC",
             "safe_database_host": _safe_host(raw_url),
+            "target_database": target_database,
+            "target_database_identity": target_database_identity,
+            "target_host_match": target_host_match,
+            "provider_reads": len(provider_query_ids),
+            "provider_read_query_ids": provider_query_ids,
+            "provider_writes": 0,
             "alembic_code_head": head,
             "alembic_version_table_present": before["alembic_version_table_present"],
             "alembic_version_row_count": before["alembic_version_row_count"],
@@ -563,6 +707,13 @@ def live() -> int:
                 "source_commit": source_commit,
                 "schema_authority": "ALEMBIC",
                 "safe_database_host": _safe_host(raw_url),
+                "target_database": target_database,
+                "target_database_identity": target_database_identity,
+                "target_host_match": target_host_match,
+                "provider_reads": len(provider_query_ids),
+                "provider_read_query_ids": provider_query_ids,
+                "provider_writes": 0,
+                "readonly_diagnostic": _safe_readonly_diagnostic(exc),
                 "audit_mode": "READ_ONLY_SCHEMA_FORENSIC",
                 "failure_classification": (
                     "SCHEMA_SNAPSHOT_PARSE_FAILURE"
@@ -583,6 +734,7 @@ def live() -> int:
         print("TURSO_SCHEMA_FORENSIC_AUDIT=ERROR_SAFE_REDACTED")
         return 1
     finally:
+        event.remove(database.engine, "before_cursor_execute", count_read)
         database.dispose()
 
 

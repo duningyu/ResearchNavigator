@@ -80,6 +80,64 @@ def test_schema_count_rejects_invalid_metadata_explicitly(value) -> None:
         bootstrap._coerce_schema_count(value, "synthetic")
 
 
+def test_schema_object_diagnostic_captures_mapping_like_row() -> None:
+    diagnostic = bootstrap._diagnose_schema_objects(
+        [{"name": "papers", "type": "table", "tbl_name": "papers", "sql": None}]
+    )
+    assert diagnostic["result_type"] == "list"
+    assert diagnostic["row_count_observed"] == 1
+    assert diagnostic["first_row_type"] == "dict"
+    assert diagnostic["first_row_length"] == 4
+    assert diagnostic["first_row_has_mapping"] is False
+    assert diagnostic["first_row_mapping_keys"] == ["name", "sql", "tbl_name", "type"]
+    assert diagnostic["dict_row_attempted"] is False
+
+
+@pytest.mark.parametrize("row", [("papers", "table"), ["papers", "table"]])
+def test_schema_object_diagnostic_captures_sequence_shape(row) -> None:
+    diagnostic = bootstrap._diagnose_schema_objects([row])
+    assert diagnostic["first_row_type"] in {"tuple", "list"}
+    assert diagnostic["first_row_length"] == 2
+    assert diagnostic["first_row_has_mapping"] is False
+    assert diagnostic["first_row_element_type_names"] == ["str", "str"]
+
+
+def test_schema_object_diagnostic_captures_dict_value_error_shape() -> None:
+    diagnostic = bootstrap._diagnose_schema_objects([("a", "b", "c", "d")])
+    assert diagnostic["first_row_length"] == 4
+    assert diagnostic["first_row_element_type_names"] == ["str"] * 4
+
+    with pytest.raises(ValueError):
+        dict(("a", "b", "c", "d"))
+
+
+def test_schema_object_diagnostic_captures_mapping_attribute() -> None:
+    class RowWithMapping:
+        _mapping = {"name": "papers", "type": "table"}
+
+        def __len__(self):
+            return 2
+
+        def __iter__(self):
+            return iter(("papers", "table"))
+
+    diagnostic = bootstrap._diagnose_schema_objects([RowWithMapping()])
+    assert diagnostic["first_row_has_mapping"] is True
+    assert diagnostic["first_row_mapping_keys"] == ["name", "type"]
+
+
+def test_schema_object_diagnostic_is_fail_safe_for_diagnostic_fields() -> None:
+    class BrokenRow:
+        @property
+        def _mapping(self):
+            raise RuntimeError("synthetic diagnostic failure")
+
+    diagnostic = bootstrap._diagnose_schema_objects([BrokenRow()])
+    assert diagnostic["first_row_type"] == "BrokenRow"
+    assert diagnostic["first_row_has_mapping"] is False
+    assert diagnostic["mapping_diagnostic_exception_type"] == "RuntimeError"
+
+
 @pytest.mark.parametrize("table", ["sqlite_sequence", "alembic_version", "paper_chunks_fts_data"])
 def test_empty_guard_ignores_non_business_schema_objects(table) -> None:
     assert bootstrap._assert_bootstrap_target_empty({"current_tables": [table]}) == "PASS"
