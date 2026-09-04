@@ -23,7 +23,7 @@ from pathlib import Path
 
 from reportlab.pdfgen.canvas import Canvas  # type: ignore[import-untyped]
 from services.worker.main import run_once
-from sqlalchemy import delete, or_, text
+from sqlalchemy import delete, or_, select, text
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
@@ -374,14 +374,25 @@ def _delete_fixture_rows(
 def _assert_fixture_rows_absent(
     session: Session, *, user_id: int, paper_id: int, document_id: int, job_id: int
 ) -> None:
+    # Cleanup uses Core bulk DELETE while Database sessions deliberately keep
+    # expire_on_commit=False.  Verify against the database, not a stale ORM
+    # identity-map entry, and cover every document owned by these synthetic
+    # roots rather than only the initially returned document ID.
+    session.expire_all()
     for model, value in (
         (User, user_id),
         (Paper, paper_id),
-        (PaperDocument, document_id),
         (Job, job_id),
     ):
         if session.get(model, value) is not None:
             raise RuntimeError(f"Fixture cleanup left {model.__tablename__} row")
+    document = session.execute(
+        select(PaperDocument.id)
+        .where(or_(PaperDocument.paper_id == paper_id, PaperDocument.user_id == user_id))
+        .limit(1)
+    ).scalar_one_or_none()
+    if document is not None:
+        raise RuntimeError("Fixture cleanup left paper_documents row")
 
 
 def reload_and_cleanup(args: argparse.Namespace) -> int:

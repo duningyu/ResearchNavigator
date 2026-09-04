@@ -123,12 +123,18 @@ def test_exact_cleanup_removes_fixture_dependents_but_preserves_unrelated_rows()
             mime_type="application/pdf", sha256="a" * 64, size_bytes=1, page_count=1,
             acquisition_run_id="cleanup-execution",
         )
+        fixture_document_derived = PaperDocument(
+            user_id=fixture_user.id, paper_id=fixture_paper.id, source_type="derived",
+            evidence_level="primary", original_filename="fixture-derived.pdf",
+            stored_path="fixture-derived", mime_type="application/pdf", sha256="d" * 64,
+            size_bytes=1, page_count=1, acquisition_run_id="cleanup-execution",
+        )
         other_document = PaperDocument(
             user_id=other_user.id, paper_id=other_paper.id, source_type="open_access",
             evidence_level="primary", original_filename="other.pdf", stored_path="other",
             mime_type="application/pdf", sha256="b" * 64, size_bytes=1, page_count=1,
         )
-        session.add_all([fixture_document, other_document])
+        session.add_all([fixture_document, fixture_document_derived, other_document])
         session.flush()
         fixture_job = Job(
             user_id=fixture_user.id, job_type="evidence_workflow_v1", status="succeeded"
@@ -195,3 +201,76 @@ def test_exact_cleanup_removes_fixture_dependents_but_preserves_unrelated_rows()
         assert session.get(PaperDocument, other_document_id) is not None
         assert session.get(Job, other_job_id) is not None
         assert session.query(JobEvent).filter(JobEvent.job_id == other_job_id).count() == 1
+
+
+def test_cleanup_assertion_uses_database_state_after_bulk_delete() -> None:
+    from run_evidence_workflow_parity import _assert_fixture_rows_absent, _delete_fixture_rows
+
+    from research_navigator.models import Base, Paper, PaperDocument, User
+
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE VIRTUAL TABLE paper_chunks_fts USING fts5("
+                "text, document_id UNINDEXED, chunk_id UNINDEXED)"
+            )
+        )
+    with Session(engine, expire_on_commit=False) as session:
+        user = User(
+            email="rn223-parity-stale-state@example.invalid",
+            password_hash="x",
+            display_name="fixture",
+        )
+        paper = Paper(title="fixture", normalized_title="fixture", doi="10.9999/stale")
+        session.add_all([user, paper])
+        session.flush()
+        document = PaperDocument(
+            user_id=user.id,
+            paper_id=paper.id,
+            source_type="open_access",
+            evidence_level="primary",
+            original_filename="fixture.pdf",
+            stored_path="fixture",
+            mime_type="application/pdf",
+            sha256="a" * 64,
+            size_bytes=1,
+            page_count=1,
+            acquisition_run_id="stale-state-execution",
+        )
+        session.add(document)
+        session.flush()
+        user_id, paper_id, document_id = user.id, paper.id, document.id
+        session.commit()
+
+        # Mirror reload_and_cleanup(): the identity map contains the row before
+        # Core bulk DELETE and expire_on_commit=False preserves that object.
+        assert session.get(PaperDocument, document_id) is not None
+        _delete_fixture_rows(
+            session,
+            user_id=user_id,
+            paper_id=paper_id,
+            document_id=document_id,
+            job_id=999,
+        )
+        session.commit()
+
+        # A recovery retry may repeat cleanup after the first attempt already
+        # removed the fixture. The exact cleanup operation must be idempotent.
+        _delete_fixture_rows(
+            session,
+            user_id=user_id,
+            paper_id=paper_id,
+            document_id=document_id,
+            job_id=999,
+        )
+        session.commit()
+
+        _assert_fixture_rows_absent(
+            session,
+            user_id=user_id,
+            paper_id=paper_id,
+            document_id=document_id,
+            job_id=999,
+        )
