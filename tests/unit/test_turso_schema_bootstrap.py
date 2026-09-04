@@ -145,3 +145,36 @@ def test_required_indexes_follow_migration_reference(monkeypatch) -> None:
         raising=False,
     )
     assert bootstrap._expected_indexes() == {"ix_migration_index"}
+
+
+def test_schema_diff_summary_is_identifier_only(monkeypatch, tmp_path) -> None:
+    reference_path = tmp_path / "head.json"
+    empty_structure = {
+        "columns": [],
+        "primary_key": {},
+        "foreign_keys": [],
+        "unique_constraints": [],
+        "indexes": [],
+    }
+    reference = {
+        "schema_structure": {"papers": empty_structure, "users": empty_structure},
+        "schema_objects": [
+            {"name": "ix_users_email", "type": "index", "tbl_name": "users"}
+        ],
+        "fts_objects": ["paper_chunks_fts"],
+    }
+    snapshot = {
+        "schema_structure": {"papers": empty_structure, "jobs": empty_structure},
+        "schema_objects": [
+            {"name": "ix_jobs_status", "type": "index", "tbl_name": "jobs"}
+        ],
+        "fts_objects": [],
+    }
+    monkeypatch.setattr(bootstrap, "_reference_path", lambda _revision: reference_path)
+    reference_path.write_text(__import__("json").dumps(reference), encoding="utf-8")
+    summary = bootstrap._schema_diff_summary(snapshot, "head")
+    assert summary["missing_tables"] == ["users"]
+    assert summary["extra_tables"] == ["jobs"]
+    assert summary["missing_objects"] == [("index", "ix_users_email")]
+    assert summary["extra_objects"] == [("index", "ix_jobs_status")]
+    assert summary["fts_match"] is False

@@ -350,6 +350,46 @@ def _compare_reference(snapshot: dict[str, object], revision: str) -> str:
     )
 
 
+def _schema_diff_summary(
+    snapshot: dict[str, object], revision: str
+) -> dict[str, object]:
+    """Return identifier-only schema differences for safe verification telemetry."""
+    path = _reference_path(revision)
+    if not path.is_file():
+        return {"reference_available": False}
+    reference = json.loads(path.read_text(encoding="utf-8"))
+    actual = _schema_fingerprint(snapshot)
+    expected = _schema_fingerprint(reference)
+    actual_tables = set(cast(list[str], actual["tables"]))
+    expected_tables = set(cast(list[str], expected["tables"]))
+    actual_structure = cast(dict[str, object], actual["structure"])
+    expected_structure = cast(dict[str, object], expected["structure"])
+    actual_objects = {
+        (str(item.get("type")), str(item.get("name")))
+        for item in cast(list[dict[str, object]], actual["objects"])
+        if isinstance(item, dict)
+    }
+    expected_objects = {
+        (str(item.get("type")), str(item.get("name")))
+        for item in cast(list[dict[str, object]], expected["objects"])
+        if isinstance(item, dict)
+    }
+    differing_tables = sorted(
+        table
+        for table in actual_tables & expected_tables
+        if actual_structure[table] != expected_structure[table]
+    )
+    return {
+        "reference_available": True,
+        "missing_tables": sorted(expected_tables - actual_tables),
+        "extra_tables": sorted(actual_tables - expected_tables),
+        "differing_tables": differing_tables,
+        "missing_objects": sorted(expected_objects - actual_objects),
+        "extra_objects": sorted(actual_objects - expected_objects),
+        "fts_match": actual["fts"] == expected["fts"],
+    }
+
+
 def _migration_history_classification() -> dict[str, str]:
     classifications: dict[str, str] = {}
     dml = re.compile(r"\b(?:insert|update|delete)\b", re.IGNORECASE)
@@ -619,6 +659,7 @@ def bootstrap() -> int:
                 "alembic_version_row_count": after["alembic_version_row_count"],
                 "alembic_current_revision": after["alembic_current_revision"],
                 "schema_matches_head": _compare_reference(after, "head"),
+                "schema_diff_summary": _schema_diff_summary(after, "head"),
                 "required_tables": after["required_tables"],
                 "required_indexes": after["required_indexes"],
                 "fts_structures": after["fts"],
@@ -747,6 +788,7 @@ def verify_bootstrap() -> int:
                     "alembic_current_revision"
                 ],
                 "schema_matches_head": schema_matches_head,
+                "schema_diff_summary": _schema_diff_summary(snapshot, "head"),
                 "required_tables": snapshot["required_tables"],
                 "required_indexes": snapshot["required_indexes"],
                 "fts_structures": snapshot["fts"],
