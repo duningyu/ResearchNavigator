@@ -195,6 +195,72 @@ def test_schema_fingerprint_ignores_foreign_key_order() -> None:
     assert bootstrap._schema_fingerprint(left) == bootstrap._schema_fingerprint(right)
 
 
+def _typed_schema_snapshot(column_type: str, *, nullable: bool = False) -> dict:
+    return {
+        "schema_structure": {
+            "papers": {
+                "columns": [
+                    {
+                        "name": "title",
+                        "type": column_type,
+                        "nullable": nullable,
+                        "primary_key": 0,
+                    }
+                ],
+                "primary_key": {"constrained_columns": []},
+                "foreign_keys": [],
+                "unique_constraints": [],
+                "indexes": [],
+            }
+        },
+        "schema_objects": [],
+        "fts_objects": [],
+    }
+
+
+@pytest.mark.parametrize(
+    "left_type,right_type", [("VARCHAR(64)", "TEXT(64)"), ("VARCHAR(500)", "TEXT(500)")]
+)
+def test_schema_fingerprint_equates_same_length_text_reflections(
+    left_type: str, right_type: str
+) -> None:
+    left = bootstrap._schema_fingerprint(_typed_schema_snapshot(left_type))
+    right = bootstrap._schema_fingerprint(_typed_schema_snapshot(right_type))
+    assert left == right
+
+
+@pytest.mark.parametrize(
+    "left_type,right_type",
+    [("VARCHAR(64)", "TEXT(80)"), ("TEXT", "TEXT(64)"), ("VARCHAR(64)", "VARCHAR(80)")],
+)
+def test_schema_fingerprint_rejects_text_type_drift(
+    left_type: str, right_type: str
+) -> None:
+    left = bootstrap._schema_fingerprint(_typed_schema_snapshot(left_type))
+    right = bootstrap._schema_fingerprint(_typed_schema_snapshot(right_type))
+    assert left != right
+
+
+def test_schema_fingerprint_still_rejects_structural_drift() -> None:
+    base = _typed_schema_snapshot("VARCHAR(64)")
+    nullable = _typed_schema_snapshot("TEXT(64)", nullable=True)
+    renamed = _typed_schema_snapshot("TEXT(64)")
+    renamed["schema_structure"]["papers"]["columns"][0]["name"] = "abstract"
+    missing = _typed_schema_snapshot("TEXT(64)")
+    missing["schema_structure"]["papers"]["columns"] = []
+    foreign_key = _typed_schema_snapshot("TEXT(64)")
+    foreign_key["schema_structure"]["papers"]["foreign_keys"] = [
+        {"referred_table": "users", "constrained_columns": ["user_id"]}
+    ]
+    indexed = _typed_schema_snapshot("TEXT(64)")
+    indexed["schema_structure"]["papers"]["indexes"] = [
+        {"name": "ix_title", "column_names": ["title"]}
+    ]
+    expected = bootstrap._schema_fingerprint(base)
+    for drifted in (nullable, renamed, missing, foreign_key, indexed):
+        assert bootstrap._schema_fingerprint(drifted) != expected
+
+
 def test_required_indexes_follow_migration_reference(monkeypatch) -> None:
     monkeypatch.setattr(
         bootstrap,

@@ -359,6 +359,14 @@ def _canonical_sql(value: object) -> str:
     return re.sub(r"\s+", " ", str(value or "").strip()).lower()
 
 
+def _canonical_sqlite_type(value: object) -> str:
+    normalized = str(value or "").strip().upper()
+    match = re.fullmatch(r"(?:VARCHAR|TEXT)\s*\(\s*(\d+)\s*\)", normalized)
+    if match:
+        return f"TEXT_AFFINITY({match.group(1)})"
+    return _canonical_sql(value)
+
+
 def _ignored_schema_artifact(name: str) -> bool:
     # sqlite_sequence and FTS5 shadow tables are implementation artifacts.  The
     # explicit paper_chunks_fts virtual table itself remains part of equality.
@@ -378,7 +386,7 @@ def _schema_fingerprint(snapshot: dict[str, object]) -> dict[str, object]:
                 "columns": [
                     {
                         "name": column.get("name"),
-                        "type": _canonical_sql(column.get("type")),
+                        "type": _canonical_sqlite_type(column.get("type")),
                         "nullable": column.get("nullable"),
                         "primary_key": column.get("primary_key"),
                     }
