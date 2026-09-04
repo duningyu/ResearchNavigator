@@ -5,6 +5,8 @@ param(
   [int]$RecoverJobId,
   [int]$RecoverDocumentId,
   [int]$RecoverUserId,
+  [int]$RecoverPaperId,
+  [string]$RecoverStoredKey,
   [string]$RecoverFixtureSha256
 )
 
@@ -78,6 +80,8 @@ if ($RecoverThenRun -and (
   $RecoverJobId -le 0 -or
   $RecoverDocumentId -le 0 -or
   $RecoverUserId -le 0 -or
+  $RecoverPaperId -le 0 -or
+  [string]::IsNullOrWhiteSpace($RecoverStoredKey) -or
   [string]::IsNullOrWhiteSpace($RecoverFixtureSha256)
 )) { throw 'RecoverThenRun requires complete fixture identity arguments.' }
 
@@ -112,7 +116,7 @@ try {
     $pythonInImage, $runner
   )
   if ($RecoverThenRun) {
-    & docker @dockerArgs 'recover' '--execution-id' $RecoverExecutionId '--job-id' $RecoverJobId '--document-id' $RecoverDocumentId '--user-id' $RecoverUserId '--fixture-sha256' $RecoverFixtureSha256
+    & docker @dockerArgs 'recover' '--execution-id' $RecoverExecutionId '--job-id' $RecoverJobId '--document-id' $RecoverDocumentId '--user-id' $RecoverUserId '--paper-id' $RecoverPaperId '--fixture-sha256' $RecoverFixtureSha256 '--stored-key' $RecoverStoredKey
     if ($LASTEXITCODE -ne 0) { throw 'Orphan fixture recovery failed; authoritative parity was not started.' }
   }
   $prepareOutput = [IO.Path]::GetTempFileName()

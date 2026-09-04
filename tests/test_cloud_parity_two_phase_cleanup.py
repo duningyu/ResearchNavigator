@@ -274,3 +274,117 @@ def test_cleanup_assertion_uses_database_state_after_bulk_delete() -> None:
             document_id=document_id,
             job_id=999,
         )
+
+
+@pytest.mark.parametrize(
+    ("remove_job", "remove_document"),
+    [(False, False), (True, False), (False, True), (True, True)],
+)
+def test_recovery_converges_from_partial_root_state(
+    remove_job: bool, remove_document: bool
+) -> None:
+    from run_evidence_workflow_parity import (
+        _delete_fixture_rows,
+        _recovery_owned_rows,
+    )
+
+    from research_navigator.models import Base, Job, Paper, PaperDocument, User
+
+    execution_id = "recovery-partial-state"
+    fixture_sha = "a" * 64
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE VIRTUAL TABLE paper_chunks_fts USING fts5("
+                "text, document_id UNINDEXED, chunk_id UNINDEXED)"
+            )
+        )
+    with Session(engine) as session:
+        user = User(
+            email=f"rn223-parity-{execution_id}@example.invalid",
+            password_hash="x",
+            display_name="fixture",
+        )
+        paper = Paper(
+            title="fixture", normalized_title="fixture", doi=f"10.9999/rn223-parity-{execution_id}"
+        )
+        session.add_all([user, paper])
+        session.flush()
+        document = PaperDocument(
+            user_id=user.id,
+            paper_id=paper.id,
+            source_type="open_access",
+            evidence_level="primary",
+            original_filename="fixture.pdf",
+            stored_path=f"{user.id}/{paper.id}/oa/{fixture_sha}.pdf",
+            mime_type="application/pdf",
+            sha256=fixture_sha,
+            size_bytes=1,
+            page_count=1,
+            acquisition_run_id=execution_id,
+        )
+        job = Job(user_id=user.id, job_type="evidence_workflow_v1", status="succeeded")
+        session.add_all([document, job])
+        session.flush()
+        user_id, paper_id, document_id, job_id = user.id, paper.id, document.id, job.id
+        if remove_job:
+            session.delete(job)
+        if remove_document:
+            session.delete(document)
+        session.flush()
+
+        resolved = _recovery_owned_rows(
+            session,
+            execution_id=execution_id,
+            fixture_sha256=fixture_sha,
+            requested_user_id=user_id,
+            requested_paper_id=paper_id,
+            requested_job_id=job_id,
+            requested_document_id=document_id,
+        )
+        resolved_user, resolved_paper, document_ids, job_ids, _ = resolved
+        _delete_fixture_rows(
+            session,
+            user_id=resolved_user,
+            paper_id=resolved_paper,
+            # Keep verified primary-key anchors even after their rows were
+            # removed, so remaining dependent rows are still swept exactly.
+            document_id=document_id,
+            job_id=job_id,
+            document_ids=document_ids,
+        )
+        session.commit()
+        assert session.get(User, user_id) is None
+        assert session.get(Paper, paper_id) is None
+        assert session.get(PaperDocument, document_id) is None
+        assert session.get(Job, job_id) is None
+
+
+def test_normalized_recovery_key_is_exact_and_fixture_scoped() -> None:
+    from run_evidence_workflow_parity import (
+        FixtureOwnershipError,
+        validate_recovery_stored_key,
+    )
+
+    validate_recovery_stored_key(
+        "2/3/oa/" + "a" * 64 + ".pdf",
+        user_id=2,
+        paper_id=3,
+        fixture_sha256="a" * 64,
+    )
+    with pytest.raises(FixtureOwnershipError):
+        validate_recovery_stored_key(
+            "2/3/oa/" + "b" * 64 + ".pdf",
+            user_id=2,
+            paper_id=3,
+            fixture_sha256="a" * 64,
+        )
+
+
+def test_normal_reload_contract_remains_strict() -> None:
+    from run_evidence_workflow_parity import build_phase_plan
+
+    assert build_phase_plan() == ("prepare", "reload")
+    assert build_phase_plan(recovery=True) == ("recover",)

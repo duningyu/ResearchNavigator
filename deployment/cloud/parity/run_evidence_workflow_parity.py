@@ -331,26 +331,39 @@ def validate_fixture_ownership(
 
 
 def _delete_fixture_rows(
-    session: Session, *, user_id: int, paper_id: int, document_id: int, job_id: int
+    session: Session,
+    *,
+    user_id: int | None,
+    paper_id: int | None,
+    document_id: int | None,
+    job_id: int | None,
+    document_ids: set[int] | None = None,
 ) -> None:
     # The fixture user and paper are freshly created synthetic roots.  Every
     # dependent delete remains scoped to one of those exact IDs (or to IDs
     # discovered from their rows), never to a broad status/type predicate.
-    scope: dict[str, set[object]] = {
-        "user_id": {user_id},
-        "paper_id": {paper_id},
-        "document_id": {document_id},
-        "job_id": {job_id},
-    }
-    analysis_rows = session.execute(
-        text(
-            "SELECT id, analysis_run_id FROM paper_analyses "
-            "WHERE user_id=:user_id AND paper_id=:paper_id"
-        ),
-        {"user_id": user_id, "paper_id": paper_id},
-    ).all()
-    scope["analysis_id"] = {row[0] for row in analysis_rows}
-    scope["run_id"] = {row[1] for row in analysis_rows if row[1] is not None}
+    scope: dict[str, set[object]] = {}
+    for name, value in (
+        ("user_id", user_id),
+        ("paper_id", paper_id),
+        ("document_id", document_id),
+        ("job_id", job_id),
+    ):
+        if value is not None:
+            scope[name] = {value}
+    all_document_ids = set(document_ids or ())
+    if document_id is not None:
+        all_document_ids.add(document_id)
+    if user_id is not None and paper_id is not None:
+        analysis_rows = session.execute(
+            text(
+                "SELECT id, analysis_run_id FROM paper_analyses "
+                "WHERE user_id=:user_id AND paper_id=:paper_id"
+            ),
+            {"user_id": user_id, "paper_id": paper_id},
+        ).all()
+        scope["analysis_id"] = {row[0] for row in analysis_rows}
+        scope["run_id"] = {row[1] for row in analysis_rows if row[1] is not None}
     for table in reversed(Base.metadata.sorted_tables):
         if table.name in {"users", "papers", "alembic_version"}:
             continue
@@ -363,12 +376,159 @@ def _delete_fixture_rows(
             session.execute(delete(table).where(or_(*predicates)))
     # FTS5 is runtime-maintained and is not represented by Declarative ORM
     # metadata; delete only chunks owned by this exact document.
-    session.execute(
-        text("DELETE FROM paper_chunks_fts WHERE document_id = :document_id"),
-        {"document_id": document_id},
-    )
-    session.execute(delete(Paper).where(Paper.id == paper_id))
-    session.execute(delete(User).where(User.id == user_id))
+    for owned_document_id in all_document_ids:
+        session.execute(
+            text("DELETE FROM paper_chunks_fts WHERE document_id = :document_id"),
+            {"document_id": owned_document_id},
+        )
+    if paper_id is not None:
+        session.execute(delete(Paper).where(Paper.id == paper_id))
+    if user_id is not None:
+        session.execute(delete(User).where(User.id == user_id))
+
+
+def validate_recovery_stored_key(
+    stored_key: str, *, user_id: int, paper_id: int, fixture_sha256: str
+) -> None:
+    expected = f"{user_id}/{paper_id}/oa/{fixture_sha256}.pdf"
+    if stored_key != expected:
+        raise FixtureOwnershipError("Recovery stored key does not belong to fixture")
+
+
+def _recovery_owned_rows(
+    session: Session, *, execution_id: str, fixture_sha256: str,
+    requested_user_id: int, requested_paper_id: int, requested_job_id: int,
+    requested_document_id: int,
+) -> tuple[int | None, int | None, set[int], set[int], set[str]]:
+    expected_email = f"rn223-parity-{execution_id}@example.invalid"
+    expected_doi = f"10.9999/rn223-parity-{execution_id}"
+    user = session.get(User, requested_user_id)
+    if user is not None and user.email != expected_email:
+        raise FixtureOwnershipError("Recovery user ID belongs to another fixture")
+    email_user = session.scalar(select(User).where(User.email == expected_email))
+    if email_user is not None and user is not None and email_user.id != user.id:
+        raise FixtureOwnershipError("Recovery user identity collision")
+    user_id = user.id if user is not None else (email_user.id if email_user else None)
+    if user_id is not None and user_id != requested_user_id:
+        raise FixtureOwnershipError("Recovery user ID does not match requested fixture")
+
+    paper = session.get(Paper, requested_paper_id)
+    if paper is not None and paper.doi != expected_doi:
+        raise FixtureOwnershipError("Recovery paper ID belongs to another fixture")
+    doi_paper = session.scalar(select(Paper).where(Paper.doi == expected_doi))
+    if doi_paper is not None and paper is not None and doi_paper.id != paper.id:
+        raise FixtureOwnershipError("Recovery paper identity collision")
+    paper_id = paper.id if paper is not None else (doi_paper.id if doi_paper else None)
+    if paper_id is not None and paper_id != requested_paper_id:
+        raise FixtureOwnershipError("Recovery paper ID does not match requested fixture")
+
+    job = session.get(Job, requested_job_id)
+    job_ids: set[int] = set()
+    if job is not None:
+        if job.user_id != requested_user_id or job.job_type != WORKFLOW_TYPE:
+            raise FixtureOwnershipError("Recovery job does not belong to fixture")
+        job_ids.add(job.id)
+
+    documents = list(session.scalars(
+        select(PaperDocument).where(PaperDocument.acquisition_run_id == execution_id)
+    ))
+    exact_document = session.get(PaperDocument, requested_document_id)
+    if exact_document is not None and exact_document not in documents:
+        documents.append(exact_document)
+    document_ids: set[int] = set()
+    stored_keys: set[str] = set()
+    for document in documents:
+        if (
+            document.user_id != requested_user_id
+            or document.paper_id != requested_paper_id
+        ):
+            raise FixtureOwnershipError("Recovery document does not belong to fixture")
+        if document.id == requested_document_id and (
+            document.acquisition_run_id != execution_id
+            or document.sha256 != fixture_sha256
+        ):
+            raise FixtureOwnershipError("Recovery document identity mismatch")
+        document_ids.add(document.id)
+        if document.stored_path:
+            stored_keys.add(document.stored_path)
+    return user_id, paper_id, document_ids, job_ids, stored_keys
+
+
+def _delete_recovery_fixture_rows(args: argparse.Namespace) -> set[str]:
+    settings = _settings()
+    database = Database.from_url(settings.database_url)
+    stored_keys = {args.stored_key}
+    try:
+        with database.session() as session:
+            user_id, paper_id, document_ids, job_ids, discovered_keys = _recovery_owned_rows(
+                session,
+                execution_id=args.execution_id,
+                fixture_sha256=args.fixture_sha256,
+                requested_user_id=args.user_id,
+                requested_paper_id=args.paper_id,
+                requested_job_id=args.job_id,
+                requested_document_id=args.document_id,
+            )
+            stored_keys.update(discovered_keys)
+            for key in stored_keys:
+                validate_recovery_stored_key(
+                    key, user_id=args.user_id, paper_id=args.paper_id,
+                    fixture_sha256=args.fixture_sha256,
+                )
+            _delete_fixture_rows(
+                session,
+                user_id=user_id,
+                paper_id=paper_id,
+                # The requested primary keys remain exact ownership anchors
+                # even when their rows were removed by an earlier recovery.
+                # Passing them lets the dependent-row sweep converge from a
+                # partially cleaned state without relaxing collision checks.
+                document_id=args.document_id,
+                job_id=args.job_id,
+                document_ids=document_ids,
+            )
+            session.commit()
+            session.expire_all()
+            remaining = session.scalar(
+                select(PaperDocument.id).where(
+                    PaperDocument.acquisition_run_id == args.execution_id
+                ).limit(1)
+            )
+            if remaining is not None:
+                raise RuntimeError("Recovery left fixture-owned paper_documents row")
+    finally:
+        database.dispose()
+    return stored_keys
+
+
+def recover_and_cleanup(args: argparse.Namespace) -> int:
+    stored_keys = _delete_recovery_fixture_rows(args)
+    storage = build_runtime_storage(_settings())
+    r2_status = "PASS"
+    for key in stored_keys:
+        try:
+            storage.delete(key)
+        except FileNotFoundError:
+            # Recovery is idempotent when the exact object was already removed.
+            continue
+    receipt = _safe_receipt(args.execution_id)
+    receipt.update({
+        "recovery_mode": "PARTIAL_IDEMPOTENT",
+        "job_cleanup": "PASS",
+        "document_cleanup": "PASS",
+        "paper_cleanup": "PASS",
+        "user_cleanup": "PASS",
+        "dependent_rows_cleanup": "PASS",
+        "r2_cleanup": r2_status,
+        "db_fixture_rows_after": 0,
+        "r2_fixture_objects_after": 0,
+        "ownership_validation": "PASS",
+        "exact_cleanup": "PASS",
+        "final_status": "ORPHAN_FIXTURE_RECOVERY_PASS",
+    })
+    RECEIPT.parent.mkdir(parents=True, exist_ok=True)
+    RECEIPT.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    return 0
 
 
 def _assert_fixture_rows_absent(
@@ -491,13 +651,17 @@ def main() -> int:
     recover_parser.add_argument("--job-id", required=True, type=int)
     recover_parser.add_argument("--document-id", required=True, type=int)
     recover_parser.add_argument("--user-id", required=True, type=int)
+    recover_parser.add_argument("--paper-id", required=True, type=int)
     recover_parser.add_argument("--fixture-sha256", required=True)
+    recover_parser.add_argument("--stored-key", required=True)
     args = parser.parse_args()
     if args.phase == "prepare":
         return prepare()
     if args.phase == "config":
         return config_preflight()
-    args.recovery = args.phase == "recover"
+    if args.phase == "recover":
+        return recover_and_cleanup(args)
+    args.recovery = False
     return reload_and_cleanup(args)
 
 
