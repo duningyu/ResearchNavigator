@@ -60,7 +60,7 @@ try {
   $prepareJson = (& $python $runner prepare | Out-String).Trim()
   if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
   $state = $prepareJson | ConvertFrom-Json
-  & $python (Join-Path $projectRoot 'deployment/cloud/parity/run_evidence_workflow_parity.py') reload --execution-id $state.execution_id --job-id $state.job_id --document-id $state.document_id --fixture-sha256 $state.fixture_sha256
+  & $python (Join-Path $projectRoot 'deployment/cloud/parity/run_evidence_workflow_parity.py') reload --execution-id $state.execution_id --job-id $state.job_id --document-id $state.document_id --user-id $state.user_id --fixture-sha256 $state.fixture_sha256
   exit $LASTEXITCODE
 } finally {
   foreach ($name in @('DATABASE_BACKEND','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT','RN_STORAGE_BACKEND','PYTHONPATH')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }

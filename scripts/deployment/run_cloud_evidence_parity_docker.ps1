@@ -1,5 +1,11 @@
 param(
-  [switch]$PreflightOnly
+  [switch]$PreflightOnly,
+  [switch]$RecoverThenRun,
+  [string]$RecoverExecutionId,
+  [int]$RecoverJobId,
+  [int]$RecoverDocumentId,
+  [int]$RecoverUserId,
+  [string]$RecoverFixtureSha256
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,6 +73,14 @@ if ($PreflightOnly) {
   exit 0
 }
 
+if ($RecoverThenRun -and (
+  [string]::IsNullOrWhiteSpace($RecoverExecutionId) -or
+  $RecoverJobId -le 0 -or
+  $RecoverDocumentId -le 0 -or
+  $RecoverUserId -le 0 -or
+  [string]::IsNullOrWhiteSpace($RecoverFixtureSha256)
+)) { throw 'RecoverThenRun requires complete fixture identity arguments.' }
+
 & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE $dockerImage sh -lc $preflight
 if ($LASTEXITCODE -ne 0) { throw 'Linux Docker parity preflight failed; credentials were not requested.' }
 
@@ -89,9 +103,38 @@ try {
     Set-Item -Path "Env:$($item[0])" -Value ([Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr))
   }
   $runner = '/workspace/deployment/cloud/parity/run_evidence_workflow_parity.py'
-  $live = $preflight + ' && ' + $pythonInImage + ' ' + $runner + ' prepare'
-  & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env DATABASE_BACKEND --env RN_STORAGE_BACKEND --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN --env R2_ACCOUNT_ID --env R2_ACCESS_KEY_ID --env R2_SECRET_ACCESS_KEY --env R2_BUCKET --env R2_ENDPOINT $dockerImage sh -lc $live
-  exit $LASTEXITCODE
+  $dockerArgs = @(
+    'run', '--rm', '--mount', "type=bind,source=$projectRoot,target=/workspace",
+    '--workdir', '/workspace', '--env', 'DATABASE_BACKEND', '--env', 'RN_STORAGE_BACKEND',
+    '--env', 'RN_SOURCE_COMMIT', '--env', 'RN_SOURCE_COMMIT_SOURCE', '--env', 'TURSO_DATABASE_URL',
+    '--env', 'TURSO_AUTH_TOKEN', '--env', 'R2_ACCOUNT_ID', '--env', 'R2_ACCESS_KEY_ID',
+    '--env', 'R2_SECRET_ACCESS_KEY', '--env', 'R2_BUCKET', '--env', 'R2_ENDPOINT', $dockerImage,
+    $pythonInImage, $runner
+  )
+  if ($RecoverThenRun) {
+    & docker @dockerArgs 'recover' '--execution-id' $RecoverExecutionId '--job-id' $RecoverJobId '--document-id' $RecoverDocumentId '--user-id' $RecoverUserId '--fixture-sha256' $RecoverFixtureSha256
+    if ($LASTEXITCODE -ne 0) { throw 'Orphan fixture recovery failed; authoritative parity was not started.' }
+  }
+  $prepareOutput = [IO.Path]::GetTempFileName()
+  try {
+    & docker @dockerArgs 'prepare' 1> $prepareOutput
+    if ($LASTEXITCODE -ne 0) { throw 'Parity process A failed; process B was not started.' }
+    $prepareJson = (Get-Content -LiteralPath $prepareOutput -Raw).Trim()
+    if ([string]::IsNullOrWhiteSpace($prepareJson)) { throw 'Parity process A returned no JSON.' }
+    try { $state = $prepareJson | ConvertFrom-Json } catch { throw 'Parity process A returned invalid JSON.' }
+    foreach ($name in @('execution_id','job_id','document_id','user_id','paper_id','stored_key','fixture_sha256')) {
+      if ($null -eq $state.$name) { throw "Parity prepare JSON missing $name." }
+    }
+  } finally {
+    Remove-Item -LiteralPath $prepareOutput -Force -ErrorAction SilentlyContinue
+  }
+  & docker @dockerArgs 'reload' '--execution-id' $state.execution_id '--job-id' $state.job_id '--document-id' $state.document_id '--user-id' $state.user_id '--fixture-sha256' $state.fixture_sha256
+  if ($LASTEXITCODE -ne 0) { throw 'Parity process B failed; final PASS was not established.' }
+  $receiptPath = Join-Path $projectRoot 'deployment/cloud/runtime_receipts/RN223_R2_TURSO_EVIDENCE_WORKFLOW_LIVE_PARITY_RECEIPT.json'
+  if (-not (Test-Path -LiteralPath $receiptPath -PathType Leaf)) { throw 'Final parity receipt is missing.' }
+  $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+  if ($receipt.final_status -ne 'PASS') { throw 'Final parity receipt did not report PASS.' }
+  exit 0
 }
 finally {
   foreach ($name in @('DATABASE_BACKEND','RN_STORAGE_BACKEND','RN_SOURCE_COMMIT','RN_SOURCE_COMMIT_SOURCE','TURSO_DATABASE_URL','TURSO_AUTH_TOKEN','R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET','R2_ENDPOINT')) { Remove-Item "Env:$name" -ErrorAction SilentlyContinue }

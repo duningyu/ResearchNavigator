@@ -23,20 +23,25 @@ from pathlib import Path
 
 from reportlab.pdfgen.canvas import Canvas  # type: ignore[import-untyped]
 from services.worker.main import run_once
+from sqlalchemy import delete, or_, text
+from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
 from research_navigator.data_plane.storage import R2Storage, build_runtime_storage
 from research_navigator.db import Database
 from research_navigator.evidence.workflow import WORKFLOW_TYPE
 from research_navigator.main import create_app
-from research_navigator.models import Job, Paper, PaperDocument, User
+from research_navigator.models import Base, Job, Paper, PaperDocument, User
 from research_navigator.open_access.base import OpenAccessCandidate
 from research_navigator.open_access.fetcher import PdfFetchResult
 from research_navigator.open_access.ingestion import ingest_open_access_pdf
 from research_navigator.security import hash_password
 
 ROOT = Path(__file__).resolve().parents[3]
-RECEIPT = ROOT / "deployment/cloud/R2_EVIDENCE_WORKFLOW_PARITY_RECEIPT.json"
+RECEIPT = (
+    ROOT
+    / "deployment/cloud/runtime_receipts/RN223_R2_TURSO_EVIDENCE_WORKFLOW_LIVE_PARITY_RECEIPT.json"
+)
 _FULL_SHA_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 
 
@@ -137,6 +142,19 @@ def _safe_receipt(execution_id: str) -> dict[str, object]:
         "content_integrity": "NOT_RUN",
         "local_path_required_after_execution": None,
         "cleanup": "NOT_RUN",
+        "process_a_exited": False,
+        "process_b_started_fresh": False,
+        "process_b_db_reload": "NOT_RUN",
+        "process_b_r2_reload": "NOT_RUN",
+        "process_b_content_integrity": "NOT_RUN",
+        "process_b_linkage": "NOT_RUN",
+        "fixture_user_cleanup": "NOT_RUN",
+        "fixture_paper_cleanup": "NOT_RUN",
+        "fixture_document_cleanup": "NOT_RUN",
+        "fixture_job_cleanup": "NOT_RUN",
+        "dependent_rows_cleanup": "NOT_RUN",
+        "r2_cleanup": "NOT_RUN",
+        "exact_cleanup": "NOT_RUN",
         "secret_exposure": False,
         "frozen_core_status": "UNCHANGED",
         "final_status": "NOT_RUN",
@@ -195,7 +213,7 @@ async def prepare_async() -> int:
                 )
                 session.add(job)
                 session.commit()
-                user_id, document_id, job_id = user.id, document.id, job.id
+                user_id, paper_id, document_id, job_id = user.id, paper.id, document.id, job.id
 
             receipt["turso_connectivity"] = "PASS"
             receipt["r2_application_runtime"] = "PASS"
@@ -228,15 +246,18 @@ async def prepare_async() -> int:
             receipt["content_integrity"] = "PASS"
             receipt["temp_workspace_removed"] = "PASS"
 
-    print(json.dumps({
-        "execution_id": execution_id,
-        "job_id": job_id,
-        "document_id": document_id,
-        "user_id": user_id,
-        "input_key": key,
-        "stored_key": stored_key,
-        "fixture_sha256": receipt["fixture_sha256"],
-    }, separators=(",", ":")))
+    print(
+        prepare_payload(
+            execution_id=execution_id,
+            job_id=job_id,
+            document_id=document_id,
+            user_id=user_id,
+            paper_id=paper_id,
+            input_key=key,
+            stored_key=stored_key,
+            fixture_sha256=str(receipt["fixture_sha256"]),
+        )
+    )
     return 0
 
 
@@ -250,6 +271,119 @@ def config_preflight() -> int:
     return 0
 
 
+class FixtureOwnershipError(RuntimeError):
+    """The requested cleanup identity does not own the synthetic fixture."""
+
+
+def build_phase_plan(*, recovery: bool = False) -> tuple[str, ...]:
+    return ("recover",) if recovery else ("prepare", "reload")
+
+
+def prepare_payload(
+    *,
+    execution_id: str,
+    job_id: int,
+    document_id: int,
+    user_id: int,
+    paper_id: int,
+    input_key: str,
+    stored_key: str,
+    fixture_sha256: str,
+) -> str:
+    return json.dumps(
+        {
+            "execution_id": execution_id,
+            "job_id": job_id,
+            "document_id": document_id,
+            "user_id": user_id,
+            "paper_id": paper_id,
+            "input_key": input_key,
+            "stored_key": stored_key,
+            "fixture_sha256": fixture_sha256,
+        },
+        separators=(",", ":"),
+    )
+
+
+def validate_fixture_ownership(
+    *,
+    execution_id: str,
+    fixture_sha256: str,
+    user_email: str,
+    paper_doi: str,
+    document_run_id: str | None,
+    document_sha256: str,
+    job_user_id: int,
+    document_user_id: int | None,
+    requested_user_id: int,
+) -> None:
+    expected_email = f"rn223-parity-{execution_id}@example.invalid"
+    expected_doi = f"10.9999/rn223-parity-{execution_id}"
+    if (
+        requested_user_id != job_user_id
+        or requested_user_id != document_user_id
+        or user_email != expected_email
+        or paper_doi != expected_doi
+        or document_run_id != execution_id
+        or document_sha256 != fixture_sha256
+    ):
+        raise FixtureOwnershipError("Synthetic fixture ownership validation failed")
+
+
+def _delete_fixture_rows(
+    session: Session, *, user_id: int, paper_id: int, document_id: int, job_id: int
+) -> None:
+    # The fixture user and paper are freshly created synthetic roots.  Every
+    # dependent delete remains scoped to one of those exact IDs (or to IDs
+    # discovered from their rows), never to a broad status/type predicate.
+    scope: dict[str, set[object]] = {
+        "user_id": {user_id},
+        "paper_id": {paper_id},
+        "document_id": {document_id},
+        "job_id": {job_id},
+    }
+    analysis_rows = session.execute(
+        text(
+            "SELECT id, analysis_run_id FROM paper_analyses "
+            "WHERE user_id=:user_id AND paper_id=:paper_id"
+        ),
+        {"user_id": user_id, "paper_id": paper_id},
+    ).all()
+    scope["analysis_id"] = {row[0] for row in analysis_rows}
+    scope["run_id"] = {row[1] for row in analysis_rows if row[1] is not None}
+    for table in reversed(Base.metadata.sorted_tables):
+        if table.name in {"users", "papers", "alembic_version"}:
+            continue
+        predicates = [
+            column.in_(values)
+            for name, values in scope.items()
+            if values and (column := table.c.get(name)) is not None
+        ]
+        if predicates:
+            session.execute(delete(table).where(or_(*predicates)))
+    # FTS5 is runtime-maintained and is not represented by Declarative ORM
+    # metadata; delete only chunks owned by this exact document.
+    session.execute(
+        text("DELETE FROM paper_chunks_fts WHERE document_id = :document_id"),
+        {"document_id": document_id},
+    )
+    session.execute(delete(Paper).where(Paper.id == paper_id))
+    session.execute(delete(User).where(User.id == user_id))
+
+
+def _assert_fixture_rows_absent(
+    session: Session, *, user_id: int, paper_id: int, document_id: int, job_id: int
+) -> None:
+    for model, value in (
+        (User, user_id),
+        (Paper, paper_id),
+        (PaperDocument, document_id),
+        (Job, job_id),
+    ):
+        if session.get(model, value) is not None:
+            raise RuntimeError(f"Fixture cleanup left {model.__tablename__} row")
+
+
 def reload_and_cleanup(args: argparse.Namespace) -> int:
     settings = _settings()
     database = Database.from_url(settings.database_url)
@@ -258,8 +392,27 @@ def reload_and_cleanup(args: argparse.Namespace) -> int:
     with database.session() as session:
         job = session.get(Job, args.job_id)
         document = session.get(PaperDocument, args.document_id)
-        if job is None or document is None or job.status not in {"partial", "succeeded"}:
+        user = session.get(User, args.user_id)
+        paper = session.get(Paper, document.paper_id) if document is not None else None
+        if (
+            job is None
+            or document is None
+            or user is None
+            or paper is None
+            or job.status not in {"partial", "succeeded"}
+        ):
             raise RuntimeError("Fresh process could not reload durable parity records")
+        validate_fixture_ownership(
+            execution_id=args.execution_id,
+            fixture_sha256=args.fixture_sha256,
+            user_email=user.email,
+            paper_doi=paper.doi or "",
+            document_run_id=document.acquisition_run_id,
+            document_sha256=document.sha256,
+            job_user_id=job.user_id,
+            document_user_id=document.user_id,
+            requested_user_id=args.user_id,
+        )
         data = storage.get(document.stored_path)
         if hashlib.sha256(data).hexdigest() != args.fixture_sha256:
             raise RuntimeError("Fresh process content integrity mismatch")
@@ -267,17 +420,45 @@ def reload_and_cleanup(args: argparse.Namespace) -> int:
             "fixture_sha256": args.fixture_sha256,
             "fixture_size": len(data),
             "fresh_process_reload": "PASS",
+            "process_a_exited": True,
+            "process_b_started_fresh": True,
+            "process_b_db_reload": "PASS",
+            "process_b_r2_reload": "PASS",
+            "process_b_content_integrity": "PASS",
+            "process_b_linkage": "PASS",
             "content_integrity": "PASS",
             "local_path_required_after_execution": False,
             "cleanup": "PENDING",
         })
         stored_key = document.stored_path
-        session.delete(document)
-        session.delete(job)
+        _delete_fixture_rows(
+            session,
+            user_id=args.user_id,
+            paper_id=paper.id,
+            document_id=args.document_id,
+            job_id=args.job_id,
+        )
         session.commit()
+        _assert_fixture_rows_absent(
+            session,
+            user_id=args.user_id,
+            paper_id=paper.id,
+            document_id=args.document_id,
+            job_id=args.job_id,
+        )
     storage.delete(stored_key)
-    receipt["cleanup"] = "PASS"
-    receipt["final_status"] = "PASS"
+    receipt.update({
+        "cleanup": "PASS",
+        "fixture_user_cleanup": "PASS",
+        "fixture_paper_cleanup": "PASS",
+        "fixture_document_cleanup": "PASS",
+        "fixture_job_cleanup": "PASS",
+        "dependent_rows_cleanup": "PASS",
+        "r2_cleanup": "PASS",
+        "exact_cleanup": "PASS",
+        "final_status": "ORPHAN_FIXTURE_RECOVERY_PASS" if args.recovery else "PASS",
+    })
+    RECEIPT.parent.mkdir(parents=True, exist_ok=True)
     RECEIPT.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     database.dispose()
     return 0
@@ -292,12 +473,20 @@ def main() -> int:
     reload_parser.add_argument("--execution-id", required=True)
     reload_parser.add_argument("--job-id", required=True, type=int)
     reload_parser.add_argument("--document-id", required=True, type=int)
+    reload_parser.add_argument("--user-id", required=True, type=int)
     reload_parser.add_argument("--fixture-sha256", required=True)
+    recover_parser = sub.add_parser("recover")
+    recover_parser.add_argument("--execution-id", required=True)
+    recover_parser.add_argument("--job-id", required=True, type=int)
+    recover_parser.add_argument("--document-id", required=True, type=int)
+    recover_parser.add_argument("--user-id", required=True, type=int)
+    recover_parser.add_argument("--fixture-sha256", required=True)
     args = parser.parse_args()
     if args.phase == "prepare":
         return prepare()
     if args.phase == "config":
         return config_preflight()
+    args.recovery = args.phase == "recover"
     return reload_and_cleanup(args)
 
 
