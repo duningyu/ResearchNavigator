@@ -19,7 +19,8 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($hostCommit)) { throw '
 if ((Resolve-Path -LiteralPath $hostRoot).Path -ne (Resolve-Path -LiteralPath $projectRoot).Path -or $hostBranch -ne 'deployment/rn223-zero-cost-cloud-v1') { throw 'Host git context mismatch.' }
 if ($hostCommit -notmatch '^[0-9a-fA-F]{40}$') { throw 'Host git commit format invalid.' }
 
-$dockerImage = 'python:3.12.11-slim-bookworm'
+$dockerImage = 'rn223-schema-audit:py312-libsql020'
+$pythonInImage = '/opt/rn-venv/bin/python'
 $mount = "$projectRoot`:/workspace"
 $pythonCheck = @'
 import platform
@@ -56,12 +57,8 @@ $env:RN_SOURCE_COMMIT = $hostCommit
 $env:RN_SOURCE_COMMIT_SOURCE = 'HOST_CONTEXT_GUARD'
 $preflight = @(
   'set -eu',
-  'export UV_PROJECT_ENVIRONMENT=/tmp/rn-venv',
-  'export UV_CACHE_DIR=/tmp/uv-cache',
-  'python -m pip install --disable-pip-version-check --no-cache-dir uv',
-  'uv sync --frozen --extra dev',
   'export PYTHONPATH=/workspace/apps/api:/workspace:/workspace/deployment/cloud/parity',
-  "printf %s $pythonCheckB64 | base64 -d | /tmp/rn-venv/bin/python"
+  "printf %s $pythonCheckB64 | base64 -d | $pythonInImage"
 ) -join ' && '
 
 if ($PreflightOnly) {
@@ -92,7 +89,7 @@ try {
     Set-Item -Path "Env:$($item[0])" -Value ([Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr))
   }
   $runner = '/workspace/deployment/cloud/parity/run_evidence_workflow_parity.py'
-  $live = $preflight + ' && /tmp/rn-venv/bin/python ' + $runner + ' prepare'
+  $live = $preflight + ' && ' + $pythonInImage + ' ' + $runner + ' prepare'
   & docker run --rm --mount "type=bind,source=$projectRoot,target=/workspace" --workdir /workspace --env DATABASE_BACKEND --env RN_STORAGE_BACKEND --env RN_SOURCE_COMMIT --env RN_SOURCE_COMMIT_SOURCE --env TURSO_DATABASE_URL --env TURSO_AUTH_TOKEN --env R2_ACCOUNT_ID --env R2_ACCESS_KEY_ID --env R2_SECRET_ACCESS_KEY --env R2_BUCKET --env R2_ENDPOINT $dockerImage sh -lc $live
   exit $LASTEXITCODE
 }
