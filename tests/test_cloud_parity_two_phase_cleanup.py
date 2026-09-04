@@ -96,7 +96,7 @@ def test_exact_cleanup_removes_fixture_dependents_but_preserves_unrelated_rows()
     with engine.begin() as connection:
         connection.execute(
             text(
-                "CREATE VIRTUAL TABLE paper_chunks_fts USING fts5(" 
+                "CREATE VIRTUAL TABLE paper_chunks_fts USING fts5("
                 "text, document_id UNINDEXED, chunk_id UNINDEXED)"
             )
         )
