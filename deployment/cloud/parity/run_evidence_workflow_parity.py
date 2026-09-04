@@ -143,6 +143,11 @@ def _safe_receipt(execution_id: str) -> dict[str, object]:
     }
 
 
+async def _run_once_async(database: Database, *, settings: Settings) -> int | None:
+    """Run the synchronous worker seam without nesting an event loop."""
+    return await asyncio.to_thread(run_once, database, settings=settings)
+
+
 async def prepare_async() -> int:
     settings = _settings()
     data = _pdf()
@@ -200,7 +205,7 @@ async def prepare_async() -> int:
             receipt["fixture_size"] = len(data)
             receipt["input_object_key_identity"] = hashlib.sha256(key.encode()).hexdigest()
 
-            if run_once(database, settings=settings) != job_id:
+            if await _run_once_async(database, settings=settings) != job_id:
                 raise RuntimeError("Worker did not execute parity job")
             with database.session() as session:
                 row = session.get(Job, job_id)
