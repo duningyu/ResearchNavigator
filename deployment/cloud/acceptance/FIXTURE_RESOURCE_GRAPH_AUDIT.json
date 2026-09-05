@@ -1,0 +1,34 @@
+{
+  "scope": "local-only Preview acceptance fixture teardown",
+  "account_root": {"table": "users", "cleanup": "never_delete"},
+  "borrowed_resources": [
+    {"table": "papers", "primary_key": "id", "ownership": "borrowed_paper_ids", "cleanup": "never_delete"},
+    {"table": "paper_sources", "primary_key": "id", "ownership": "paper_id in borrowed_paper_ids", "cleanup": "never_delete"}
+  ],
+  "account_root_relations": [
+    {"table": "users", "primary_key": "id", "cleanup": "never_delete"},
+    {"table": "search_sessions", "ownership": "user_id", "cleanup": "out_of_scope; never delete without explicit manifest support"}
+  ],
+  "fixture_owned_allowlist": [
+    {"table": "research_projects", "owner": "user_id", "dependent": "explicit manifest project_ids"},
+    {"table": "paper_sets", "owner": "user_id", "dependent": "paper_set_items, comparison_runs"},
+    {"table": "paper_set_items", "owner": "paper_set_id", "dependent": "exact manifest paper_set_ids"},
+    {"table": "comparison_runs", "owner": "user_id", "dependent": "exact manifest project_ids/paper_set_ids"},
+    {"table": "gap_candidates", "owner": "user_id", "dependent": "gap_evidence, gap_explanations"},
+    {"table": "gap_evidence", "owner": "gap_id", "dependent": "exact manifest gap_candidate_ids"},
+    {"table": "gap_explanations", "owner": "user_id", "dependent": "exact manifest gap_candidate_ids"},
+    {"table": "paper_analyses", "owner": "user_id", "dependent": "exact manifest paper_analysis_ids"},
+    {"table": "research_plans", "owner": "user_id", "dependent": "plan_items"},
+    {"table": "plan_items", "owner": "user_id", "dependent": "exact manifest research_plan_ids"},
+    {"table": "jobs", "owner": "user_id", "dependent": "job_events, job-linked rows"},
+    {"table": "job_events", "owner": "user_id", "dependent": "exact manifest job_ids"},
+    {"table": "paper_documents", "owner": "user_id", "dependent": "paper_chunks"},
+    {"table": "paper_chunks", "owner": "user_id", "dependent": "exact manifest paper_document_ids"},
+    {"table": "favorites", "owner": "user_id", "dependent": "exact manifest favorite_ids"}
+  ],
+  "manifest_id_requirement": "Every allowlisted row must be captured by exact primary key before freeze; the controller never discovers or deletes unlisted rows.",
+  "allowlisted_rows_with_explicit_ids": ["source_requests", "tool_calls", "agent_runs", "idempotency_records"],
+  "database_transaction": "explicit closure select -> FK-safe delete -> commit -> new session verify",
+  "r2": "exact key HEAD/DELETE/absence; no list or prefix delete",
+  "blast_radius": {"per_table": 100, "total_database_rows": 500, "r2_objects": 20}
+}
