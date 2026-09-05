@@ -18,6 +18,7 @@ def test_vercel_headers_bound_browser_capabilities_and_tunnel_connections() -> N
     csp = headers["Content-Security-Policy"]
     assert "default-src 'self'" in csp
     assert "connect-src 'self' https://*.trycloudflare.com" in csp
+    assert "https://*.r2.cloudflarestorage.com" in csp
     assert "object-src 'none'" in csp
     assert "frame-ancestors 'none'" in csp
 
