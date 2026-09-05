@@ -74,6 +74,10 @@ class _Boto3Client(Protocol):
 
     def delete_object(self, *, Bucket: str, Key: str) -> object: ...
 
+    def generate_presigned_url(
+        self, *, ClientMethod: str, Params: Mapping[str, object], ExpiresIn: int
+    ) -> str: ...
+
 
 class S3TransportWithStat(S3Transport, Protocol):
     def stat_object(self, *, bucket: str, key: str) -> dict[str, object]: ...
@@ -128,6 +132,26 @@ class Boto3R2Transport:
     def delete_object(self, *, bucket: str, key: str) -> None:
         self.client.delete_object(Bucket=bucket, Key=key)
 
+    def generate_presigned_upload(
+        self, *, bucket: str, key: str, content_type: str, sha256: str, expires_in: int
+    ) -> str:
+        return self.client.generate_presigned_url(
+            ClientMethod="put_object",
+            Params={
+                "Bucket": bucket,
+                "Key": key,
+                "ContentType": content_type,
+                "Metadata": {"sha256": sha256},
+            },
+            ExpiresIn=expires_in,
+        )
+
+
+class S3TransportWithPresign(S3Transport, Protocol):
+    def generate_presigned_upload(
+        self, *, bucket: str, key: str, content_type: str, sha256: str, expires_in: int
+    ) -> str: ...
+
 
 class R2Storage:
     def __init__(self, *, bucket: str, transport: S3Transport) -> None:
@@ -149,6 +173,19 @@ class R2Storage:
 
     def delete(self, key: str) -> None:
         self.transport.delete_object(bucket=self.bucket, key=_safe_key(key))
+
+    def generate_presigned_upload(
+        self, *, key: str, content_type: str, sha256: str, expires_in: int
+    ) -> str:
+        if not hasattr(self.transport, "generate_presigned_upload"):
+            raise NotImplementedError("R2 transport does not support presigned uploads")
+        return cast(S3TransportWithPresign, self.transport).generate_presigned_upload(
+            bucket=self.bucket,
+            key=_safe_key(key),
+            content_type=content_type,
+            sha256=sha256,
+            expires_in=expires_in,
+        )
 
 
 def build_runtime_storage(settings: RuntimeStorageSettings) -> DurableStorage:

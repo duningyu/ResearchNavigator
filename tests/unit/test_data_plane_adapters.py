@@ -62,6 +62,7 @@ def test_local_backend_does_not_require_r2_configuration(tmp_path: Path) -> None
 class FakeS3Client:
     def __init__(self) -> None:
         self.objects: dict[tuple[str, str], bytes] = {}
+        self.presign_calls: list[dict[str, object]] = []
 
     def put_object(self, *, Bucket: str, Key: str, Body: bytes) -> None:
         self.objects[(Bucket, Key)] = Body
@@ -77,6 +78,14 @@ class FakeS3Client:
     def delete_object(self, *, Bucket: str, Key: str) -> None:
         self.objects.pop((Bucket, Key), None)
 
+    def generate_presigned_url(
+        self, *, ClientMethod: str, Params: dict[str, object], ExpiresIn: int
+    ) -> str:
+        self.presign_calls.append(
+            {"ClientMethod": ClientMethod, "Params": Params, "ExpiresIn": ExpiresIn}
+        )
+        return "https://r2.invalid/researchnav-documents/upload?signature=redacted"
+
 
 def test_boto3_r2_transport_and_stat() -> None:
     transport = Boto3R2Transport(FakeS3Client())
@@ -85,6 +94,32 @@ def test_boto3_r2_transport_and_stat() -> None:
     assert storage.get("users/7/doc.pdf") == b"pdf"
     assert storage.stat("users/7/doc.pdf") == {"ContentLength": 3}
     storage.delete("users/7/doc.pdf")
+
+
+def test_boto3_r2_transport_presign_binds_bucket_key_type_and_hash() -> None:
+    client = FakeS3Client()
+    storage = R2Storage(bucket="researchnav-documents", transport=Boto3R2Transport(client))
+
+    url = storage.generate_presigned_upload(
+        key="uploads/7/random/a" * 16 + ".pdf",
+        content_type="application/pdf",
+        sha256="a" * 64,
+        expires_in=300,
+    )
+
+    assert url.startswith("https://r2.invalid/")
+    assert client.presign_calls == [
+        {
+            "ClientMethod": "put_object",
+            "Params": {
+                "Bucket": "researchnav-documents",
+                "Key": "uploads/7/random/a" * 16 + ".pdf",
+                "ContentType": "application/pdf",
+                "Metadata": {"sha256": "a" * 64},
+            },
+            "ExpiresIn": 300,
+        }
+    ]
 
 
 def test_r2_settings_are_fail_closed_and_secret_repr_safe(monkeypatch: pytest.MonkeyPatch) -> None:

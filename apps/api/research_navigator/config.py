@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import os
-from urllib.parse import urlsplit
 from dataclasses import dataclass, field
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 def _as_bool(value: str | None, default: bool) -> bool:
@@ -85,6 +85,7 @@ class Settings:
     r2_secret_access_key: str | None = field(default=None, repr=False)
     r2_endpoint: str | None = None
     r2_region: str = "auto"
+    upload_signing_secret: str | None = field(default=None, repr=False)
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -164,6 +165,7 @@ class Settings:
             r2_secret_access_key=os.getenv("R2_SECRET_ACCESS_KEY") or None,
             r2_endpoint=os.getenv("R2_ENDPOINT") or None,
             r2_region=os.getenv("R2_REGION", "auto"),
+            upload_signing_secret=os.getenv("RN_UPLOAD_SIGNING_SECRET") or None,
         )
 
         if instance.storage_backend == "r2":
