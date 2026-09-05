@@ -17,18 +17,26 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $mode = if ($Audit) { 'audit' } elseif ($DryRun) { 'dry-run' } elseif ($Execute) { 'execute' } else { 'verify' }
 $controller = Join-Path $root 'deployment/cloud/acceptance/preview_fixture_controller.py'
-
-if ($Audit) {
-  $python = Get-Command python -ErrorAction Stop
-  & $python.Source $controller $mode
-  exit $LASTEXITCODE
-}
+$dockerImage = 'rn223-schema-audit:py312-libsql020'
+$pythonInImage = 'python'
+$rootFull = ([IO.Path]::GetFullPath($root)).TrimEnd('\') + '\'
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
   throw 'Docker is required for the verified Python/libsql acceptance runtime.'
 }
 
-$rootFull = ([IO.Path]::GetFullPath($root)).TrimEnd('\') + '\'
+if ($Audit) {
+  $auditDockerArgs = @(
+    'run', '--rm', '--network', 'none',
+    '--mount', "type=bind,source=$root,target=/workspace,readonly",
+    '--workdir', '/workspace',
+    $dockerImage,
+    $pythonInImage, '/workspace/deployment/cloud/acceptance/preview_fixture_controller.py', 'audit'
+  )
+  & docker @auditDockerArgs
+  exit $LASTEXITCODE
+}
+
 $manifestPath = ([IO.Path]::GetFullPath((Resolve-Path -LiteralPath $Manifest).Path))
 if (-not $manifestPath.StartsWith($rootFull, [StringComparison]::OrdinalIgnoreCase)) {
   throw 'Manifest must be inside the ResearchNavigator worktree.'
@@ -86,8 +94,8 @@ try {
     $dockerArgs += @('--env', 'R2_ACCOUNT_ID', '--env', 'R2_ACCESS_KEY_ID', '--env', 'R2_SECRET_ACCESS_KEY', '--env', 'R2_BUCKET', '--env', 'R2_ENDPOINT')
   }
   $dockerArgs += @(
-    'rn223-schema-audit:py312-libsql020',
-    'python', $controller.Replace('\', '/'), $mode,
+    $dockerImage,
+    $pythonInImage, $controller.Replace('\', '/'), $mode,
     '--manifest', ("/workspace/" + $manifestPath.Substring($rootFull.Length).TrimStart('\','/').Replace('\','/'))
   )
   if ($ManifestSha256) { $dockerArgs += @('--manifest-sha256', $ManifestSha256) }
