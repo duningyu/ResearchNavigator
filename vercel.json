@@ -7,7 +7,10 @@
   "functions": {
     "api/index.py": { "maxDuration": 300 }
   },
-  "rewrites": [{ "source": "/((?!api(?:/|$)).*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api" },
+    { "source": "/((?!api(?:/|$)).*)", "destination": "/index.html" }
+  ],
   "headers": [{
     "source": "/(.*)",
     "headers": [
