@@ -81,6 +81,37 @@ describe('public demo backend availability gate', () => {
     vi.useRealTimers();
   });
 
+  it('keeps an online workspace mounted while a background health poll is pending', async () => {
+    window.sessionStorage.setItem('rn_backend_origin', 'https://demo.trycloudflare.com');
+    let pollCallback: (() => void) | undefined;
+    vi.spyOn(window, 'setInterval').mockImplementation((callback: TimerHandler) => {
+      pollCallback = callback as () => void;
+      return 1;
+    });
+    let resolvePoll: ((value: Response) => void) | undefined;
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(response(200))
+      .mockImplementationOnce(() => new Promise<Response>((resolve) => {
+        resolvePoll = resolve;
+      }));
+    vi.stubGlobal('fetch', fetchMock);
+    render(<BackendAvailabilityGate forcePublicDemo><div>workspace</div></BackendAvailabilityGate>);
+
+    await act(async () => { await Promise.resolve(); });
+    expect(screen.getByText('workspace')).toBeVisible();
+
+    act(() => { pollCallback?.(); });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('workspace')).toBeVisible();
+    expect(screen.queryByTestId('backend-status')).toBeNull();
+
+    await act(async () => {
+      resolvePoll?.(response(200));
+      await Promise.resolve();
+    });
+    expect(screen.getByText('workspace')).toBeVisible();
+  });
+
   it('rejects an invalid backend hostname without making a request', () => {
     window.history.replaceState({}, '', '/?rn_backend=https%3A%2F%2Fevil.example');
     const fetchMock = vi.fn();

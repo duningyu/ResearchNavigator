@@ -30,14 +30,14 @@ export function BackendAvailabilityGate({ children, forcePublicDemo = false }: P
     return hasConfiguredBackend() ? 'BACKEND_CONNECTING' : 'BACKEND_NOT_CONFIGURED';
   });
 
-  const checkBackend = useCallback(async () => {
+  const checkBackend = useCallback(async ({ foreground = true }: { foreground?: boolean } = {}) => {
     const invalid = hasInvalidRuntimeBackendParam();
     setInvalidBackend(invalid);
     if (invalid || !hasConfiguredBackend()) {
       setState('BACKEND_NOT_CONFIGURED');
       return;
     }
-    setState('BACKEND_CONNECTING');
+    if (foreground) setState('BACKEND_CONNECTING');
     try {
       const response = await fetch(`${getApiBaseUrl()}/health`, {
         headers: { Accept: 'application/json' },
@@ -52,12 +52,12 @@ export function BackendAvailabilityGate({ children, forcePublicDemo = false }: P
   }, []);
 
   useEffect(() => {
-    if (managed) void checkBackend();
+    if (managed) void checkBackend({ foreground: true });
   }, [checkBackend, managed]);
 
   useEffect(() => {
     if (!managed || state !== 'BACKEND_ONLINE') return undefined;
-    const timer = window.setInterval(() => void checkBackend(), 15_000);
+    const timer = window.setInterval(() => void checkBackend({ foreground: false }), 15_000);
     return () => window.clearInterval(timer);
   }, [checkBackend, managed, state]);
 
@@ -95,7 +95,7 @@ export function BackendAvailabilityGate({ children, forcePublicDemo = false }: P
             <Space><Spin size="small" /><Typography.Text>正在连接演示后端…</Typography.Text></Space>
           ) : (
             <Space wrap>
-              {hasConfiguredBackend() && <Button type="primary" onClick={() => void checkBackend()}>重试连接</Button>}
+              {hasConfiguredBackend() && <Button type="primary" onClick={() => void checkBackend({ foreground: true })}>重试连接</Button>}
               {(getRuntimeBackendOrigin() || invalidBackend) && (
                 <Button onClick={clearBackend}>清除过期后端地址</Button>
               )}
