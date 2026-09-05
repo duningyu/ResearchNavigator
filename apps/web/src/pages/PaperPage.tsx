@@ -18,6 +18,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { apiRequest } from '../api/client';
+import { shouldUseDirectUpload, uploadPdfDirect } from '../api/uploads';
 import { EvidenceWorkflowPanel } from '../components/EvidenceWorkflowPanel';
 import { PaperIntelligenceCards } from '../components/PaperIntelligenceCards';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
@@ -226,9 +227,13 @@ export function PaperPage() {
   const upload = async () => {
     if (!pdf || !rightsConfirmed) return;
     setBusy(true); setError(null);
-    const body = new FormData(); body.append('file', pdf); body.append('rights_confirmed', 'true');
     try {
-      await apiRequest(`/papers/${paperId}/upload`, { method: 'POST', body });
+      if (shouldUseDirectUpload()) {
+        await uploadPdfDirect(paperId ?? '', pdf);
+      } else {
+        const body = new FormData(); body.append('file', pdf); body.append('rights_confirmed', 'true');
+        await apiRequest(`/papers/${paperId}/upload`, { method: 'POST', body });
+      }
       const nextAnalysis = await apiRequest<PaperAnalysis>(`/papers/${paperId}/analyze`, {
         method: 'POST', body: JSON.stringify({ project_id: projectId, provider: 'configured' }),
       });

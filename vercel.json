@@ -1,8 +1,12 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "corepack pnpm@10.15.1 --dir apps/web install --frozen-lockfile",
   "buildCommand": "corepack pnpm@10.15.1 --dir apps/web run build",
   "outputDirectory": "apps/web/dist",
+  "functions": {
+    "api/index.py": { "maxDuration": 300 }
+  },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [{
     "source": "/(.*)",
