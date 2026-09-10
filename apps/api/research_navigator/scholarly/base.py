@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from datetime import UTC, date, datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class PaperAuthor(BaseModel):
@@ -62,6 +62,18 @@ class SearchRequest(BaseModel):
     open_access_only: bool = False
     sources: list[str] = Field(default_factory=list)
     project_id: int | None = None
+    adapt_query: bool = True
+    source_queries: dict[str, str] = Field(default_factory=dict)
+
+    @field_validator("source_queries")
+    @classmethod
+    def validate_source_queries(cls, queries: dict[str, str]) -> dict[str, str]:
+        allowed = {"arxiv", "openalex", "crossref", "semantic_scholar", "fixture"}
+        if not set(queries).issubset(allowed):
+            raise ValueError("Unsupported query source")
+        if any(not query.strip() or len(query) > 500 for query in queries.values()):
+            raise ValueError("Source query must contain 1–500 characters")
+        return queries
 
 
 class SourceStatus(BaseModel):

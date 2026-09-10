@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import json
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from research_navigator.config import Settings
 from research_navigator.data_plane.storage import DurableStorage, LocalStorage
 from research_navigator.documents.index import index_document
+from research_navigator.documents.material_binding import bind_material, expected_arxiv_identity
 from research_navigator.documents.parser import parse_pdf
 from research_navigator.documents.security import DocumentSecurityError, validate_pdf_upload
 from research_navigator.models import Paper, PaperDocument
@@ -63,16 +66,20 @@ def ingest_open_access_pdf(
     resolved_storage = storage or LocalStorage(settings.upload_dir)
     resolved_storage.put(storage_key, fetched.data)
     stored_path = (
-        settings.upload_dir / storage_key
-        if isinstance(resolved_storage, LocalStorage)
-        else None
+        settings.upload_dir / storage_key if isinstance(resolved_storage, LocalStorage) else None
     )
 
     document = PaperDocument(
         user_id=user_id,
         paper_id=paper.id,
         source_type="open_access_repository",
-        evidence_level="open_fulltext" if has_text else "not_available",
+        evidence_level=(
+            "open_fulltext"
+            if parsed.text_coverage == "succeeded"
+            else "partial_fulltext"
+            if has_text
+            else "not_available"
+        ),
         original_filename=validated.safe_filename,
         stored_path=str(stored_path or storage_key),
         mime_type=fetched.content_type,
@@ -80,7 +87,11 @@ def ingest_open_access_pdf(
         size_bytes=validated.size_bytes,
         page_count=parsed.page_count,
         rights_confirmed=True,
-        ingestion_version="pdf-v2-oa",
+        ingestion_version="pdf-v3-oa-coverage",
+        material_binding_json=json.dumps(bind_material(
+            paper_id=paper.id, arxiv_id=expected_arxiv_identity(paper), doi=paper.doi,
+            sha256=validated.sha256, parsed=parsed,
+        )),
         source_url=fetched.final_url,
         source_record_id=candidate.source_record_id,
         rights_basis=rights_basis,
@@ -88,7 +99,7 @@ def ingest_open_access_pdf(
         retrieved_at=fetched.retrieved_at,
         response_hash=fetched.response_hash,
         acquisition_run_id=acquisition_run_id,
-        parse_status="succeeded" if has_text else "failed_no_extractable_text",
+        parse_status=parsed.text_coverage,
     )
     session.add(document)
     session.flush()

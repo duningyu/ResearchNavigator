@@ -6,8 +6,31 @@ def test_gap_candidate_is_bounded_and_never_claims_novelty_proof() -> None:
         project_direction="未来窗口异常风险排序",
         paper_ids=[1, 2],
         evidence_matrix=[
-            {"paper_id": 1, "task": "point anomaly detection", "prediction_horizon": None},
-            {"paper_id": 2, "task": "time-series forecasting", "prediction_horizon": None},
+            {
+                "paper_id": paper_id,
+                "title": f"Synthetic study {paper_id}",
+                "research_problem": "未来窗口异常风险排序",
+                "limitations_author_stated": ["仅在单一数据集验证"],
+                "field_states": {
+                    "research_problem": "evidenced",
+                    "limitations_author_stated": "evidenced",
+                },
+                "field_citations": {
+                    field: [
+                        {
+                            "source_type": "abstract",
+                            "section": "Abstract",
+                            "supporting_text": text,
+                            "material_verified": True,
+                        }
+                    ]
+                    for field, text in [
+                        ("research_problem", "未来窗口异常风险排序"),
+                        ("limitations_author_stated", "仅在单一数据集验证"),
+                    ]
+                },
+            }
+            for paper_id in [1, 2]
         ],
     )
 

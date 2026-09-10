@@ -154,24 +154,39 @@ def run_scenario(
             },
         )
     )
-    gap = _ok(
-        client.post(
-            "/api/gaps/generate",
-            headers={**headers, **_idem(scenario_version, "gap")},
-            json={"project_id": project["id"], "paper_set_id": gap_set["id"]},
-        )
+    generation = client.post(
+        "/api/gaps/generate",
+        headers={**headers, **_idem(scenario_version, "gap")},
+        json={"project_id": project["id"], "paper_set_id": gap_set["id"]},
     )
-    gap = _ok(
-        client.post(
-            f"/api/gaps/{gap['id']}/challenge",
-            headers=headers,
-            json={"additional_terms": ["counter evidence", "adjacent method"]},
+    blocked = generation.status_code == 409
+    if blocked:
+        detail = generation.json()["detail"]
+        if not isinstance(detail, dict) or detail.get("allowed") is not False:
+            _ok(generation)
+        gap = {
+            "id": None,
+            "status": "evidence_required",
+            "workflow_stage": "evidence_required",
+            "paper_set_id": gap_set["id"],
+            "not_novelty_proof": True,
+            "generation_status": 409,
+            "reason": detail["reason"],
+            "actions": detail["actions"],
+        }
+    else:
+        gap = _ok(generation)
+        gap = _ok(
+            client.post(
+                f"/api/gaps/{gap['id']}/challenge",
+                headers=headers,
+                json={"additional_terms": ["counter evidence", "adjacent method"]},
+            )
         )
-    )
 
     plan = None
     human_confirmation = "not_performed"
-    if confirm_demo_gap:
+    if confirm_demo_gap and not blocked:
         gap = _ok(
             client.post(
                 f"/api/gaps/{gap['id']}/confirm",
@@ -220,6 +235,9 @@ def run_scenario(
             "paper_set_id": gap.get("paper_set_id"),
             "explanation_version": (gap.get("explanation") or {}).get("version"),
             "not_novelty_proof": gap["not_novelty_proof"],
+            "generation_status": gap.get("generation_status", generation.status_code),
+            "reason": gap.get("reason"),
+            "actions": gap.get("actions", []),
         },
         "human_confirmation": human_confirmation,
         "plan": None if plan is None else {"id": plan["id"], "status": plan["status"]},

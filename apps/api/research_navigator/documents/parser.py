@@ -23,6 +23,14 @@ class ParsedDocument:
     def page_count(self) -> int:
         return len(self.pages)
 
+    @property
+    def text_coverage(self) -> str:
+        """Extraction coverage, not proof of publication/version completeness."""
+        readable = sum(bool(page.text.strip()) for page in self.pages)
+        if not readable:
+            return "failed_no_extractable_text"
+        return "succeeded" if readable == self.page_count else "partial"
+
 
 @dataclass(frozen=True, slots=True)
 class ParsedChunk:
@@ -41,9 +49,11 @@ _SECTION_NAMES = {
     "methods": "Method",
     "experiments": "Experiments",
     "results": "Results",
+    "results and findings": "Results",
     "limitations": "Limitations",
     "conclusion": "Conclusion",
     "future work": "Future Work",
+    "framework": "Framework",
     "appendix": "Appendix",
 }
 
@@ -60,8 +70,12 @@ def parse_pdf(data: bytes) -> ParsedDocument:
 
 
 def _detect_section(text: str, current: str = "Unknown") -> str:
-    for line in text.splitlines()[:8]:
-        normalized = re.sub(r"^\d+(?:\.\d+)*\s*", "", line.strip().lower()).rstrip(":")
+    for line in text.splitlines():
+        normalized = re.sub(
+            r"^(?:(?:[ivxlcdm]+)\.|\d+(?:\.\d+)*)\s*",
+            "",
+            line.strip().lower(),
+        ).rstrip(":")
         if normalized in _SECTION_NAMES:
             return _SECTION_NAMES[normalized]
     return current

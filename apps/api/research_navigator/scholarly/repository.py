@@ -72,6 +72,17 @@ def upsert_paper(session: Session, raw_record: PaperRecord) -> Paper:
         if record.abstract:
             selected_abstract_provenance = record.abstract_provenance
     else:
+        # Keep conflicting material versions explicit; do not bless an old PDF
+        # as the newly observed version or merge preprint/publication evidence.
+        identities = json.loads(paper.external_ids_json or "{}")
+        incoming_version = record.external_ids.get("arxiv_versioned_id")
+        previous_version = identities.get("arxiv_versioned_id")
+        if incoming_version and previous_version and incoming_version != previous_version:
+            observed = set(identities.get("arxiv_observed_versions", []))
+            observed.update((previous_version, incoming_version))
+            identities["arxiv_observed_versions"] = sorted(observed)
+            identities["arxiv_version_conflict"] = True
+            paper.external_ids_json = _json(identities)
         current_abstract_verified = session.scalar(
             select(PaperSource.id).where(
                 PaperSource.paper_id == paper.id,

@@ -29,7 +29,7 @@ class ReproductionAssessment(BaseModel):
     estimated_compute_level: str
     blocking_reasons: list[str]
     recommended_first_step: str
-    score_version: str = "reproduction-v1"
+    score_version: str = "reproduction-v2"
 
 
 def calculate_reproduction_assessment(
@@ -58,10 +58,6 @@ def calculate_reproduction_assessment(
 
 
 def assess_reproduction(paper: Paper, analysis: PaperAnalysisOutput) -> ReproductionAssessment:
-    urls = " ".join(
-        [paper.publisher_url or "", paper.pdf_url or "", paper.source_urls_json]
-    ).lower()
-    has_repo = "github.com" in urls or "gitlab.com" in urls
     fulltext = analysis.evidence_level in {
         "open_fulltext",
         "user_uploaded_fulltext",
@@ -71,9 +67,9 @@ def assess_reproduction(paper: Paper, analysis: PaperAnalysisOutput) -> Reproduc
         ReproductionDimension(
             name="code_availability",
             weight=0.20,
-            status="verified" if has_repo else "unknown",
-            score=1.0 if has_repo else None,
-            evidence="发现可验证代码仓库链接。" if has_repo else "当前来源未完成代码仓库核验。",
+            status="unknown",
+            score=None,
+            evidence="代码入口不等于作者实现或代码开源；尚未核验归属、内容与许可证。",
         ),
         ReproductionDimension(
             name="data_availability",

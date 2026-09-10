@@ -255,6 +255,7 @@ class PaperDocument(TimestampMixin, Base):
     page_count: Mapped[int] = mapped_column(nullable=False)
     rights_confirmed: Mapped[bool] = mapped_column(default=False, nullable=False)
     ingestion_version: Mapped[str] = mapped_column(String(80), default="pdf-v1", nullable=False)
+    material_binding_json: Mapped[str | None] = mapped_column(Text, nullable=True)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     source_record_id: Mapped[str | None] = mapped_column(String(500), nullable=True)
     rights_basis: Mapped[str | None] = mapped_column(String(120), nullable=True)
@@ -443,6 +444,8 @@ class PlanItem(TimestampMixin, Base):
     category: Mapped[str] = mapped_column(String(80), nullable=False)
     title: Mapped[str] = mapped_column(String(240), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
+    purpose: Mapped[str | None] = mapped_column(Text, nullable=True)
+    expected_output: Mapped[str | None] = mapped_column(Text, nullable=True)
     sequence: Mapped[int] = mapped_column(nullable=False)
     status: Mapped[str] = mapped_column(String(40), default="pending", nullable=False)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -550,6 +553,13 @@ class SourceRuntimeState(TimestampMixin, Base):
         String(40), default="unknown", nullable=False
     )
     cooldown_until: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    lease_owner: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    lease_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    next_allowed_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
     consecutive_failures: Mapped[int] = mapped_column(default=0, nullable=False)

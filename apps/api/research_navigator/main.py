@@ -34,12 +34,15 @@ from research_navigator.routes import (
     search,
     selections,
     system,
+    translation,
     workspace,
 )
 from research_navigator.routes import (
     settings as settings_routes,
 )
+from research_navigator.scholarly.coordinator import ArxivRequestCoordinator
 from research_navigator.scholarly.service import build_search_service
+from research_navigator.translation.service import TranslationService
 
 
 def create_app(
@@ -60,10 +63,19 @@ def create_app(
         app.state.settings = resolved
         app.state.storage = (storage_factory or build_runtime_storage)(resolved)
         app.state.database = database
-        app.state.search_service = build_search_service(resolved)
-        app.state.oa_resolver = build_open_access_resolver(resolved)
+        arxiv_coordinator = (
+            ArxivRequestCoordinator(database=database) if resolved.enable_arxiv else None
+        )
+        app.state.arxiv_coordinator = arxiv_coordinator
+        app.state.search_service = build_search_service(
+            resolved, database=database, arxiv_coordinator=arxiv_coordinator
+        )
+        app.state.oa_resolver = build_open_access_resolver(
+            resolved, database=database, arxiv_coordinator=arxiv_coordinator
+        )
         app.state.pdf_fetcher = build_pdf_fetcher(resolved)
         app.state.analysis_provider = build_analysis_provider(resolved)
+        app.state.translation_service = TranslationService()
         runtime_config_path = resolved.data_dir / "admin_runtime_config.json"
         runtime_config = {"source_health_timeout_seconds": 5.0, "worker_max_attempts_default": 3}
         if runtime_config_path.exists():
@@ -130,6 +142,7 @@ def create_app(
     app.include_router(recommendations.router, prefix="/api")
     app.include_router(workspace.router, prefix="/api")
     app.include_router(system.router, prefix="/api")
+    app.include_router(translation.router, prefix="/api")
     return app
 
 

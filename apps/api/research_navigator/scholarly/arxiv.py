@@ -18,6 +18,10 @@ from research_navigator.scholarly.base import (
     SourceProvenance,
     SourceStatus,
 )
+from research_navigator.scholarly.coordinator import (
+    ArxivRequestCoordinator,
+    CoordinatorUnavailable,
+)
 
 _ATOM = "{http://www.w3.org/2005/Atom}"
 _ARXIV = "{http://arxiv.org/schemas/atom}"
@@ -28,8 +32,14 @@ class ArxivAdapter(ScholarlyAdapter):
     supports_evidence_acquisition = True
     base_url = "https://export.arxiv.org/api/query"
 
-    def __init__(self, *, timeout: float = 25.0) -> None:
+    def __init__(
+        self,
+        *,
+        timeout: float = 25.0,
+        coordinator: ArxivRequestCoordinator | None = None,
+    ) -> None:
         self.timeout = timeout
+        self.coordinator = coordinator
 
     async def search(self, request: SearchRequest) -> AdapterSearchResult:
         params: dict[str, str | int] = {
@@ -38,18 +48,34 @@ class ArxivAdapter(ScholarlyAdapter):
             "max_results": request.limit,
             "sortBy": "relevance",
         }
-        try:
+        async def fetch() -> bytes:
             async with httpx.AsyncClient(
                 timeout=self.timeout, headers={"User-Agent": "ResearchNavigator/0.2"}
             ) as client:
                 response = await client.get(self.base_url, params=params)
                 if response.status_code == 429:
-                    return AdapterSearchResult(
-                        status=SourceStatus(status="rate_limited", detail="arXiv returned 429")
+                    raise httpx.HTTPStatusError(
+                        "arXiv returned 429", request=response.request, response=response
                     )
                 response.raise_for_status()
-                root = ET.fromstring(response.text)
+                return response.content
+
+        try:
+            content = (
+                await self.coordinator.run("search", fetch)
+                if self.coordinator is not None
+                else await fetch()
+            )
+            root = ET.fromstring(content)
+        except CoordinatorUnavailable as exc:
+            return AdapterSearchResult(
+                status=SourceStatus(status="error", detail=f"CoordinatorUnavailable: {exc}")
+            )
         except Exception as exc:
+            if isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code == 429:
+                return AdapterSearchResult(
+                    status=SourceStatus(status="rate_limited", detail="arXiv returned 429")
+                )
             return AdapterSearchResult(
                 status=SourceStatus(status="error", detail=f"{type(exc).__name__}: {exc}")
             )

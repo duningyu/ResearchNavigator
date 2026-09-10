@@ -114,6 +114,20 @@ def test_abstract_analysis_is_structured_scored_and_persisted(tmp_path: Path) ->
         assert stored.status_code == 200
         assert stored.json()["analysis_version"] == payload["analysis_version"]
 
+        project = client.post(
+            "/api/projects", headers=headers, json={"name": "Isolated direction"}
+        ).json()
+        scoped = client.post(
+            f"/api/papers/{paper_id}/analyze", headers=headers,
+            json={"project_id": project["id"]},
+        )
+        assert scoped.status_code == 200
+        unscoped = client.get(f"/api/papers/{paper_id}/analysis", headers=headers).json()
+        assert unscoped["id"] == payload["id"]
+        assert client.get(
+            f"/api/papers/{paper_id}/analysis?project_id={project['id']}", headers=headers,
+        ).json()["id"] == scoped.json()["id"]
+
 
 def test_abstract_only_analysis_marks_unsupported_fields_as_insufficient_evidence(
     tmp_path: Path,

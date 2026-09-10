@@ -124,6 +124,7 @@ async def acquire_evidence(
 @router.get("/papers/{paper_id}/analysis", response_model=PaperAnalysisResponse)
 def get_latest_analysis(
     paper_id: int,
+    project_id: int | None = None,
     user: User = Depends(get_current_user),
     session: Session = Depends(get_db),
 ) -> PaperAnalysisResponse:
@@ -133,6 +134,7 @@ def get_latest_analysis(
         .where(
             PaperAnalysisRecord.paper_id == paper_id,
             PaperAnalysisRecord.user_id == user.id,
+            PaperAnalysisRecord.project_id == project_id,
         )
         .order_by(PaperAnalysisRecord.created_at.desc(), PaperAnalysisRecord.id.desc())
     )

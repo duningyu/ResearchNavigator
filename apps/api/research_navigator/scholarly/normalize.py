@@ -39,6 +39,10 @@ def normalize_title(value: str) -> str:
 
 
 def normalize_record(record: PaperRecord) -> PaperRecord:
+    external_ids = dict(record.external_ids)
+    versioned = _ARXIV_PREFIX.sub("", (record.arxiv_id or "").strip()).removesuffix(".pdf")
+    if _ARXIV_VERSION.search(versioned):
+        external_ids["arxiv_versioned_id"] = versioned
     abstract_provenance = record.abstract_provenance
     if record.abstract and abstract_provenance is None and len(record.source_provenance) == 1:
         abstract_provenance = record.source_provenance[0]
@@ -46,6 +50,7 @@ def normalize_record(record: PaperRecord) -> PaperRecord:
         update={
             "doi": normalize_doi(record.doi),
             "arxiv_id": normalize_arxiv_id(record.arxiv_id),
+            "external_ids": external_ids,
             "normalized_title": normalize_title(record.title),
             "source_urls": list(OrderedDict.fromkeys(record.source_urls)),
             "abstract_provenance": abstract_provenance,

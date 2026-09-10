@@ -489,6 +489,7 @@ def test_existing_fulltext_skips_external_acquisition_and_preserves_level(
     tmp_path: Path,
 ) -> None:
     adapter = MutableEvidenceAdapter(record(doi="10.1000/fulltext", abstract=None))
+    adapter.record.arxiv_id = "2401.12345v2"
     app = create_app(settings_for(tmp_path))
     with TestClient(app) as client:
         app.state.search_service = FederatedSearchService([adapter])
@@ -505,6 +506,7 @@ def test_existing_fulltext_skips_external_acquisition_and_preserves_level(
         ).json()["papers"][0]["id"]
         buffer = BytesIO()
         canvas = Canvas(buffer)
+        canvas.drawString(72, 790, "arXiv:2401.12345v2")
         canvas.drawString(72, 760, "Authorized fulltext evidence.")
         canvas.save()
         uploaded = client.post(

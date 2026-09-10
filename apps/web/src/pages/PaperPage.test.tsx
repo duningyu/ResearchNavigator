@@ -85,6 +85,7 @@ describe('paper evidence acquisition', () => {
       }
       if (url.endsWith('/papers/7/analysis')) return json(initial);
       if (url.endsWith('/papers/7/documents')) return json([]);
+      if (url.endsWith('/papers/7/evidence-workflows')) return json([]);
       if (url.endsWith('/papers/7')) return json(paper);
       if (url.endsWith('/projects')) return json([]);
       return json({ detail: `unexpected request: ${url}` }, { status: 500 });
@@ -95,17 +96,17 @@ describe('paper evidence acquisition', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByText('证据等级：metadata_only')).toBeInTheDocument();
-    expect(screen.getAllByText('未在当前可访问文本中找到。').length).toBeGreaterThan(0);
+    expect(await screen.findByText('现有材料：仅书目信息')).toBeInTheDocument();
+    expect(screen.getAllByText('当前来源未提供摘要。').length).toBeGreaterThan(0);
     const statusCard = screen.getByText('当前证据状态与缺失提示').closest('.ant-card');
     expect(statusCard).not.toBeNull();
-    expect(within(statusCard as HTMLElement).getByText('缺失字段').closest('tr')).toHaveTextContent('无');
+    expect(within(statusCard as HTMLElement).getByText('待补充材料').closest('tr')).toHaveTextContent('已提取字段仍需核对原文');
 
     fireEvent.click(screen.getByRole('button', { name: '获取更多证据并重新分析' }));
 
-    expect(await screen.findByText('证据等级：abstract_only')).toBeInTheDocument();
+    expect(await screen.findByText('现有材料：仅摘要')).toBeInTheDocument();
     expect(screen.getAllByText('Concrete abstract evidence').length).toBeGreaterThan(0);
-    expect(screen.getByText('crossref: ok')).toBeInTheDocument();
+    expect(screen.getByText('crossref: 查询已完成')).toBeInTheDocument();
     await waitFor(() => expect(fetchSpy.mock.calls.some(([input]) => String(input).endsWith('/papers/7/acquire-evidence'))).toBe(true));
   });
 });

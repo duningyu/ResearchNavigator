@@ -6,6 +6,7 @@ counts with suitability and it never hides fixture provenance.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from contextlib import suppress
@@ -14,7 +15,14 @@ from datetime import UTC, datetime
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from research_navigator.models import Paper, Recommendation, ResearchProfile, ResearchProject
+from research_navigator.models import (
+    Paper,
+    PaperDocument,
+    PaperSource,
+    Recommendation,
+    ResearchProfile,
+    ResearchProject,
+)
 
 _TOKEN = re.compile(r"[a-z0-9]+|[\u4e00-\u9fff]{2,}", re.IGNORECASE)
 _STOP = {
@@ -33,6 +41,18 @@ _STOP = {
     "paper",
     "method",
     "study",
+    "deep",
+    "learning",
+    "model",
+    "data",
+    "algorithm",
+    "network",
+    "analysis",
+    "detection",
+    "prediction",
+    "future",
+    "window",
+    "industrial",
 }
 
 
@@ -59,6 +79,122 @@ def _direction_tokens(profile: ResearchProfile | None, project: ResearchProject 
     if project:
         values.extend([project.name, project.broad_direction or "", project.description or ""])
     return _tokens(" ".join(values))
+
+
+def _identity(value: object) -> str:
+    return hashlib.sha256(str(value).encode("utf-8")).hexdigest()[:16]
+
+
+def _profile_identity(profile: ResearchProfile | None, project: ResearchProject | None) -> str:
+    payload = {
+        "profile": {
+            "stage": profile.stage if profile else None,
+            "major": profile.major if profile else None,
+            "broad_direction": profile.broad_direction if profile else None,
+            "keywords": profile.keywords_json if profile else "[]",
+            "excluded_terms": profile.excluded_terms_json if profile else "[]",
+            "preferences": profile.preferences_json if profile else "[]",
+        },
+        "project": {
+            "id": project.id if project else None,
+            "name": project.name if project else None,
+            "broad_direction": project.broad_direction if project else None,
+            "description": project.description if project else None,
+        },
+    }
+    return f"profile:{_identity(json.dumps(payload, ensure_ascii=False, sort_keys=True))}"
+
+
+def _paper_identity(paper: Paper) -> str:
+    if paper.arxiv_id:
+        return f"arxiv:{paper.arxiv_id}"
+    if paper.doi:
+        return f"doi:{paper.doi}"
+    return f"paper:{paper.id}:{_identity(paper.normalized_title)}"
+
+
+def _material_identity(material: object | None, paper: Paper) -> tuple[str, str]:
+    if isinstance(material, PaperDocument):
+        return (
+            f"document:{material.id}:{material.sha256}",
+            "full_text" if "fulltext" in material.evidence_level else "metadata",
+        )
+    if isinstance(material, PaperSource):
+        return (
+            f"source:{material.id}:{material.raw_hash or material.source_id}",
+            "abstract" if material.provides_abstract and paper.abstract else "metadata",
+        )
+    if paper.abstract:
+        return f"abstract:{hashlib.sha256(paper.abstract.encode('utf-8')).hexdigest()}", "abstract"
+    return f"metadata:{paper.id}", "metadata"
+
+
+def build_reading_recommendation(
+    *,
+    paper: Paper,
+    profile: ResearchProfile | None,
+    project: ResearchProject | None,
+    material: object | None,
+) -> dict[str, object]:
+    """Build a material- and profile-bound recommendation, not a score label."""
+    paper_identity = _paper_identity(paper)
+    material_identity, evidence_level = _material_identity(material, paper)
+    profile_identity = _profile_identity(profile, project)
+    direction = _direction_tokens(profile, project)
+    matched = direction & _paper_tokens(paper)
+    task_match = (
+        "unknown"
+        if not direction or not paper.abstract
+        else ("matched" if matched else "mismatched")
+    )
+    method_terms = {"attention", "transformer", "cnn", "lstm", "neural", "deep"}
+
+    if task_match == "unknown" or evidence_level == "metadata":
+        verdict = "insufficient_evidence"
+        rationale = "当前材料不足以判断论文与研究任务的适配关系。"
+        applicability = "暂不能形成可靠的阅读优先级判断。"
+        missing = ["明确研究任务", "可核验的摘要或正文材料"]
+    elif task_match == "mismatched":
+        verdict = "method_reference" if method_terms & _paper_tokens(paper) else "not_priority"
+        rationale = (
+            "该论文研究任务与当前方向不同，仅在方法层面可能具有参考价值。"
+            if verdict == "method_reference"
+            else "该论文研究任务与当前方向不匹配。"
+        )
+        applicability = "如需借鉴，应在当前数据和实验设置中单独验证。"
+        missing = ["当前任务下的迁移实验", "与本方向直接相关的正文证据"]
+    elif evidence_level == "abstract":
+        verdict = "method_reference"
+        rationale = "摘要显示存在一定任务关联，但仍需正文核实方法和实验边界。"
+        applicability = "可作为初步阅读线索，不等同于正文核验结论。"
+        missing = ["正文方法细节", "完整实验设置"]
+    else:
+        verdict = "priority_read"
+        rationale = "当前研究档案与论文任务存在可核验关联，且已有当前版本正文材料。"
+        applicability = "可优先阅读，并结合当前数据复核适用范围。"
+        missing = ["当前数据上的独立复现实验"]
+
+    return {
+        "verdict": verdict,
+        "rationale": rationale,
+        "task_match": task_match,
+        "evidence_level": evidence_level,
+        "applicability": applicability,
+        "missing_information": missing,
+        "evidence_refs": [
+            {
+                "paper_id": paper.id,
+                "paper_identity": paper_identity,
+                "material_identity": material_identity,
+                "evidence_level": evidence_level,
+            }
+        ],
+        "research_profile_identity": profile_identity,
+        "paper_identity": paper_identity,
+        "material_identity": material_identity,
+        "is_current": True,
+        "invalidation_reason": None,
+    }
 
 
 def _category(paper: Paper, matched: set[str], current_year: int) -> str:
@@ -122,12 +258,27 @@ def refresh_recommendations(
             reason = f"与研究档案共享术语：{', '.join(matched_sorted[:8])}。"
         else:
             reason = "当前本地论文库中直接匹配证据较弱，作为补充路线保留。"
+        material: PaperDocument | PaperSource | None = session.scalar(
+            select(PaperDocument)
+            .where(PaperDocument.paper_id == paper.id)
+            .order_by(PaperDocument.created_at.desc(), PaperDocument.id.desc())
+        )
+        if material is None:
+            material = session.scalar(
+                select(PaperSource)
+                .where(PaperSource.paper_id == paper.id)
+                .order_by(PaperSource.created_at.desc(), PaperSource.id.desc())
+            )
+        reading_recommendation = build_reading_recommendation(
+            paper=paper, profile=profile, project=project, material=material
+        )
         evidence = {
             "rule_version": "recommendation-v1",
             "matched_terms": matched_sorted,
             "direction_term_count": len(direction),
             "is_fixture_sensitive": True,
             "warning": "fixture 记录仅用于演示，不可作为真实科研证据。",
+            "reading_recommendation": reading_recommendation,
         }
         row = Recommendation(
             user_id=user_id,

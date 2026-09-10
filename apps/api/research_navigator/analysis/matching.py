@@ -17,7 +17,7 @@ class WeightedScoreResult(BaseModel):
     evidence_coverage: float
     components: dict[str, float | None]
     reasons: dict[str, str]
-    score_version: str = "direction-match-v1"
+    score_version: str = "direction-match-v2"
 
 
 def missing_aware_weighted_score(
@@ -92,32 +92,15 @@ def assess_direction_match(
             ],
         )
     )
-    lower_profile, lower_paper = profile_text.lower(), paper_text.lower()
-    task_terms = (
-        "anomaly detection",
-        "异常检测",
-        "anomaly prediction",
-        "异常预测",
-        "risk ranking",
-        "预警",
-    )
-    data_terms = ("time series", "时序", "multivariate", "多变量", "industrial", "工业")
-    output_terms = ("future", "horizon", "risk", "ranking", "prediction", "未来", "排序", "预测")
-    evaluation_terms = ("pr-auc", "precision", "recall", "top-k", "event", "误报", "告警")
-
-    def keyword_alignment(terms: tuple[str, ...]) -> float | None:
-        desired = [term for term in terms if term in lower_profile]
-        if not desired:
-            return None
-        return sum(1 for term in desired if term in lower_paper) / len(desired)
-
     components = {
         "semantic_similarity": _overlap(profile_text, paper_text),
-        "task_alignment": keyword_alignment(task_terms),
-        "data_modality": keyword_alignment(data_terms),
-        "prediction_output": keyword_alignment(output_terms),
-        "evaluation_protocol": keyword_alignment(evaluation_terms),
-        "resource_fit": 0.7 if profile.compute_constraints else None,
+        # Profile currently has no separately verified modality/output/protocol contracts.
+        # Never fill these from a domain template or reward a declared hardware budget.
+        "task_alignment": _overlap(profile.broad_direction or "", analysis.research_problem or ""),
+        "data_modality": None,
+        "prediction_output": None,
+        "evaluation_protocol": None,
+        "resource_fit": None,
     }
     result = missing_aware_weighted_score(
         components=components,
@@ -131,7 +114,11 @@ def assess_direction_match(
         },
     )
     result.reasons = {
-        name: ("证据缺失，未参与归一化" if value is None else f"组成分={value:.3f}")
+        name: (
+            "缺少可核验条件，不计分"
+            if value is None
+            else "基于词语重合，仅作阅读线索，不证明任务相关"
+        )
         for name, value in components.items()
     }
     return result

@@ -1,7 +1,41 @@
+import pytest
+
 from research_navigator.analysis.reproduction import (
     ReproductionDimension,
+    assess_reproduction,
     calculate_reproduction_assessment,
 )
+from research_navigator.analysis.structured import PaperAnalysisOutput
+from research_navigator.models import Paper
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://github.com/third-party/implementation",
+        "https://github.com.attacker.invalid/code",
+        "https://example.invalid/?next=github.com",
+    ],
+)
+def test_repository_mention_is_not_verified_open_source(url: str) -> None:
+    paper = Paper(
+        id=1,
+        title="Synthetic",
+        normalized_title="synthetic",
+        source_urls_json="[]",
+        publisher_url=url,
+    )
+    analysis = PaperAnalysisOutput(
+        paper_id=1,
+        evidence_level="abstract_only",
+        executive_summary="Synthetic",
+        summary="Synthetic",
+    )
+    result = assess_reproduction(paper, analysis)
+    code = next(item for item in result.dimensions if item.name == "code_availability")
+    assert code.status == "unknown"
+    assert code.score is None
+    assert "许可" in code.evidence
 
 
 def test_unknown_is_excluded_but_missing_is_known_negative() -> None:

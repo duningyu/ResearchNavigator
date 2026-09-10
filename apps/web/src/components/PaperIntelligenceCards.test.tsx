@@ -17,11 +17,16 @@ describe('PaperIntelligenceCards', () => {
       test_split: null, metrics: [], evidence_level: 'abstract_only', field_citations: {},
     }]} loading={false} />);
     expect(screen.getByText('A. Researcher')).toBeInTheDocument();
-    expect(screen.getByText('resolved_identifier')).toBeInTheDocument();
+    expect(screen.getByText('已核对来源标识')).toBeInTheDocument();
+    expect(screen.queryByText('resolved_identifier')).not.toBeInTheDocument();
+    expect(screen.queryByText('A1')).not.toBeInTheDocument();
     const rawMentionRow = screen.getByText('原文提及').closest('tr');
     expect(rawMentionRow).not.toBeNull();
     expect(within(rawMentionRow as HTMLElement).getByText('SWaT')).toBeInTheDocument();
-    expect(screen.getByText('mentioned_only')).toBeInTheDocument();
+    expect(screen.getByText('仅在原文中提及')).toBeInTheDocument();
+    expect(screen.getByText('仅摘要')).toBeInTheDocument();
+    expect(screen.queryByText('mentioned_only')).not.toBeInTheDocument();
+    expect(screen.queryByText('evaluation')).not.toBeInTheDocument();
     expect(screen.getAllByText('未在当前可访问证据中找到。').length).toBeGreaterThan(0);
   });
 });

@@ -39,6 +39,7 @@ Thumbs.db
 # Local verification evidence
 codex_audit/runs/
 $r/
+.tmp/
 
 .vercel
 .env*

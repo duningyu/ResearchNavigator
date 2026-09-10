@@ -6,10 +6,12 @@ export type SourceStatus = {
   enabled?: boolean;
   configured?: boolean;
   checked_at?: string;
+  metadata?: Record<string, unknown>;
 };
 
 export type Citation = {
   source_type: string;
+  supporting_text?: string | null;
   section?: string | null;
   page_start?: number | null;
   page_end?: number | null;
@@ -51,6 +53,32 @@ export type Paper = {
   is_fixture: boolean;
   abstract_evidence_verified: boolean;
   ranking?: RankingMetadata | null;
+};
+
+export type AbstractTranslation = {
+  paper_id: number;
+  original_abstract: string | null;
+  translated_abstract: string | null;
+  status: 'ready' | 'failed' | 'partial' | 'unavailable';
+  source_abstract_sha256: string | null;
+  target_language: string;
+  pipeline_version: string;
+  fallback_reason?: string | null;
+};
+
+export type ReadingRecommendation = {
+  verdict: 'priority_read' | 'method_reference' | 'not_priority' | 'insufficient_evidence';
+  rationale: string;
+  task_match: 'matched' | 'mismatched' | 'unknown';
+  evidence_level: 'metadata' | 'abstract' | 'full_text';
+  applicability: string;
+  missing_information: string[];
+  evidence_refs: Array<Record<string, unknown>>;
+  research_profile_identity: string;
+  paper_identity: string;
+  material_identity: string;
+  is_current: boolean;
+  invalidation_reason?: string | null;
 };
 
 export type SearchSession = {
@@ -152,8 +180,8 @@ export type PaperAnalysis = {
 export type EvidenceAcquisition = {
   run_id: string;
   outcome: 'abstract_acquired' | 'no_matching_evidence' | 'no_eligible_source' | 'source_unavailable' | 'already_sufficient';
-  evidence_level_before: 'metadata_only' | 'abstract_only' | 'open_fulltext' | 'user_uploaded_fulltext' | 'publisher_authorized_fulltext';
-  evidence_level_after: 'metadata_only' | 'abstract_only' | 'open_fulltext' | 'user_uploaded_fulltext' | 'publisher_authorized_fulltext';
+  evidence_level_before: 'metadata_only' | 'abstract_only' | 'partial_fulltext' | 'open_fulltext' | 'user_uploaded_fulltext' | 'publisher_authorized_fulltext';
+  evidence_level_after: 'metadata_only' | 'abstract_only' | 'partial_fulltext' | 'open_fulltext' | 'user_uploaded_fulltext' | 'publisher_authorized_fulltext';
   queried_sources: string[];
   source_status: Record<string, SourceStatus>;
   paper: Paper;
@@ -170,6 +198,7 @@ export type EvidenceWorkflowEvent = {
 };
 
 export type EvidenceWorkflow = {
+  result_integrity?: 'verified' | 'missing_or_mismatched' | 'not_checked';
   id: number;
   paper_id: number;
   project_id?: number | null;
@@ -341,7 +370,7 @@ export type ComparisonRun = {
   project_id: number;
   paper_set_id: number;
   direction_snapshot: Record<string, unknown>;
-  papers: Array<{ id: number; title: string; publication_year?: number | null; venue?: string | null; evidence_level: string }>;
+  papers: Array<{ id: number; title: string; publication_year?: number | null; venue?: string | null; evidence_level: string; relation?: 'direct' | 'adjacent' | 'unrelated' | 'unknown'; relation_citations?: Record<string, unknown>[]; relation_version?: string | null }>;
   rows: ComparisonRow[];
   analysis_version: string;
   evidence_hash: string;
@@ -366,6 +395,8 @@ export type GapExplanation = {
 };
 
 export type GapCandidate = {
+  review_required?: boolean;
+  review_reason?: string | null;
   id: number;
   project_id: number;
   paper_set_id?: number | null;
@@ -398,12 +429,16 @@ export type PlanItem = {
   category: string;
   title: string;
   description: string;
+  purpose?: string | null;
+  expected_output?: string | null;
   sequence: number;
   status: string;
   notes?: string | null;
 };
 
 export type ResearchPlan = {
+  review_required?: boolean;
+  review_reason?: string | null;
   id: number;
   project_id: number;
   gap_id?: number | null;

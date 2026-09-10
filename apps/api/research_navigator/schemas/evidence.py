@@ -26,6 +26,7 @@ class EvidenceWorkflowRead(BaseModel):
     status: str
     payload: dict[str, object]
     result: dict[str, object]
+    result_integrity: str = "not_checked"
     error: str | None
     strongest_evidence: str
     attempt_count: int

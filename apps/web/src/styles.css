@@ -76,3 +76,12 @@ pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   font-size: 12px;
   color: #697386;
 }
+.workspace-menu .ant-menu-item { color: #cbe7ed; }
+.dashboard-hero div.ant-typography { max-width: 600px; margin-bottom: 0; color: #cbe7ed; font-size: 15px; line-height: 1.7; }
+/* Readable secondary copy on the light workspace; do not recolor source quotations. */
+.app-content .ant-typography-secondary,
+.app-content .ant-statistic-title,
+.workflow-step small,
+.paper-selection-copy > span { color: #536779; }
+.workflow-step > span { color: #23717b; }
+.workspace-main :focus-visible { outline: 3px solid #216b8a; outline-offset: 3px; }

@@ -20,6 +20,10 @@ from research_navigator.analysis.structured import (
     EvidenceSpan,
     analyze_accessible_text,
 )
+from research_navigator.documents.material_binding import (
+    expected_arxiv_identity,
+    material_is_current,
+)
 from research_navigator.models import (
     AgentRun,
     Paper,
@@ -40,12 +44,21 @@ def accessible_text(
         select(PaperDocument)
         .where(
             PaperDocument.paper_id == paper.id,
-            PaperDocument.parse_status == "succeeded",
             or_(PaperDocument.user_id == user_id, PaperDocument.user_id.is_(None)),
         )
         .order_by(PaperDocument.created_at.desc(), PaperDocument.id.desc())
     )
-    if document is not None:
+    if (
+        document is not None
+        and document.parse_status in {"succeeded", "partial"}
+        and material_is_current(
+            document.material_binding_json,
+            paper_id=paper.id,
+            arxiv_id=expected_arxiv_identity(paper),
+            doi=paper.doi,
+            sha256=document.sha256,
+        )
+    ):
         chunks = list(
             session.scalars(
                 select(PaperChunk)

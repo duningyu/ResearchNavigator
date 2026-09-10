@@ -1,20 +1,35 @@
 from io import BytesIO
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 from reportlab.pdfgen.canvas import Canvas
 
 from research_navigator.config import Settings
 from research_navigator.main import create_app
+from research_navigator.models import Paper
 
 
-def make_pdf() -> bytes:
+def bind_local_test_paper(client: TestClient, paper_id: int) -> None:
+    # Independent local metadata fixture; upload must itself carry the matching version.
+    with client.app.state.database.session() as session:
+        paper = session.get(Paper, paper_id)
+        assert paper is not None
+        paper.arxiv_id = "2401.12345v2"
+        session.commit()
+
+
+def make_pdf(*, partial: bool = False) -> bytes:
     buffer = BytesIO()
     canvas = Canvas(buffer)
+    canvas.drawString(72, 810, "arXiv:2401.12345v2")
     canvas.drawString(72, 760, "Abstract")
     canvas.drawString(72, 735, "We predict future horizon anomaly risk for industrial time series.")
     canvas.drawString(72, 710, "Method")
     canvas.drawString(72, 685, "The method ranks alerts under a fixed budget with causal windows.")
+    if partial:
+        canvas.showPage()
+        canvas.showPage()
     canvas.save()
     return buffer.getvalue()
 
@@ -45,7 +60,10 @@ def settings_for(tmp_path: Path) -> Settings:
     )
 
 
-def test_user_uploaded_pdf_is_persisted_chunked_and_retrievable(tmp_path: Path) -> None:
+@pytest.mark.parametrize("partial", [False, True])
+def test_user_uploaded_pdf_is_persisted_chunked_and_retrievable(
+    tmp_path: Path, partial: bool
+) -> None:
     with TestClient(create_app(settings_for(tmp_path))) as client:
         auth = client.post(
             "/api/auth/register",
@@ -62,20 +80,22 @@ def test_user_uploaded_pdf_is_persisted_chunked_and_retrievable(tmp_path: Path) 
             json={"query": "future horizon", "sources": ["fixture"], "limit": 1},
         ).json()["papers"][0]["id"]
 
+        bind_local_test_paper(client, paper_id)
         upload = client.post(
             f"/api/papers/{paper_id}/upload",
             headers=headers,
             data={"rights_confirmed": "true"},
-            files={"file": ("authorized-paper.pdf", make_pdf(), "application/pdf")},
+            files={"file": ("authorized-paper.pdf", make_pdf(partial=partial), "application/pdf")},
         )
         assert upload.status_code == 201, upload.text
-        assert upload.json()["evidence_level"] == "user_uploaded_fulltext"
-        assert upload.json()["page_count"] == 1
+        expected_level = "partial_fulltext" if partial else "user_uploaded_fulltext"
+        assert upload.json()["evidence_level"] == expected_level
+        assert upload.json()["page_count"] == (2 if partial else 1)
         assert upload.json()["chunk_count"] >= 1
 
         status = client.get(f"/api/papers/{paper_id}/content-status", headers=headers)
         assert status.status_code == 200
-        assert status.json()["evidence_level"] == "user_uploaded_fulltext"
+        assert status.json()["evidence_level"] == expected_level
 
         retrieval = client.post(
             f"/api/papers/{paper_id}/retrieve",
@@ -94,6 +114,7 @@ def make_evidence_rich_pdf() -> bytes:
     buffer = BytesIO()
     canvas = Canvas(buffer)
     lines = [
+        "arXiv:2401.12345v2",
         "Abstract",
         "We study future-window anomaly risk prediction for industrial time series.",
         "Method",
@@ -137,6 +158,7 @@ def test_fulltext_analysis_extracts_evidence_fields_with_page_chunk_citations(
             headers=headers,
             json={"query": "future horizon", "sources": ["fixture"], "limit": 1},
         ).json()["papers"][0]["id"]
+        bind_local_test_paper(client, paper_id)
         upload = client.post(
             f"/api/papers/{paper_id}/upload",
             headers=headers,

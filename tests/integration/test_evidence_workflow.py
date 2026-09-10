@@ -9,6 +9,7 @@ from reportlab.pdfgen.canvas import Canvas
 
 from research_navigator.config import Settings
 from research_navigator.main import create_app
+from research_navigator.models import Job
 from research_navigator.open_access.base import (
     OpenAccessCandidate,
     OpenAccessResolution,
@@ -106,6 +107,7 @@ def record(*, abstract: str | None) -> PaperRecord:
         abstract=abstract,
         publication_year=2026,
         doi="10.1000/workflow",
+        arxiv_id="2401.12345v2",
         source_urls=["https://example.test/workflow"],
         source_provenance=[provenance],
         abstract_provenance=provenance if abstract else None,
@@ -128,9 +130,36 @@ def create_paper(client: TestClient, headers: dict[str, str], adapter: EvidenceA
     return response.json()["papers"][0]["id"]
 
 
+def test_restore_workflow_is_scoped_to_paper_account_and_project(tmp_path: Path) -> None:
+    with TestClient(create_app(settings_for(tmp_path))) as client:
+        owner = register(client, "restore-owner@example.invalid")
+        stranger = register(client, "restore-other@example.invalid")
+        paper_id = create_paper(client, owner, EvidenceAdapter(record(abstract="Material")))
+        project = client.post(
+            "/api/projects",
+            headers=owner,
+            json={"name": "Restore fixture", "broad_direction": "Image segmentation"},
+        )
+        assert project.status_code == 201, project.text
+        project_id = project.json()["id"]
+        path = f"/api/papers/{paper_id}/evidence-workflows"
+        created = client.post(path, headers=owner, json={"project_id": project_id})
+        assert created.status_code == 201, created.text
+        restored = client.get(path, headers=owner, params={"project_id": project_id})
+        assert restored.status_code == 200, restored.text
+        assert [row["id"] for row in restored.json()] == [created.json()["id"]]
+        assert client.get(path, headers=owner).json() == []
+        assert client.get(path, headers=stranger).json() == []
+        assert (
+            client.get(path, headers=stranger, params={"project_id": project_id}).status_code == 404
+        )
+        assert client.get(path).status_code == 401
+
+
 def make_pdf() -> bytes:
     buffer = BytesIO()
     canvas = Canvas(buffer)
+    canvas.drawString(72, 810, "arXiv:2401.12345v2")
     canvas.drawString(72, 760, "Method")
     canvas.drawString(72, 735, "We rank future anomaly risk using causal windows.")
     canvas.save()
@@ -251,6 +280,24 @@ def test_workflow_external_pdf_failure_preserves_abstract_and_reports_reason(
         assert completed["strongest_evidence"] == "abstract_only"
         assert "repository offline" in " ".join(completed["result"]["warnings"])
         assert completed["result"]["analysis_id"] > 0
+
+
+def test_success_without_durable_result_is_not_verified(tmp_path: Path) -> None:
+    app = create_app(settings_for(tmp_path))
+    with TestClient(app) as client:
+        headers = register(client, "missing-result@example.com")
+        paper_id = create_paper(client, headers, EvidenceAdapter(record(abstract=None)))
+        job = client.post(
+            f"/api/papers/{paper_id}/evidence-workflows", headers=headers, json={}
+        ).json()
+        with app.state.database.session() as session:
+            row = session.get(Job, job["id"])
+            assert row is not None
+            row.status = "succeeded"
+            session.commit()
+        response = client.get(f"/api/evidence-workflows/{job['id']}", headers=headers)
+        assert response.status_code == 200
+        assert response.json()["result_integrity"] == "missing_or_mismatched"
 
 
 def test_workflow_cancel_uses_terminal_semantics(tmp_path: Path) -> None:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -27,6 +28,7 @@ from research_navigator.config import Settings
 from research_navigator.data_plane.storage import DurableStorage, LocalStorage, R2Storage
 from research_navigator.deps import get_current_user, get_db
 from research_navigator.documents.index import index_document, search_document_chunks
+from research_navigator.documents.material_binding import bind_material, expected_arxiv_identity
 from research_navigator.documents.parser import parse_pdf
 from research_navigator.documents.security import DocumentSecurityError, validate_pdf_upload
 from research_navigator.idempotency import replay_snapshot, store_snapshot
@@ -96,6 +98,7 @@ def _document_read(session: Session, row: PaperDocument) -> DocumentRead:
         page_count=row.page_count,
         chunk_count=int(chunk_count),
         parse_status=row.parse_status,
+        material_binding=json.loads(row.material_binding_json or "{}"),
         source_url=row.source_url,
         source_record_id=row.source_record_id,
         rights_basis=row.rights_basis,
@@ -121,9 +124,18 @@ def _claim_int(claims: dict[str, object], name: str) -> int:
 
 
 def _ingest_pdf_bytes(
-    *, session: Session, storage: DurableStorage, settings: Settings, user: User, paper_id: int,
-    filename: str, content_type: str | None, data: bytes, rights_confirmed: bool,
-    storage_key: str, store_object: bool,
+    *,
+    session: Session,
+    storage: DurableStorage,
+    settings: Settings,
+    user: User,
+    paper_id: int,
+    filename: str,
+    content_type: str | None,
+    data: bytes,
+    rights_confirmed: bool,
+    storage_key: str,
+    store_object: bool,
 ) -> DocumentRead:
     if not rights_confirmed:
         raise HTTPException(status_code=400, detail="Rights confirmation is required")
@@ -141,18 +153,39 @@ def _ingest_pdf_bytes(
     if store_object:
         storage.put(storage_key, data)
     stored_path = settings.upload_dir / storage_key if settings.storage_backend == "local" else None
-    existing = session.scalar(select(PaperDocument).where(
-        PaperDocument.user_id == user.id, PaperDocument.paper_id == paper_id,
-        PaperDocument.sha256 == validated.sha256,
-    ))
+    existing = session.scalar(
+        select(PaperDocument).where(
+            PaperDocument.user_id == user.id,
+            PaperDocument.paper_id == paper_id,
+            PaperDocument.sha256 == validated.sha256,
+        )
+    )
     if existing is not None:
         return _document_read(session, existing)
     document = PaperDocument(
-        user_id=user.id, paper_id=paper_id, source_type="user_upload",
-        evidence_level="user_uploaded_fulltext", original_filename=validated.safe_filename,
-        stored_path=str(stored_path or storage_key), mime_type="application/pdf",
-        sha256=validated.sha256, size_bytes=validated.size_bytes, page_count=parsed.page_count,
-        rights_confirmed=True, ingestion_version="pdf-v1",
+        user_id=user.id,
+        paper_id=paper_id,
+        source_type="user_upload",
+        evidence_level=(
+            "user_uploaded_fulltext"
+            if parsed.text_coverage == "succeeded"
+            else "partial_fulltext"
+            if parsed.text_coverage == "partial"
+            else "not_available"
+        ),
+        original_filename=validated.safe_filename,
+        stored_path=str(stored_path or storage_key),
+        mime_type="application/pdf",
+        sha256=validated.sha256,
+        size_bytes=validated.size_bytes,
+        page_count=parsed.page_count,
+        rights_confirmed=True,
+        ingestion_version="pdf-v2-coverage",
+        material_binding_json=json.dumps(bind_material(
+            paper_id=paper_id, arxiv_id=expected_arxiv_identity(_paper_or_404(session, paper_id)),
+            doi=_paper_or_404(session, paper_id).doi, sha256=validated.sha256, parsed=parsed,
+        )),
+        parse_status=parsed.text_coverage,
     )
     session.add(document)
     session.flush()
@@ -170,15 +203,22 @@ async def upload_paper(
     request: Request,
     file: UploadFile = File(...),
     rights_confirmed: bool = Form(...),
-    user: User = Depends(get_current_user), session: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_db),
 ) -> DocumentRead:
     _paper_or_404(session, paper_id)
     settings = request.app.state.settings
     data = await file.read(_effective_max_pdf_bytes(settings) + 1)
     return _ingest_pdf_bytes(
-        session=session, storage=request.app.state.storage, settings=settings, user=user,
-        paper_id=paper_id, filename=file.filename or "paper.pdf", content_type=file.content_type,
-        data=data, rights_confirmed=rights_confirmed,
+        session=session,
+        storage=request.app.state.storage,
+        settings=settings,
+        user=user,
+        paper_id=paper_id,
+        filename=file.filename or "paper.pdf",
+        content_type=file.content_type,
+        data=data,
+        rights_confirmed=rights_confirmed,
         storage_key=f"{user.id}/{paper_id}/{hashlib.sha256(data).hexdigest()}.pdf",
         store_object=True,
     )
@@ -186,8 +226,11 @@ async def upload_paper(
 
 @router.post("/papers/{paper_id}/uploads/presign", response_model=PresignUploadResponse)
 def presign_upload(
-    paper_id: int, payload: PresignUploadRequest, request: Request,
-    user: User = Depends(get_current_user), session: Session = Depends(get_db),
+    paper_id: int,
+    payload: PresignUploadRequest,
+    request: Request,
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_db),
 ) -> PresignUploadResponse:
     settings = request.app.state.settings
     if settings.storage_backend != "r2":
@@ -198,8 +241,10 @@ def presign_upload(
     _paper_or_404(session, paper_id)
     try:
         metadata = validate_presign_metadata(
-            filename=payload.filename, content_type=payload.content_type,
-            size_bytes=payload.size_bytes, sha256=payload.sha256,
+            filename=payload.filename,
+            content_type=payload.content_type,
+            size_bytes=payload.size_bytes,
+            sha256=payload.sha256,
             max_bytes=_effective_max_pdf_bytes(settings),
         )
     except DocumentSecurityError as exc:
@@ -210,31 +255,45 @@ def presign_upload(
     expires_at = datetime.now(UTC) + timedelta(seconds=PRESIGN_TTL_SECONDS)
     try:
         url = storage.generate_presigned_upload(
-            key=key, content_type=metadata.content_type, sha256=metadata.sha256,
+            key=key,
+            content_type=metadata.content_type,
+            sha256=metadata.sha256,
             expires_in=min(PRESIGN_TTL_SECONDS, MAX_PRESIGN_TTL_SECONDS),
         )
     except (NotImplementedError, RuntimeError) as exc:
         raise HTTPException(status_code=503, detail="R2 presigned upload is unavailable") from exc
-    token = issue_completion_token(secret=settings.upload_signing_secret, claims={
-        "user_id": user.id, "paper_id": paper_id, "key": key,
-        "filename": metadata.filename, "content_type": metadata.content_type,
-        "size_bytes": metadata.size_bytes, "sha256": metadata.sha256,
-        "exp": int(expires_at.timestamp()),
-    })
+    token = issue_completion_token(
+        secret=settings.upload_signing_secret,
+        claims={
+            "user_id": user.id,
+            "paper_id": paper_id,
+            "key": key,
+            "filename": metadata.filename,
+            "content_type": metadata.content_type,
+            "size_bytes": metadata.size_bytes,
+            "sha256": metadata.sha256,
+            "exp": int(expires_at.timestamp()),
+        },
+    )
     return PresignUploadResponse(
-        upload_method="PUT", presigned_url=url,
+        upload_method="PUT",
+        presigned_url=url,
         required_headers={
             "Content-Type": metadata.content_type,
             "x-amz-meta-sha256": metadata.sha256,
         },
-        completion_token=token, expires_at=expires_at,
+        completion_token=token,
+        expires_at=expires_at,
     )
 
 
 @router.post("/papers/{paper_id}/uploads/finalize", response_model=DocumentRead)
 def finalize_upload(
-    paper_id: int, payload: FinalizeUploadRequest, request: Request,
-    user: User = Depends(get_current_user), session: Session = Depends(get_db),
+    paper_id: int,
+    payload: FinalizeUploadRequest,
+    request: Request,
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_db),
 ) -> DocumentRead:
     settings = request.app.state.settings
     storage = request.app.state.storage
@@ -283,9 +342,8 @@ def finalize_upload(
             raise HTTPException(status_code=502, detail="Invalid storage metadata")
         if int(content_length) != expected_size:
             raise HTTPException(status_code=400, detail="Uploaded object size does not match claim")
-    if (
-        stats.get("ContentType") is not None
-        and str(stats["ContentType"]) != str(claims.get("content_type"))
+    if stats.get("ContentType") is not None and str(stats["ContentType"]) != str(
+        claims.get("content_type")
     ):
         raise HTTPException(status_code=400, detail="Uploaded object type does not match claim")
     metadata = stats.get("Metadata")
@@ -300,10 +358,17 @@ def finalize_upload(
         )
     _paper_or_404(session, paper_id)
     result = _ingest_pdf_bytes(
-        session=session, storage=storage, settings=settings, user=user, paper_id=paper_id,
+        session=session,
+        storage=storage,
+        settings=settings,
+        user=user,
+        paper_id=paper_id,
         filename=str(claims.get("filename", "paper.pdf")),
         content_type=str(claims.get("content_type")),
-        data=data, rights_confirmed=True, storage_key=key, store_object=False,
+        data=data,
+        rights_confirmed=True,
+        storage_key=key,
+        store_object=False,
     )
     store_snapshot(
         session,
@@ -355,7 +420,9 @@ def content_status(
             .order_by(PaperDocument.created_at.desc())
         )
     )
-    successful_documents = [row for row in documents if row.parse_status == "succeeded"]
+    successful_documents = [
+        row for row in documents if row.parse_status in {"succeeded", "partial"}
+    ]
     if successful_documents:
         evidence_level = successful_documents[0].evidence_level
     elif paper.abstract:

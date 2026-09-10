@@ -1,5 +1,5 @@
 import { Alert, Button, Checkbox, Empty, Input, Radio, Select, Space, Spin, Tag, Typography } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import type { LibraryItem, Paper, PaperSet, SearchSession } from '../types/domain';
@@ -13,6 +13,7 @@ type Props = {
   ariaLabel: string;
   initialSessionId?: number | null;
   initialPaperSetId?: number | null;
+  initialSelectedIds?: number[];
 };
 
 type LibraryResponse = { items: LibraryItem[] };
@@ -24,7 +25,7 @@ const sourceOptions = [
   { label: '题名检索', value: 'manual' },
 ];
 
-export function PaperSelectionPanel({ selected, onChange, purpose, ariaLabel, initialSessionId = null, initialPaperSetId = null }: Props) {
+export function PaperSelectionPanel({ selected, onChange, purpose, ariaLabel, initialSessionId = null, initialPaperSetId = null, initialSelectedIds }: Props) {
   const [sourceKind, setSourceKind] = useState<SourceKind>(initialPaperSetId ? 'favorites' : 'search_session');
   const [sessions, setSessions] = useState<SearchSession[]>([]);
   const [sessionId, setSessionId] = useState<number | null>(initialSessionId);
@@ -32,47 +33,60 @@ export function PaperSelectionPanel({ selected, onChange, purpose, ariaLabel, in
   const [manualQuery, setManualQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestVersion = useRef(0);
 
   const selectedIds = useMemo(() => new Set(selected.map((paper) => paper.id)), [selected]);
 
-  const loadSessionPapers = async (id: number) => {
+  const loadSessionPapers = async (id: number, explicitIds?: number[]) => {
+    const version = ++requestVersion.current;
     setLoading(true); setError(null);
-    try { setPapers(await apiRequest<Paper[]>(`/search/sessions/${id}/papers`)); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setLoading(false); }
+    try {
+      const loaded = await apiRequest<Paper[]>(`/search/sessions/${id}/papers`);
+      if (version !== requestVersion.current) return;
+      setPapers(loaded);
+      if (explicitIds) onChange(loaded.filter((paper) => explicitIds.includes(paper.id)));
+    }
+    catch (reason) { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '论文载入失败'); }
+    finally { if (version === requestVersion.current) setLoading(false); }
   };
 
   useEffect(() => {
+    const version = ++requestVersion.current;
+    const dispose = () => { ++requestVersion.current; };
     if (initialPaperSetId) {
       setLoading(true);
       void apiRequest<PaperSet>(`/paper-sets/${initialPaperSetId}`)
-        .then((paperSet) => { setPapers(paperSet.papers); onChange(paperSet.papers); })
-        .catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)))
-        .finally(() => setLoading(false));
-      return;
+        .then((paperSet) => { if (version === requestVersion.current) { setPapers(paperSet.papers); onChange(paperSet.papers); } })
+        .catch((reason) => { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '论文集合载入失败'); })
+        .finally(() => { if (version === requestVersion.current) setLoading(false); });
+      return dispose;
     }
     if (initialSessionId) {
       setSessionId(initialSessionId);
-      void loadSessionPapers(initialSessionId);
-      return;
+      void loadSessionPapers(initialSessionId, initialSelectedIds);
+      return dispose;
     }
-    void apiRequest<SearchSession[]>('/search/sessions').then(setSessions).catch((reason) => setError(reason instanceof Error ? reason.message : String(reason)));
+    void apiRequest<SearchSession[]>('/search/sessions')
+      .then((rows) => { if (version === requestVersion.current) setSessions(rows); })
+      .catch((reason) => { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '检索记录载入失败'); });
     // Deliberately do not auto-select sessions[0]. The user must choose a corpus.
+    return dispose;
   }, [initialPaperSetId, initialSessionId]);
 
   const switchSource = async (value: string | number) => {
+    const version = ++requestVersion.current;
     const next = value as SourceKind;
-    setSourceKind(next); setError(null); setPapers([]);
+    setSourceKind(next); setError(null); setPapers([]); setLoading(false);
     if (next === 'favorites') {
       setLoading(true);
       try {
         const library = await apiRequest<LibraryResponse>('/library');
-        setPapers(library.items.filter((item) => item.favorite).map((item) => item.paper));
-      } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-      finally { setLoading(false); }
+        if (version === requestVersion.current) setPapers(library.items.filter((item) => item.favorite).map((item) => item.paper));
+      } catch (reason) { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '收藏载入失败'); }
+      finally { if (version === requestVersion.current) setLoading(false); }
     } else if (next === 'search_session' && !initialSessionId) {
-      try { setSessions(await apiRequest<SearchSession[]>('/search/sessions')); }
-      catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+      try { const rows = await apiRequest<SearchSession[]>('/search/sessions'); if (version === requestVersion.current) setSessions(rows); }
+      catch (reason) { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '检索记录载入失败'); }
     }
   };
 
@@ -85,12 +99,13 @@ export function PaperSelectionPanel({ selected, onChange, purpose, ariaLabel, in
 
   const manualSearch = async () => {
     const query = manualQuery.trim(); if (!query) return;
+    const version = ++requestVersion.current;
     setLoading(true); setError(null);
     try {
       const response = await apiRequest<SearchResponse>('/search/papers', { method: 'POST', body: JSON.stringify({ query, mode: 'precise', sources: [], limit: 10 }) });
-      setPapers(response.papers);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setLoading(false); }
+      if (version === requestVersion.current) setPapers(response.papers);
+    } catch (reason) { if (version === requestVersion.current) setError(reason instanceof Error ? reason.message : '论文检索失败'); }
+    finally { if (version === requestVersion.current) setLoading(false); }
   };
 
   return <div className="paper-selection-panel">

@@ -15,15 +15,19 @@ import {
   Typography,
   message,
 } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import { shouldUseDirectUpload, uploadPdfDirect } from '../api/uploads';
 import { EvidenceWorkflowPanel } from '../components/EvidenceWorkflowPanel';
 import { PaperIntelligenceCards } from '../components/PaperIntelligenceCards';
+import { ReadingRecommendationCard } from '../components/ReadingRecommendationCard';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
+import { evidenceText, gapState } from '../lib/researchDisplay';
+import { locateCitation } from '../lib/citationNavigation';
 import type {
   AuthorCard,
+  AbstractTranslation,
   Citation,
   DatasetCard,
   EvidenceAcquisition,
@@ -33,58 +37,57 @@ import type {
   PaperAnalysisBody,
   PaperDocument,
   Project,
+  ReadingRecommendation,
 } from '../types/domain';
 
 type FieldState = 'evidenced' | 'insufficient_evidence' | 'unknown';
 
-function renderValue(value: unknown): string {
-  if (value === null || value === undefined || value === '') return '未在当前可访问文本中找到。';
-  if (Array.isArray(value)) return value.length ? value.map(renderValue).join('；') : '未在当前可访问文本中找到。';
-  if (typeof value === 'object') {
-    return Object.entries(value as Record<string, unknown>)
-      .filter(([, entry]) => entry !== null && entry !== undefined && entry !== '')
-      .map(([key, entry]) => `${key}: ${renderValue(entry)}`)
-      .join('；') || '未在当前可访问文本中找到。';
-  }
-  return String(value);
-}
-
 function citationLabel(citation: Citation) {
   return [
-    citation.source_type,
+    citation.source_type === 'abstract' ? '摘要原文' : '正文原文',
     citation.section,
     citation.page_start
       ? `p.${citation.page_start}${citation.page_end && citation.page_end !== citation.page_start ? `-${citation.page_end}` : ''}`
       : null,
-    citation.chunk_id ? `chunk#${citation.chunk_id}` : null,
   ].filter(Boolean).join(' · ');
 }
 
 function EvidenceField({ body, field, label, value }: { body: PaperAnalysisBody; field: string; label: string; value: unknown }) {
   const state = (body.field_states[field] ?? 'unknown') as FieldState;
   const citations = body.field_citations[field] ?? [];
-  return <Descriptions.Item label={label}>
+  return <section aria-label={label}>
     <Space orientation="vertical" size={4} style={{ width: '100%' }}>
-      <div>{renderValue(value)}</div>
+      <div>{evidenceText(value)}</div>
       <Space wrap>
-        <Tag color={state === 'evidenced' ? 'green' : state === 'insufficient_evidence' ? 'orange' : 'default'}>{state}</Tag>
+        <Tag color={state === 'evidenced' ? 'green' : state === 'insufficient_evidence' ? 'orange' : 'default'}>{gapState(state)}</Tag>
         {citations.map((citation, index) => <Tag key={`${field}-${index}`}>{citationLabel(citation)}</Tag>)}
       </Space>
+      {citations.map((citation, index) => citation.supporting_text ? <blockquote key={index}>{citation.supporting_text}</blockquote> : null)}
     </Space>
-  </Descriptions.Item>;
+  </section>;
 }
 
 export function PaperPage() {
   const { paperId } = useParams();
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const [paper, setPaper] = useState<Paper | null>(null);
+  const [abstractTranslation, setAbstractTranslation] = useState<AbstractTranslation | null>(null);
+  const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
+  const [abstractView, setAbstractView] = useState<'translated' | 'original'>('translated');
   const [analysis, setAnalysis] = useState<PaperAnalysis | null>(null);
   const [documents, setDocuments] = useState<PaperDocument[]>([]);
   const [authors, setAuthors] = useState<AuthorCard[]>([]);
   const [datasets, setDatasets] = useState<DatasetCard[]>([]);
   const [workflow, setWorkflow] = useState<EvidenceWorkflow | null>(null);
+  const [workflowRestored, setWorkflowRestored] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [projectId, setProjectId] = useState<number | null>(null);
+  const requestedProject = Number(params.get('project'));
+  const projectId = Number.isSafeInteger(requestedProject) && requestedProject > 0 ? requestedProject : null;
+  const setProjectId = (value: number | null) => {
+    const next = new URLSearchParams(params);
+    if (value === null) next.delete('project'); else next.set('project', String(value));
+    setParams(next);
+  };
   const [note, setNote] = useState('');
   const [pdf, setPdf] = useState<File | null>(null);
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
@@ -93,47 +96,92 @@ export function PaperPage() {
   const [error, setError] = useState<string | null>(null);
   const [acquisitionReport, setAcquisitionReport] = useState<EvidenceAcquisition | null>(null);
   const returnTo = params.get('return');
+  const citationRegion = useRef<HTMLElement | null>(null);
+  const locatedQuote = locateCitation(params, paper, analysis);
+  useEffect(() => {
+    if (locatedQuote) { citationRegion.current?.scrollIntoView?.({ block: 'center' }); citationRegion.current?.focus(); }
+  }, [locatedQuote]);
+  const scope = `${paperId}:${projectId ?? ''}`;
+  const activeScope = useRef({ key: scope, generation: 0 });
+  if (activeScope.current.key !== scope) activeScope.current = { key: scope, generation: activeScope.current.generation + 1 };
+  const generation = activeScope.current.generation;
+  const isCurrentScope = () => activeScope.current.generation === generation;
 
   const loadPaper = async () => {
-    try { setPaper(await apiRequest<Paper>(`/papers/${paperId}`)); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
+    try { const value = await apiRequest<Paper>(`/papers/${paperId}`); if (isCurrentScope()) setPaper(value); }
+    catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+  };
+  const loadAbstractTranslation = async () => {
+    try {
+      const value = await apiRequest<AbstractTranslation>(`/papers/${paperId}/abstract-translation?target_language=zh-CN`);
+      if (isCurrentScope()) setAbstractTranslation(value);
+    } catch {
+      if (isCurrentScope()) setAbstractTranslation(null);
+    }
+  };
+  const loadReadingRecommendation = async () => {
+    if (projectId === null) { if (isCurrentScope()) setReadingRecommendation(null); return; }
+    try {
+      const rows = await apiRequest<Array<{ paper: { id: number }; reading_recommendation: ReadingRecommendation }>>(`/recommendations?project_id=${projectId}`);
+      const current = rows.find((row) => row.paper.id === Number(paperId));
+      if (isCurrentScope()) setReadingRecommendation(current?.reading_recommendation ?? null);
+    } catch { if (isCurrentScope()) setReadingRecommendation(null); }
   };
   const loadAnalysis = async () => {
-    try { setAnalysis(await apiRequest<PaperAnalysis>(`/papers/${paperId}/analysis`)); }
-    catch { setAnalysis(null); }
+    try { const value = await apiRequest<PaperAnalysis>(`/papers/${paperId}/analysis${projectId === null ? '' : `?project_id=${projectId}`}`); if (isCurrentScope()) setAnalysis(value); }
+    catch { if (isCurrentScope()) setAnalysis(null); }
   };
   const loadDocuments = async () => {
-    try { setDocuments(await apiRequest<PaperDocument[]>(`/papers/${paperId}/documents`)); }
-    catch { setDocuments([]); }
+    try { const value = await apiRequest<PaperDocument[]>(`/papers/${paperId}/documents`); if (isCurrentScope()) setDocuments(value); }
+    catch { if (isCurrentScope()) setDocuments([]); }
   };
   const loadAuthors = async () => {
-    try { setAuthors(await apiRequest<AuthorCard[]>(`/papers/${paperId}/authors`)); }
-    catch { setAuthors([]); }
+    try { const value = await apiRequest<AuthorCard[]>(`/papers/${paperId}/authors`); if (isCurrentScope()) setAuthors(value); }
+    catch { if (isCurrentScope()) setAuthors([]); }
   };
   const loadDatasets = async () => {
-    try { setDatasets(await apiRequest<DatasetCard[]>(`/papers/${paperId}/datasets`)); }
-    catch { setDatasets([]); }
+    try { const value = await apiRequest<DatasetCard[]>(`/papers/${paperId}/datasets`); if (isCurrentScope()) setDatasets(value); }
+    catch { if (isCurrentScope()) setDatasets([]); }
   };
   const refreshDerived = async () => {
-    await Promise.all([loadPaper(), loadAnalysis(), loadDocuments(), loadAuthors(), loadDatasets()]);
+    await Promise.all([loadPaper(), loadAbstractTranslation(), loadReadingRecommendation(), loadAnalysis(), loadDocuments(), loadAuthors(), loadDatasets()]);
   };
 
   useEffect(() => {
     setError(null);
+    setBusy(false);
+    setPaper(null); setAbstractTranslation(null); setReadingRecommendation(null); setAbstractView('translated'); setAnalysis(null); setDocuments([]); setAuthors([]); setDatasets([]);
+    setNote(''); setPdf(null); setRightsConfirmed(false); setAcquisitionReport(null);
     void refreshDerived();
-    void apiRequest<Project[]>('/projects').then(setProjects).catch(() => setProjects([]));
-  }, [paperId]);
+    void apiRequest<Project[]>('/projects').then((value) => { if (isCurrentScope()) setProjects(value); }).catch(() => { if (isCurrentScope()) setProjects([]); });
+  }, [scope]);
+
+  useEffect(() => {
+    let active = true;
+    setWorkflow(null);
+    setWorkflowRestored(false);
+    const query = projectId === null ? '' : `?project_id=${projectId}`;
+    void apiRequest<EvidenceWorkflow[]>(`/papers/${paperId}/evidence-workflows${query}`).then((rows) => {
+      if (active && isCurrentScope()) {
+        setWorkflow(rows.find((row) => row.paper_id === Number(paperId) && row.project_id === projectId) ?? null);
+        setWorkflowRestored(true);
+      }
+    }).catch(() => { if (active && isCurrentScope()) setError('暂时无法恢复材料获取进展，请刷新后再试，避免重复提交。'); });
+    return () => { active = false; };
+  }, [scope]);
 
   useEffect(() => {
     if (!workflow || workflow.terminal) return;
+    let active = true;
     const timer = window.setInterval(() => {
       void apiRequest<EvidenceWorkflow>(`/evidence-workflows/${workflow.id}`).then((current) => {
+        if (!active || !isCurrentScope()) return;
         setWorkflow(current);
         if (current.terminal) void refreshDerived();
       }).catch(() => undefined);
     }, 2500);
-    return () => window.clearInterval(timer);
-  }, [workflow?.id, workflow?.terminal]);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [scope, workflow?.id, workflow?.terminal]);
 
   const analyze = async () => {
     setBusy(true); setError(null);
@@ -142,11 +190,12 @@ export function PaperPage() {
         method: 'POST',
         body: JSON.stringify({ project_id: projectId, provider: 'configured' }),
       });
+      if (!isCurrentScope()) return;
       setAnalysis(value);
       await Promise.all([loadDatasets(), loadAuthors()]);
       message.success(value.fallback_reason ? '分析已完成，但 LLM 不可用，已保留确定性结果' : '证据级分析已保存并显示');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const acquireEvidence = async () => {
@@ -156,14 +205,16 @@ export function PaperPage() {
         method: 'POST',
         body: JSON.stringify({ project_id: projectId, sources: [] }),
       });
+      if (!isCurrentScope()) return;
       setPaper(value.paper); setAnalysis(value.analysis); setAcquisitionReport(value);
       if (value.outcome === 'abstract_acquired') message.success('已从可审计学术来源补充摘要，并重新执行分析');
       else message.info('已完成摘要证据查询，但未找到可安全合并的新证据');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const createWorkflow = async () => {
+    if (!workflowRestored || (workflow && !workflow.terminal)) return;
     setBusy(true); setError(null);
     try {
       const created = await apiRequest<EvidenceWorkflow>(`/papers/${paperId}/evidence-workflows`, {
@@ -175,10 +226,15 @@ export function PaperPage() {
           confirm_limited_license: confirmLimitedLicense,
         }),
       });
+      if (!isCurrentScope()) return;
       setWorkflow(created);
-      message.success('证据工作流已创建；pending 只表示已入队，不等于 Worker 已完成');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+      const completed = await apiRequest<EvidenceWorkflow>(`/evidence-workflows/${created.id}/run`, { method: 'POST' });
+      if (!isCurrentScope()) return;
+      setWorkflow(completed);
+      await refreshDerived();
+      message.info(`材料处理：${gapState(completed.status)}，请核对实际可用材料`);
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const runWorkflow = async () => {
@@ -186,12 +242,13 @@ export function PaperPage() {
     setBusy(true); setError(null);
     try {
       const completed = await apiRequest<EvidenceWorkflow>(`/evidence-workflows/${workflow.id}/run`, { method: 'POST' });
+      if (!isCurrentScope()) return;
       setWorkflow(completed);
       await refreshDerived();
-      if (completed.status === 'succeeded') message.success('证据工作流已完成，并自动刷新分析、作者卡与数据集卡');
-      else message.warning(`证据工作流以 ${completed.status} 结束；请查看时间线中的来源和失败原因`);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+      if (completed.status === 'succeeded' && completed.result_integrity === 'verified') message.success('证据工作流已完成，并自动刷新分析、作者卡与数据集卡');
+      else message.warning(`材料处理：${gapState(completed.status)}，请核对来源状态`);
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const refreshWorkflow = async () => {
@@ -199,10 +256,11 @@ export function PaperPage() {
     setBusy(true); setError(null);
     try {
       const current = await apiRequest<EvidenceWorkflow>(`/evidence-workflows/${workflow.id}`);
+      if (!isCurrentScope()) return;
       setWorkflow(current);
       if (current.terminal) await refreshDerived();
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const cancelWorkflow = async () => {
@@ -210,15 +268,16 @@ export function PaperPage() {
     setBusy(true); setError(null);
     try {
       const cancelled = await apiRequest<EvidenceWorkflow>(`/evidence-workflows/${workflow.id}/cancel`, { method: 'POST' });
+      if (!isCurrentScope()) return;
       setWorkflow(cancelled);
       message.info('证据工作流已取消');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const favorite = async () => {
     await apiRequest('/library/favorites', { method: 'POST', body: JSON.stringify({ paper_id: Number(paperId) }) });
-    message.success('论文已收藏，可在论文库参与对比、空白探索与方向聚类');
+    message.success('已保存到我的论文，可明确选文后比较并核实研究机会');
   };
   const saveNote = async () => {
     await apiRequest('/library/notes', { method: 'POST', body: JSON.stringify({ paper_id: Number(paperId), content: note }) });
@@ -234,30 +293,33 @@ export function PaperPage() {
         const body = new FormData(); body.append('file', pdf); body.append('rights_confirmed', 'true');
         await apiRequest(`/papers/${paperId}/upload`, { method: 'POST', body });
       }
+      if (!isCurrentScope()) return;
       const nextAnalysis = await apiRequest<PaperAnalysis>(`/papers/${paperId}/analyze`, {
         method: 'POST', body: JSON.stringify({ project_id: projectId, provider: 'configured' }),
       });
+      if (!isCurrentScope()) return;
       setAnalysis(nextAnalysis); setPdf(null); setRightsConfirmed(false);
       await Promise.all([loadDocuments(), loadAuthors(), loadDatasets()]);
-      message.success('PDF 已保存，并基于全文重新执行证据级分析');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+      message.success('PDF 已保存，分析以实际提取到的文本为准；请核对材料覆盖范围');
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
   const removeDocument = async (documentId: number) => {
     setBusy(true);
     try {
       await apiRequest(`/documents/${documentId}`, { method: 'DELETE' });
+      if (!isCurrentScope()) return;
       await Promise.all([loadDocuments(), loadAnalysis(), loadDatasets()]);
       message.success('PDF、切片和检索索引已删除，证据等级已重新计算');
-    } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); }
-    finally { setBusy(false); }
+    } catch (reason) { if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason)); }
+    finally { if (isCurrentScope()) setBusy(false); }
   };
 
   const evidenceFields = useMemo(() => analysis ? [
-    ['executive_summary', '论文总结', analysis.analysis.executive_summary],
+    ['executive_summary', '快速解读', analysis.analysis.executive_summary],
     ['research_background', '研究背景', analysis.analysis.research_background],
     ['research_problem', '研究问题', analysis.analysis.research_problem],
-    ['task_definition', '任务定义（输入/输出/Setting）', analysis.analysis.task_definition],
+    ['task_definition', '任务定义（输入、输出与研究条件）', analysis.analysis.task_definition],
     ['theoretical_contribution', '理论创新 / 理论贡献', analysis.analysis.theoretical_contribution],
     ['method_innovation', '方法创新', analysis.analysis.method_innovation],
     ['research_route', '研究路线', analysis.analysis.research_route],
@@ -271,7 +333,7 @@ export function PaperPage() {
     ['experimental_protocol', '实验协议 / 切分', analysis.analysis.experimental_protocol],
     ['major_results', '主要结果', analysis.analysis.major_results],
     ['claimed_contributions', '作者声明贡献', analysis.analysis.claimed_contributions],
-    ['future_work_explicit', '作者明确 Future Work', analysis.analysis.future_work_explicit],
+    ['future_work_explicit', '作者明确提出的后续研究', analysis.analysis.future_work_explicit],
     ['limitations_author_stated', '作者明确局限', analysis.analysis.limitations_author_stated],
     ['limitations_inferred', '系统推断局限（非作者声明）', analysis.analysis.limitations_inferred],
   ] as Array<[string, string, unknown]> : [], [analysis]);
@@ -287,6 +349,9 @@ export function PaperPage() {
   return <Space orientation="vertical" size="large" style={{ width: '100%' }}>
     {returnTo && <div><Link to={returnTo}>← 返回原检索页与页码</Link></div>}
     {error && <Alert type="error" showIcon title="操作失败" description={error} />}
+    {params.has('quote') && (locatedQuote
+      ? <section ref={citationRegion} tabIndex={-1} aria-label="已定位的原文依据"><Card title="已定位的原文依据"><blockquote>{locatedQuote}</blockquote><Typography.Text>已与当前论文材料匹配；原文保留，不将引用内容视为系统指令。</Typography.Text></Card></section>
+      : <Alert type="warning" title="未找到对应原文片段，材料可能已更新；请重新核对引用。" />)}
 
     <Card title={paper.title} extra={paper.is_fixture ? <Tag color="orange">仅演示 Fixture</Tag> : null}>
       <Descriptions column={1} bordered>
@@ -295,7 +360,19 @@ export function PaperPage() {
         <Descriptions.Item label="DOI / arXiv">{paper.doi ?? paper.arxiv_id ?? '无'}</Descriptions.Item>
         <Descriptions.Item label="开放状态">{paper.open_access_status ?? '未核验'}</Descriptions.Item>
         <Descriptions.Item label="摘要可信状态">{paper.abstract_evidence_verified ? '已绑定可信来源' : '未验证或不存在'}</Descriptions.Item>
-        <Descriptions.Item label="摘要">{paper.abstract ?? '未在当前可访问文本中找到。'}</Descriptions.Item>
+        <Descriptions.Item label="摘要译文">
+          <Space orientation="vertical" style={{ width: '100%' }}>
+            {abstractTranslation?.status === 'ready' && abstractView === 'translated'
+              ? abstractTranslation.translated_abstract
+              : abstractTranslation?.original_abstract ?? paper.abstract ?? '当前来源未提供摘要。'}
+            {abstractTranslation?.status === 'ready' && abstractView === 'translated' && <Typography.Text type="secondary">中文译文由当前原始摘要生成，专名、数字和单位按原文保留。</Typography.Text>}
+            {abstractTranslation && abstractTranslation.status !== 'ready' && abstractTranslation.original_abstract && <Alert type="warning" showIcon message="中文译文暂未生成，以下为论文原始摘要。" />}
+            <Space wrap>
+              <Button size="small" disabled={!abstractTranslation?.original_abstract && !paper.abstract} onClick={() => setAbstractView('original')}>查看原文</Button>
+              <Button size="small" disabled={abstractTranslation?.status !== 'ready'} onClick={() => setAbstractView('translated')}>查看中文</Button>
+            </Space>
+          </Space>
+        </Descriptions.Item>
       </Descriptions>
       <Divider />
       <Space wrap>
@@ -303,7 +380,7 @@ export function PaperPage() {
         <Button onClick={() => void favorite()}>收藏论文</Button>
         <Button type="primary" loading={busy} onClick={() => void analyze()}>执行证据级分析</Button>
         {!hasFulltextAnalysis && (analysis?.analysis.evidence_level === 'metadata_only' || paper.is_fixture || paper.abstract_evidence_verified === false) && <Button loading={busy} onClick={() => void acquireEvidence()}>获取更多证据并重新分析</Button>}
-        <Button loading={busy} disabled={Boolean(workflow && !workflow.terminal)} onClick={() => void createWorkflow()}>创建完整证据工作流</Button>
+        <Button loading={busy} disabled={!workflowRestored || Boolean(workflow && !workflow.terminal)} onClick={() => void createWorkflow()}>获取公开材料并分析</Button>
         {paper.source_urls[0] && <Button href={paper.source_urls[0]} target="_blank">打开原始网页</Button>}
       </Space>
       <Checkbox style={{ marginTop: 12 }} checked={confirmLimitedLicense} onChange={(event) => setConfirmLimitedLicense(event.target.checked)}>
@@ -313,18 +390,20 @@ export function PaperPage() {
 
     <Card title="当前证据状态与缺失提示">
       <Descriptions bordered column={1} size="small">
-        <Descriptions.Item label="当前证据等级"><Tag color="blue">{currentEvidenceLevel}</Tag></Descriptions.Item>
+        <Descriptions.Item label="当前证据等级"><Tag color="blue">{gapState(currentEvidenceLevel)}</Tag></Descriptions.Item>
         <Descriptions.Item label="摘要来源状态">{paper.abstract_evidence_verified ? '可信摘要已回填' : '需要重新获取可信摘要，或上传/获取合法全文'}</Descriptions.Item>
-        <Descriptions.Item label="缺失字段">{missingFields.length ? missingFields.map((field) => <Tag key={field} color="orange">{field}</Tag>) : '无'}</Descriptions.Item>
-        <Descriptions.Item label="结论边界">{hasFulltextAnalysis ? '已存在可解析全文，字段仍以实际引用为准。' : '没有可解析全文时，实验协议、作者 Future Work 和正文局限不得由摘要推断。'}</Descriptions.Item>
+        <Descriptions.Item label="待补充材料">{missingFields.length ? `${missingFields.length} 项信息仍待核实，请查看下方逐项依据。` : '已提取字段仍需核对原文，不代表研究问题已解决。'}</Descriptions.Item>
+        <Descriptions.Item label="结论边界">{hasFulltextAnalysis ? '已提取正文片段，不代表完整正文；字段以实际引用为准。' : '当前主要依据摘要或书目信息，不能据此推断正文未披露的实验细节。'}</Descriptions.Item>
       </Descriptions>
     </Card>
+
+    {readingRecommendation && <ReadingRecommendationCard recommendation={readingRecommendation} />}
 
     {acquisitionReport && <Alert
       type={acquisitionReport.outcome === 'abstract_acquired' ? 'success' : acquisitionReport.outcome === 'source_unavailable' ? 'error' : 'info'}
       showIcon
-      title={`摘要证据获取结果：${acquisitionReport.outcome}`}
-      description={<Space wrap>{Object.entries(acquisitionReport.source_status).map(([source, status]) => <Tag key={source} color={status.status === 'ok' ? 'green' : status.status === 'error' ? 'red' : 'default'}>{source}: {status.status}{status.detail ? ` · ${status.detail}` : ''}</Tag>)}</Space>}
+      title={`摘要获取结果：${gapState(acquisitionReport.outcome)}`}
+      description={<Space wrap>{Object.entries(acquisitionReport.source_status).map(([source, status]) => <Tag key={source}>{source}: {gapState(status.status)}</Tag>)}</Space>}
     />}
     <EvidenceWorkflowPanel workflow={workflow} busy={busy} onRun={() => void runWorkflow()} onCancel={() => void cancelWorkflow()} onRefresh={() => void refreshWorkflow()} />
 
@@ -334,7 +413,7 @@ export function PaperPage() {
         <input aria-label="合法 PDF 文件" type="file" accept="application/pdf,.pdf" onChange={(event) => setPdf(event.target.files?.[0] ?? null)} />
         <Checkbox checked={rightsConfirmed} onChange={(event) => setRightsConfirmed(event.target.checked)}>我确认有权处理此 PDF</Checkbox>
         <Button disabled={!pdf || !rightsConfirmed} loading={busy} onClick={() => void upload()}>上传并重新分析</Button>
-        <List dataSource={documents} locale={{ emptyText: '尚无已上传全文；当前分析将受摘要/元数据证据等级限制。' }} renderItem={(document) => <List.Item actions={[<Button danger key="delete" onClick={() => void removeDocument(document.id)}>删除全文</Button>]}><List.Item.Meta title={document.original_filename} description={`${document.evidence_level} · ${document.page_count} 页 · ${document.chunk_count} chunks · sha256=${document.sha256.slice(0, 12)}…`} /></List.Item>} />
+        <List dataSource={documents} locale={{ emptyText: '尚无已获取正文；先阅读可信摘要，不将获取失败等同于收费。' }} renderItem={(document) => <List.Item actions={[<Button danger key="delete" onClick={() => void removeDocument(document.id)}>删除全文</Button>]}><List.Item.Meta title={document.original_filename} description={`${gapState(document.evidence_level)} · ${document.page_count} 页 · 已提取 ${document.chunk_count} 段；完整性尚需核对`} /></List.Item>} />
       </Space>
     </Card>
 
@@ -343,19 +422,10 @@ export function PaperPage() {
     <Card title="个人研究记录"><Space orientation="vertical" style={{ width: '100%' }}><Input.TextArea aria-label="研究笔记" value={note} onChange={(event) => setNote(event.target.value)} /><Button disabled={!note.trim()} onClick={() => void saveNote()}>保存笔记</Button></Space></Card>
 
     {analysis ? <>
-      <Alert type={analysis.analysis.evidence_level === 'abstract_only' ? 'warning' : 'info'} showIcon title={`证据等级：${analysis.analysis.evidence_level}`} description={analysis.analysis.warnings.join('；') || '每个字段都保留当前可访问证据和缺失边界。'} />
-      <Card title="分析执行与审计状态">
-        <Descriptions bordered column={1} size="small">
-          <Descriptions.Item label="analysis_mode">{analysis.analysis_mode ?? 'deterministic'}</Descriptions.Item>
-          <Descriptions.Item label="provider / model">{analysis.provider ?? 'deterministic'} / {analysis.model_name ?? '无'}</Descriptions.Item>
-          <Descriptions.Item label="prompt_version">{analysis.prompt_version ?? '不适用'}</Descriptions.Item>
-          <Descriptions.Item label="fallback_reason">{analysis.fallback_reason ?? '无'}</Descriptions.Item>
-        </Descriptions>
-      </Card>
+      <Alert type={analysis.analysis.evidence_level === 'abstract_only' ? 'warning' : 'info'} showIcon title={`现有材料：${gapState(analysis.analysis.evidence_level)}`} description={analysis.fallback_reason ? '模型分析不可用，当前保留规则抽取的材料，不代表模型推理已完成。' : '每项结论以可定位的原文为准，缺失信息不作推断。'} />
       <Card title="执行证据级分析 · 详细解释">
         <Descriptions bordered column={1}>
-          {evidenceFields.map(([field, label, value]) => <EvidenceField key={field} body={analysis.analysis} field={field} label={label} value={value} />)}
-          <Descriptions.Item label="缺失字段">{analysis.analysis.missing_fields.length ? analysis.analysis.missing_fields.map((field) => <Tag key={field} color="orange">{field}</Tag>) : '无'}</Descriptions.Item>
+          {evidenceFields.map(([field, label, value]) => <Descriptions.Item key={field} label={label}><EvidenceField body={analysis.analysis} field={field} label={label} value={value} /></Descriptions.Item>)}
         </Descriptions>
       </Card>
       <Row gutter={[16, 16]}><Col xs={24} lg={12}><Card><ScoreBreakdown title="与当前研究方向的匹配度" score={analysis.direction_similarity} /></Card></Col><Col xs={24} lg={12}><Card><ScoreBreakdown title="复现推荐度" score={analysis.reproduction_assessment} /></Card></Col></Row>

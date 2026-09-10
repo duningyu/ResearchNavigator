@@ -9,6 +9,25 @@ export class ApiError extends Error {
   }
 }
 
+function safeInstruction(value: unknown): value is string {
+  return typeof value === 'string' && value.length <= 500 && /[\u4e00-\u9fff]/u.test(value)
+    && !/(https?:|authorization|bearer|cookie|token|secret|credential|signature|[<>{}]|[A-Z]{2,}_[A-Z_]+|[A-Z]:\\)/i.test(value);
+}
+
+function displayError(value: unknown, status: number): string {
+  if (safeInstruction(value)) return value;
+  if (typeof value === 'object' && value !== null && 'reason' in value
+      && safeInstruction(value.reason)) {
+    const actions = 'actions' in value && Array.isArray(value.actions)
+      ? value.actions.filter(safeInstruction) : [];
+    return [value.reason, ...actions].join(' ');
+  }
+  if (status === 401) return '登录已过期，请重新登录。';
+  if (status === 403) return '当前账号无权执行此操作。';
+  if (status === 422) return '提交的信息不完整或格式不正确，请检查后重试。';
+  return '请求未完成，请稍后重试。';
+}
+
 export function getStoredToken(): string | null {
   return localStorage.getItem('rn_access_token');
 }
@@ -39,8 +58,8 @@ export async function apiRequest<T>(
   if (!response.ok) {
     const detail =
       typeof payload === 'object' && payload !== null && 'detail' in payload
-        ? String((payload as { detail: unknown }).detail)
-        : `HTTP ${response.status}`;
+        ? displayError((payload as { detail: unknown }).detail, response.status)
+        : displayError(null, response.status);
     throw new ApiError(response.status, detail);
   }
   return payload as T;
@@ -51,8 +70,8 @@ export async function apiDownload(path: string, filename: string, token: string 
   if (token) headers.set('Authorization', `Bearer ${token}`);
   const response = await fetch(`${getApiBaseUrl()}${path}`, { headers });
   if (!response.ok) {
-    const text = await response.text();
-    throw new ApiError(response.status, text || `HTTP ${response.status}`);
+    // Never render raw download responses: proxies may include signed URLs or HTML.
+    throw new ApiError(response.status, displayError(null, response.status));
   }
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);

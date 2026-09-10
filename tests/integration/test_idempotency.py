@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cited_gap_fixture import add_cited_materials
 from fastapi.testclient import TestClient
 
 from research_navigator.config import Settings
@@ -103,6 +104,7 @@ def test_mutation_replay_returns_same_resources_without_duplicates(tmp_path: Pat
         assert set1.json()["id"] == set2.json()["id"]
 
         gap_payload = {"project_id": project_id, "paper_set_id": set1.json()["id"]}
+        add_cited_materials(client.app, project_id, paper_ids)
         gap1 = client.post("/api/gaps/generate", headers=idem(headers, "gap-1"), json=gap_payload)
         gap2 = client.post("/api/gaps/generate", headers=idem(headers, "gap-1"), json=gap_payload)
         assert gap1.json()["id"] == gap2.json()["id"]

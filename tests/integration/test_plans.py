@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cited_gap_fixture import add_cited_materials
 from fastapi.testclient import TestClient
 
 from research_navigator.config import Settings
@@ -57,6 +58,7 @@ def test_plan_can_only_be_created_from_confirmed_gap_and_items_are_persisted(
         ).json()["papers"]
         paper_id = papers[0]["id"]
         client.post(f"/api/papers/{paper_id}/analyze", headers=headers, json={})
+        add_cited_materials(client.app, project["id"], [paper_id])
         gap = client.post(
             "/api/gaps/generate",
             headers=headers,
@@ -79,6 +81,9 @@ def test_plan_can_only_be_created_from_confirmed_gap_and_items_are_persisted(
         assert created.status_code == 201, created.text
         payload = created.json()
         assert len(payload["items"]) >= 6
+        assert all(item.get("expected_output") for item in payload["items"])
+        assert len({item["expected_output"] for item in payload["items"]}) == len(payload["items"])
+        assert all(item.get("purpose") for item in payload["items"])
         assert {item["category"] for item in payload["items"]} >= {
             "prerequisite_reading",
             "reproduction",
@@ -95,3 +100,23 @@ def test_plan_can_only_be_created_from_confirmed_gap_and_items_are_persisted(
         assert updated.status_code == 200
         stored = client.get(f"/api/plans/{payload['id']}", headers=headers).json()
         assert any(row["status"] == "done" for row in stored["items"])
+        for state in ("skipped", "pending"):
+            edited = client.put(
+                f"/api/plan-items/{item['id']}",
+                headers=headers,
+                json={
+                    "status": state,
+                    "title": "核对两篇原文的任务定义",
+                    "description": "产出：一份标注来源与不确定项的对照表",
+                    "expected_output": "任务定义对照表，标注待核验条件",
+                    "purpose": "确认任务是否可比较",
+                },
+            )
+            assert edited.status_code == 200
+            fresh = client.get(f"/api/plans/{payload['id']}", headers=headers).json()
+            actual = next(row for row in fresh["items"] if row["id"] == item["id"])
+            assert actual["status"] == state
+            assert actual["title"] == "核对两篇原文的任务定义"
+            assert actual["description"].startswith("产出：")
+            assert actual["expected_output"] == "任务定义对照表，标注待核验条件"
+            assert actual["purpose"] == "确认任务是否可比较"

@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from pathlib import Path
 
 import sqlalchemy as sa
@@ -33,6 +34,46 @@ EXPECTED_TABLES = {
     "tags",
     "users",
 }
+
+
+def test_plan_output_migration_preserves_user_edited_history(tmp_path, monkeypatch):
+    monkeypatch.delenv("RN_DATABASE_URL", raising=False)
+    database_path = tmp_path / "historic-plan.db"
+    config = alembic_config(database_path)
+    command.upgrade(config, "0005")
+    engine = sa.create_engine(f"sqlite+pysqlite:///{database_path.as_posix()}")
+    metadata = sa.MetaData()
+    metadata.reflect(engine)
+    stamp = datetime.now(UTC)
+    common = {"created_at": stamp, "updated_at": stamp}
+    with engine.begin() as connection:
+        connection.execute(metadata.tables["users"].insert().values(
+            id=1, email="migration@example.invalid", password_hash="NOT-A-CREDENTIAL",
+            display_name="历史测试", is_admin=False, is_active=True, **common,
+        ))
+        connection.execute(metadata.tables["research_projects"].insert().values(
+            id=1, user_id=1, name="local historic fixture", status="active", **common,
+        ))
+        connection.execute(metadata.tables["research_plans"].insert().values(
+            id=1, user_id=1, project_id=1, title="用户编辑计划", objective="保留原意",
+            status="active", **common,
+        ))
+        connection.execute(metadata.tables["plan_items"].insert().values(
+            id=1, plan_id=1, user_id=1, category="risk_check", title="用户步骤",
+            description="用户已编辑的内容", notes="不是复现证明", sequence=1,
+            status="done", **common,
+        ))
+    command.upgrade(config, "head")
+    # New connection/reflection: no stale ORM metadata or auto-backfilled history.
+    current = sa.Table("plan_items", sa.MetaData(), autoload_with=engine)
+    with engine.connect() as connection:
+        row = connection.execute(sa.select(current)).mappings().one()
+        assert row["description"] == "用户已编辑的内容"
+        assert row["notes"] == "不是复现证明"
+        assert row["status"] == "done"
+        assert row["purpose"] is None
+        assert row["expected_output"] is None
+    engine.dispose()
 
 
 def alembic_config(database_path: Path) -> Config:

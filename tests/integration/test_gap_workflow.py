@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cited_gap_fixture import add_cited_materials
 from fastapi.testclient import TestClient
 
 from research_navigator.config import Settings
@@ -83,6 +84,8 @@ def test_gap_requires_challenge_before_human_confirmation(tmp_path: Path) -> Non
             )
             assert analyzed.status_code == 200
 
+        add_cited_materials(client.app, project["id"], paper_ids)
+
         generated = client.post(
             "/api/gaps/generate",
             headers=headers,
@@ -130,6 +133,7 @@ def test_gap_generation_uses_explicit_paper_set_not_latest_search(tmp_path: Path
             json={"query": "anomaly detection", "sources": ["fixture"], "limit": 2},
         ).json()
         selected_ids = [paper["id"] for paper in first_search["papers"]]
+        add_cited_materials(client.app, project["id"], selected_ids)
         paper_set = client.post(
             "/api/paper-sets",
             headers=headers,
@@ -179,6 +183,7 @@ def test_gap_explanation_is_versioned_and_plan_blocked_until_human_confirmation(
             headers=headers,
             json={"query": "anomaly detection", "sources": ["fixture"], "limit": 2},
         ).json()["papers"]
+        add_cited_materials(client.app, project["id"], [paper["id"] for paper in papers])
         paper_set = client.post(
             "/api/paper-sets",
             headers=headers,

@@ -13,6 +13,8 @@ from sqlalchemy.orm import Session
 
 from research_navigator.deps import get_current_user, get_db
 from research_navigator.gaps.candidate import make_gap_candidate
+from research_navigator.gaps.eligibility import EvidenceGateBlocked
+from research_navigator.gaps.guard import StaleGapEvidence, assert_current_gap, context_fingerprint
 from research_navigator.gaps.matrix import build_evidence_matrix
 from research_navigator.gaps.service import append_gap_explanation, run_gap_challenge
 from research_navigator.gaps.workflow import assert_confirmable
@@ -83,7 +85,14 @@ def _latest_explanation(session: Session, row: GapCandidate) -> dict[str, object
 
 
 def _read(session: Session, row: GapCandidate) -> GapCandidateRead:
+    review_reason = None
+    try:
+        assert_current_gap(session, row)
+    except StaleGapEvidence as exc:
+        review_reason = str(exc)
     return GapCandidateRead(
+        review_required=review_reason is not None,
+        review_reason=review_reason,
         id=row.id,
         project_id=row.project_id,
         paper_set_id=row.paper_set_id,
@@ -194,7 +203,12 @@ def generate_gap(
         payload=payload.model_dump(mode="json"),
     )
     if replay is not None:
-        return GapCandidateRead.model_validate(replay)
+        existing = _owned_gap(session, user_id=user.id, gap_id=int(replay["id"]))
+        try:
+            assert_current_gap(session, existing)
+        except StaleGapEvidence as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return _read(session, existing)
     project = _owned_project(session, user_id=user.id, project_id=payload.project_id)
     paper_set, paper_ids = _resolve_paper_set(
         session, user_id=user.id, project=project, payload=payload
@@ -202,14 +216,21 @@ def generate_gap(
     existing_ids = set(session.scalars(select(Paper.id).where(Paper.id.in_(paper_ids))))
     if existing_ids != set(paper_ids):
         raise HTTPException(status_code=404, detail="One or more papers were not found")
-    matrix = build_evidence_matrix(session, user_id=user.id, paper_ids=paper_ids)
+    matrix = build_evidence_matrix(
+        session, user_id=user.id, project_id=project.id, paper_ids=paper_ids
+    )
     direction_snapshot = _direction_snapshot(session, user.id, project)
     paper_set.direction_snapshot_json = _json(direction_snapshot)
-    draft = make_gap_candidate(
-        project_direction=project.broad_direction or project.name,
-        paper_ids=paper_ids,
-        evidence_matrix=matrix,
-    )
+    try:
+        draft = make_gap_candidate(
+            project_direction=project.broad_direction or project.name,
+            paper_ids=paper_ids,
+            evidence_matrix=matrix,
+        )
+    except EvidenceGateBlocked as exc:
+        session.rollback()
+        raise HTTPException(status_code=409, detail=exc.decision.model_dump(mode="json")) from exc
+    draft.coverage["context_fingerprint"] = context_fingerprint(session, project, paper_ids)
     row = GapCandidate(
         user_id=user.id,
         project_id=project.id,
@@ -296,6 +317,8 @@ async def challenge_gap(
         )
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except StaleGapEvidence as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     return _read(session, row)
 
 
@@ -303,11 +326,33 @@ async def challenge_gap(
 def confirm_gap(
     gap_id: int,
     payload: GapConfirmRequest,
+    request: Request,
     user: User = Depends(get_current_user),
     session: Session = Depends(get_db),
 ) -> GapCandidateRead:
     row = _owned_gap(session, user_id=user.id, gap_id=gap_id)
+    idempotency_payload = {"gap_id": gap_id, **payload.model_dump(mode="json")}
+    replay = replay_snapshot(
+        session,
+        request=request,
+        user_id=user.id,
+        operation="gaps.confirm",
+        payload=idempotency_payload,
+    )
+    if replay is not None:
+        # A replay must not turn an otherwise stale confirmation into a
+        # current one. Re-check the evidence context before returning the
+        # original snapshot for affirmative confirmations.
+        if payload.confirmed:
+            try:
+                assert_current_gap(session, row)
+            except ValueError as exc:
+                raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return _read(session, row)
+
     try:
+        if payload.confirmed:
+            assert_current_gap(session, row)
         assert_confirmable(row.status, row.challenge_completed_at)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
@@ -316,7 +361,18 @@ def confirm_gap(
     row.human_confirmation_note = payload.note
     session.commit()
     session.refresh(row)
-    return _read(session, row)
+    result = _read(session, row)
+    store_snapshot(
+        session,
+        request=request,
+        user_id=user.id,
+        operation="gaps.confirm",
+        payload=idempotency_payload,
+        resource_type="gap",
+        resource_id=row.id,
+        response_snapshot=result.model_dump(mode="json"),
+    )
+    return result
 
 
 @router.get("/gaps/{gap_id}", response_model=GapCandidateRead)

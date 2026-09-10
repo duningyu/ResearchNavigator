@@ -28,6 +28,8 @@ class GapConfirmRequest(BaseModel):
 
 
 class GapCandidateRead(BaseModel):
+    review_required: bool = False
+    review_reason: str | None = None
     id: int
     project_id: int
     paper_set_id: int | None

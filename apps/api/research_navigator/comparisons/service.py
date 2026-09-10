@@ -12,6 +12,8 @@ from sqlalchemy.orm import Session
 from research_navigator.analysis.matching import WeightedScoreResult
 from research_navigator.analysis.service import run_paper_analysis
 from research_navigator.analysis.structured import PaperAnalysisOutput
+from research_navigator.gaps.eligibility import evaluate_evidence
+from research_navigator.gaps.matrix import build_evidence_matrix
 from research_navigator.models import (
     ComparisonRun,
     Paper,
@@ -190,6 +192,22 @@ def create_comparison(
                 "evidence_level": analysis.evidence_level,
             }
         )
+
+    relevance = evaluate_evidence(
+        project.broad_direction or "",
+        build_evidence_matrix(
+            session,
+            user_id=user_id,
+            project_id=project_id,
+            paper_ids=[item.paper_id for item in items],
+        ),
+    )
+    by_id = {item.paper_id: item for item in relevance.evidence}
+    for payload in paper_payloads:
+        evidence = by_id[payload["id"]]
+        payload["relation"] = evidence.relation
+        payload["relation_citations"] = evidence.relation_citations
+        payload["relation_version"] = relevance.version
 
     rows: list[dict[str, Any]] = []
     for key, label in ROW_SPECS:

@@ -152,9 +152,13 @@ async def _perform_search(
     fetch_limit = min(
         100, max(payload.limit, payload.limit * 2 if search_mode == "discovery" else payload.limit)
     )
-    service_payload = SearchRequest.model_validate(
-        {**payload.model_dump(mode="json", exclude={"mode"}), "limit": fetch_limit}
-    )
+    service_payload_data = {
+        **payload.model_dump(mode="json", exclude={"mode"}),
+        "limit": fetch_limit,
+    }
+    if payload.mode == "precise":
+        service_payload_data["adapt_query"] = False
+    service_payload = SearchRequest.model_validate(service_payload_data)
     service: FederatedSearchService = request.app.state.search_service
     runtime = SourceRuntimeRepository(session)
     requested_names = service_payload.sources or list(service.adapters)
@@ -405,7 +409,9 @@ async def resolve_paper(
 
     query = payload.doi or payload.arxiv_id or payload.title or ""
     service: FederatedSearchService = request.app.state.search_service
-    result = await service.search(SearchRequest(query=query, limit=10, sources=payload.sources))
+    result = await service.search(
+        SearchRequest(query=query, limit=10, sources=payload.sources, adapt_query=False)
+    )
     expected_title = normalize_title(payload.title) if payload.title else None
     for record in result.papers:
         normalized_doi = normalize_doi(record.doi)

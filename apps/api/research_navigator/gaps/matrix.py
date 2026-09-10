@@ -3,16 +3,22 @@
 from __future__ import annotations
 
 import json
+import re
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from research_navigator.analysis.structured import PaperAnalysisOutput
-from research_navigator.models import Paper, PaperAnalysisRecord
+from research_navigator.documents.material_binding import (
+    expected_arxiv_identity,
+    material_is_current,
+)
+from research_navigator.gaps.eligibility import fingerprint
+from research_navigator.models import Paper, PaperAnalysisRecord, PaperChunk, PaperDocument
 
 
 def build_evidence_matrix(
-    session: Session, *, user_id: int, paper_ids: list[int]
+    session: Session, *, user_id: int, paper_ids: list[int], project_id: int | None = None
 ) -> list[dict[str, object]]:
     matrix: list[dict[str, object]] = []
     for paper_id in paper_ids:
@@ -24,6 +30,7 @@ def build_evidence_matrix(
             .where(
                 PaperAnalysisRecord.user_id == user_id,
                 PaperAnalysisRecord.paper_id == paper_id,
+                *([PaperAnalysisRecord.project_id == project_id] if project_id is not None else []),
             )
             .order_by(PaperAnalysisRecord.created_at.desc(), PaperAnalysisRecord.id.desc())
         )
@@ -52,9 +59,65 @@ def build_evidence_matrix(
             if analysis
             else {}
         )
+        document = session.scalar(
+            select(PaperDocument).where(
+                PaperDocument.paper_id == paper_id,
+                or_(PaperDocument.user_id == user_id, PaperDocument.user_id.is_(None)),
+            ).order_by(PaperDocument.created_at.desc(), PaperDocument.id.desc())
+        )
+        current_material = document is not None and material_is_current(
+        document.material_binding_json, paper_id=paper.id, arxiv_id=expected_arxiv_identity(paper),
+            doi=paper.doi, sha256=document.sha256,
+        ) and document.parse_status in {"succeeded", "partial"}
+        chunks = list(
+            session.scalars(
+                select(PaperChunk)
+                .join(PaperDocument, PaperDocument.id == PaperChunk.document_id)
+                .where(
+                    PaperChunk.paper_id == paper_id,
+                    PaperChunk.user_id == user_id,
+                    PaperDocument.paper_id == paper_id,
+                    PaperDocument.user_id == user_id,
+                    PaperDocument.id == (document.id if current_material and document else -1),
+                )
+            )
+        )
+        for citations in field_citations.values():
+            for citation in citations:
+                support = " ".join(str(citation.get("supporting_text") or "").casefold().split())
+                material = paper.abstract or "" if citation.get("source_type") == "abstract" else ""
+                if citation.get("chunk_id") is not None:
+                    chunk = next((c for c in chunks if c.id == citation["chunk_id"]), None)
+                    material = chunk.text if chunk is not None else ""
+                citation["material_verified"] = bool(support) and support in " ".join(
+                    material.casefold().split()
+                )
         matrix.append(
             {
                 "paper_id": paper.id,
+                "work_identity": (
+                    "arxiv:" + re.sub(r"v\d+$", "", paper.arxiv_id.casefold())
+                    if paper.arxiv_id
+                    else "doi:" + paper.doi.casefold().removeprefix("https://doi.org/")
+                    if paper.doi
+                    else "title:" + " ".join(paper.title.casefold().split())
+                ),
+                "material_fingerprint": fingerprint(
+                    {
+                        "title": paper.title,
+                        "abstract": paper.abstract,
+                        "doi": paper.doi,
+                        "arxiv_id": paper.arxiv_id,
+                        "analysis": analysis_row.analysis_json if analysis_row else None,
+                        "analysis_id": analysis_row.id if analysis_row else None,
+                        "current_material": (
+                            [document.id, document.sha256, document.material_binding_json,
+                             document.parse_status, document.ingestion_version]
+                            if document else None
+                        ),
+                        "chunks": [(c.id, c.text_hash, fingerprint(c.text)) for c in chunks],
+                    }
+                ),
                 "title": paper.title,
                 "publication_year": paper.publication_year,
                 "venue": paper.venue,

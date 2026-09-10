@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field
 EvidenceLevel = Literal[
     "metadata_only",
     "abstract_only",
+    "partial_fulltext",
     "open_fulltext",
     "user_uploaded_fulltext",
     "publisher_authorized_fulltext",

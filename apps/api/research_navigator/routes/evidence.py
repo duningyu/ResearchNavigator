@@ -6,7 +6,7 @@ import json
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from research_navigator.deps import get_current_user, get_db
@@ -18,7 +18,15 @@ from research_navigator.evidence.workflow import (
     finalize_execution,
     strongest_evidence,
 )
-from research_navigator.models import Job, JobEvent, Paper, ResearchProject, User
+from research_navigator.models import (
+    Job,
+    JobEvent,
+    Paper,
+    PaperAnalysisRecord,
+    PaperDocument,
+    ResearchProject,
+    User,
+)
 from research_navigator.schemas.evidence import (
     EvidenceWorkflowCreate,
     EvidenceWorkflowEventRead,
@@ -48,21 +56,42 @@ def _read(session: Session, row: Job) -> EvidenceWorkflowRead:
     if paper is None:
         raise HTTPException(status_code=404, detail="Paper not found")
     events = list(
-        session.scalars(
-            select(JobEvent).where(JobEvent.job_id == row.id).order_by(JobEvent.id)
-        )
+        session.scalars(select(JobEvent).where(JobEvent.job_id == row.id).order_by(JobEvent.id))
     )
+    result = json.loads(row.result_json)
+    integrity = "not_checked"
+    if row.status in {"succeeded", "partial"}:
+        analysis_id = result.get("analysis_id")
+        analysis = (
+            session.get(PaperAnalysisRecord, analysis_id) if type(analysis_id) is int else None
+        )
+        valid = (
+            analysis is not None
+            and analysis.user_id == row.user_id
+            and analysis.paper_id == paper_id
+            and analysis.project_id == row.project_id
+        )
+        document_id = result.get("document_id")
+        if document_id is not None:
+            document = session.get(PaperDocument, document_id) if type(document_id) is int else None
+            valid = (
+                valid
+                and document is not None
+                and (document.user_id == row.user_id and document.paper_id == paper_id)
+            )
+        integrity = "verified" if valid else "missing_or_mismatched"
+        if not valid:
+            result = {}  # Do not expose a foreign or dangling result reference.
     return EvidenceWorkflowRead(
         id=row.id,
         paper_id=paper_id,
         project_id=row.project_id,
         status=row.status,
         payload=payload,
-        result=json.loads(row.result_json),
+        result=result,
+        result_integrity=integrity,
         error=row.error,
-        strongest_evidence=strongest_evidence(
-            session, user_id=row.user_id, paper=paper
-        ),
+        strongest_evidence=strongest_evidence(session, user_id=row.user_id, paper=paper),
         attempt_count=row.attempt_count,
         max_attempts=row.max_attempts,
         started_at=row.started_at,
@@ -80,6 +109,40 @@ def _read(session: Session, row: Job) -> EvidenceWorkflowRead:
             for event in events
         ],
     )
+
+
+@router.get("/papers/{paper_id}/evidence-workflows", response_model=list[EvidenceWorkflowRead])
+def list_paper_evidence_workflows(
+    paper_id: int,
+    project_id: int | None = None,
+    user: User = Depends(get_current_user),
+    session: Session = Depends(get_db),
+) -> list[EvidenceWorkflowRead]:
+    """Restore contextual progress without exposing another user's job payload."""
+    if session.get(Paper, paper_id) is None:
+        raise HTTPException(status_code=404, detail="Paper not found")
+    if (
+        project_id is not None
+        and session.scalar(
+            select(ResearchProject.id).where(
+                ResearchProject.id == project_id, ResearchProject.user_id == user.id
+            )
+        )
+        is None
+    ):
+        raise HTTPException(status_code=404, detail="Project not found")
+    rows = session.scalars(
+        select(Job)
+        .where(
+            Job.user_id == user.id,
+            Job.project_id == project_id,
+            Job.job_type == WORKFLOW_TYPE,
+            func.json_extract(Job.payload_json, "$.paper_id") == paper_id,
+        )
+        .order_by(Job.id.desc())
+        .limit(20)
+    )
+    return [_read(session, row) for row in rows]
 
 
 @router.post(
@@ -114,9 +177,7 @@ def create_evidence_workflow(
         job_type=WORKFLOW_TYPE,
         status="pending",
         payload_json=json.dumps(body, ensure_ascii=False),
-        max_attempts=int(
-            request.app.state.runtime_config.get("worker_max_attempts_default", 3)
-        ),
+        max_attempts=int(request.app.state.runtime_config.get("worker_max_attempts_default", 3)),
     )
     session.add(row)
     session.flush()

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from cited_gap_fixture import add_cited_materials
 from fastapi.testclient import TestClient
 from services.worker.main import run_once
 
@@ -107,6 +108,7 @@ def test_worker_executes_analysis_recommendation_and_gap_challenge_handlers(
         assert recommendation_result["status"] == "succeeded"
         assert recommendation_result["result"]["recommendation_count"] == 3
 
+        add_cited_materials(app, project["id"], paper_ids[:2])
         gap = client.post(
             "/api/gaps/generate",
             headers=headers,

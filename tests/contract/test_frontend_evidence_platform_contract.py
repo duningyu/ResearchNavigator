@@ -17,14 +17,14 @@ def test_paper_page_exposes_full_workflow_timeline_and_research_cards() -> None:
     assert "/evidence-workflows" in source
     assert "EvidenceWorkflowPanel" in source
     assert "证据工作流时间线" in workflow_component
-    assert "最终证据等级" in workflow_component
+    assert "现有材料" in workflow_component
     assert "/authors" in source
     assert "PaperIntelligenceCards" in source
     assert "作者卡" in intelligence_component
     assert "/datasets" in source
     assert "数据集卡" in intelligence_component
-    assert "缺失字段" in source
-    assert "analysis_mode" in source
+    assert "待补充材料" in source
+    assert "证据级分析" in source
     assert "fallback_reason" in source
 
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ComparisonCreate(BaseModel):
@@ -17,6 +17,9 @@ class ComparisonPaper(BaseModel):
     publication_year: int | None
     venue: str | None
     evidence_level: str
+    relation: Literal["direct", "adjacent", "unrelated", "unknown"] = "unknown"
+    relation_citations: list[dict[str, Any]] = Field(default_factory=list)
+    relation_version: str | None = None
 
 
 class ComparisonCell(BaseModel):

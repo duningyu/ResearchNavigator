@@ -101,6 +101,8 @@ def test_comparison_uses_explicit_set_and_deep_evidence_rows(tmp_path: Path) -> 
         assert payload["paper_set_id"] == paper_set_id
         assert payload["direction_snapshot"]["project"]["broad_direction"] == "未来窗口异常风险排序"
         assert len(payload["papers"]) == 2
+        # Keyword overlap in fixture metadata is not citation-backed task relevance.
+        assert all(paper["relation"] == "unknown" for paper in payload["papers"])
         rows = {row["key"]: row for row in payload["rows"]}
         for key in (
             "research_problem",

@@ -8,6 +8,10 @@ import xml.etree.ElementTree as ET
 import httpx
 
 from research_navigator.open_access.base import OpenAccessCandidate, PaperIdentity
+from research_navigator.scholarly.coordinator import (
+    ArxivRequestCoordinator,
+    CoordinatorUnavailable,
+)
 
 _ATOM = "{http://www.w3.org/2005/Atom}"
 _ARXIV = "{http://arxiv.org/schemas/atom}"
@@ -22,17 +26,29 @@ class ArxivOpenAccessClient:
         *,
         timeout: float = 20.0,
         transport: httpx.AsyncBaseTransport | None = None,
+        coordinator: ArxivRequestCoordinator | None = None,
     ) -> None:
         self.timeout = timeout
         self.transport = transport
+        self.coordinator = coordinator
 
     async def resolve(self, identity: PaperIdentity) -> list[OpenAccessCandidate]:
         if not identity.arxiv_id:
             return []
-        async with httpx.AsyncClient(timeout=self.timeout, transport=self.transport) as client:
-            response = await client.get(self.base_url, params={"id_list": identity.arxiv_id})
-            response.raise_for_status()
-            content = response.content
+        async def fetch() -> bytes:
+            async with httpx.AsyncClient(timeout=self.timeout, transport=self.transport) as client:
+                response = await client.get(self.base_url, params={"id_list": identity.arxiv_id})
+                response.raise_for_status()
+                return response.content
+
+        try:
+            content = (
+                await self.coordinator.run("open_access_resolve", fetch)
+                if self.coordinator is not None
+                else await fetch()
+            )
+        except CoordinatorUnavailable:
+            return []
         root = ET.fromstring(content)
         entry = root.find(f"{_ATOM}entry")
         if entry is None:

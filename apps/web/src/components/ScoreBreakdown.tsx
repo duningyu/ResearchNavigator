@@ -1,6 +1,7 @@
 import { Alert, Descriptions, Progress, Space, Tag, Typography } from 'antd';
 import type { ScoreResult } from '../types/domain';
 import { clampScore, coveragePercent } from './scoreMath';
+import { scoreLabels } from '../lib/researchDisplay';
 
 export function ScoreBreakdown({ title, score }: { title: string; score: ScoreResult }) {
   const coverage = coveragePercent(score.evidence_coverage);
@@ -11,8 +12,8 @@ export function ScoreBreakdown({ title, score }: { title: string; score: ScoreRe
       <Tag>证据覆盖 {coverage}%</Tag>
       {score.components && (
         <Descriptions size="small" bordered column={1}>
-          {Object.entries(score.components).map(([key, value]) => (
-            <Descriptions.Item key={key} label={key}>
+          {Object.entries(score.components).filter(([key]) => Object.hasOwn(scoreLabels, key)).map(([key, value]) => (
+            <Descriptions.Item key={key} label={scoreLabels[key]}>
               {value === null ? '缺失，不参与归一化' : `${Math.round(value * 100)}%`}
             </Descriptions.Item>
           ))}
@@ -23,7 +24,7 @@ export function ScoreBreakdown({ title, score }: { title: string; score: ScoreRe
           type="warning"
           showIcon
           message="复现阻断项"
-          description={score.blocking_reasons.join('、')}
+          description={score.blocking_reasons.map((key) => Object.hasOwn(scoreLabels, key) ? scoreLabels[key] : '其他条件尚需核验').join('、')}
         />
       )}
     </Space>

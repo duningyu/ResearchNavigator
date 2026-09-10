@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from research_navigator.gaps.candidate import build_gap_explanation, generate_challenge_queries
+from research_navigator.gaps.guard import assert_current_gap, challenge_fingerprint
 from research_navigator.models import AgentRun, GapCandidate, GapEvidence, GapExplanation
 from research_navigator.scholarly.base import SearchRequest
 from research_navigator.scholarly.repository import upsert_paper
@@ -22,11 +23,14 @@ def _json(value: object) -> str:
 
 
 def append_gap_explanation(session: Session, *, row: GapCandidate) -> GapExplanation:
-    latest_version = session.scalar(
-        select(GapExplanation.version)
-        .where(GapExplanation.gap_id == row.id, GapExplanation.user_id == row.user_id)
-        .order_by(GapExplanation.version.desc())
-    ) or 0
+    latest_version = (
+        session.scalar(
+            select(GapExplanation.version)
+            .where(GapExplanation.gap_id == row.id, GapExplanation.user_id == row.user_id)
+            .order_by(GapExplanation.version.desc())
+        )
+        or 0
+    )
     payload = build_gap_explanation(
         version=int(latest_version) + 1,
         claim=row.claim,
@@ -69,18 +73,30 @@ async def run_gap_challenge(
     )
     if row is None:
         raise LookupError("Gap candidate not found")
+    assert_current_gap(session, row)
     queries = generate_challenge_queries(row.scope)
     queries.extend(term.strip() for term in additional_terms if term.strip())
     queries = list(dict.fromkeys(queries))
     counter: list[dict[str, object]] = []
     source_names: set[str] = set()
+    outcomes: list[dict[str, object]] = []
+    complete = True
 
     for query in queries[:3]:
         result = await search_service.search(SearchRequest(query=query, limit=3))
+        complete = (
+            complete
+            and bool(result.source_status)
+            and any(value.status == "ok" for value in result.source_status.values())
+            and all(
+                value.status in {"ok", "disabled", "not_configured"}
+                for value in result.source_status.values()
+            )
+        )
         for source_name, source_status in result.source_status.items():
             source_names.add(source_name)
             if source_status.status not in {"ok", "disabled", "not_configured"}:
-                counter.append(
+                outcomes.append(
                     {
                         "query": query,
                         "source": source_name,
@@ -96,7 +112,7 @@ async def run_gap_challenge(
                     "title": paper.title,
                     "query": query,
                     "is_fixture": any(item.is_fixture for item in record.source_provenance),
-                    "relationship": "potential_counter_or_adjacent_evidence",
+                    "relationship": "unevaluated",
                 }
             )
             session.add(
@@ -113,9 +129,14 @@ async def run_gap_challenge(
     row.challenge_queries_json = _json(queries)
     row.counter_evidence_json = _json(counter)
     row.data_sources_json = _json(sorted(source_names))
-    row.challenge_completed_at = datetime.now(UTC)
-    row.status = "pending_confirmation"
-    row.confidence = "medium" if len(counter) >= 2 else "low"
+    coverage = json.loads(row.coverage_json)
+    coverage["challenge_source_failures"] = outcomes
+    row.coverage_json = _json(coverage)
+    row.challenge_completed_at = datetime.now(UTC) if complete else None
+    coverage["challenge_fingerprint"] = challenge_fingerprint(row)
+    row.coverage_json = _json(coverage)
+    row.status = "pending_confirmation" if complete else "generated"
+    row.confidence = "low"
     append_gap_explanation(session, row=row)
     session.add(
         AgentRun(
@@ -125,7 +146,7 @@ async def run_gap_challenge(
             workflow_type="gap_challenge_search",
             workflow_version="gap-workflow-v1",
             prompt_version="challenge-query-v1",
-            status="succeeded",
+            status="succeeded" if complete else "failed",
             input_json=_json({"gap_id": row.id, "queries": queries}),
             output_json=_json(counter),
             finished_at=datetime.now(UTC),

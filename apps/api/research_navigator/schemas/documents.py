@@ -16,6 +16,7 @@ class DocumentRead(BaseModel):
     page_count: int
     chunk_count: int
     parse_status: str = "succeeded"
+    material_binding: dict[str, object] = Field(default_factory=dict)
     source_url: str | None = None
     source_record_id: str | None = None
     rights_basis: str | None = None

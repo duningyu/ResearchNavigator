@@ -28,15 +28,22 @@ const workflow: EvidenceWorkflow = {
 afterEach(cleanup);
 
 describe('EvidenceWorkflowPanel', () => {
+  it('does not present a success flag without verified result as completion', () => {
+    render(<EvidenceWorkflowPanel workflow={{ ...workflow, status: 'succeeded', result: {}, result_integrity: 'missing_or_mismatched' }} busy={false} onRun={vi.fn()} onCancel={vi.fn()} onRefresh={vi.fn()} />);
+    expect(screen.getByText('结果尚未核验')).toBeInTheDocument();
+    expect(screen.queryByText('处理完成')).not.toBeInTheDocument();
+  });
   it('renders terminal status, strongest evidence, source failure and event timeline', () => {
     render(<EvidenceWorkflowPanel workflow={workflow} busy={false} onRun={vi.fn()} onCancel={vi.fn()} onRefresh={vi.fn()} />);
-    expect(screen.getByText('partial')).toBeInTheDocument();
-    const evidenceRow = screen.getByText('最终证据等级').closest('tr');
+    expect(screen.getByText('部分步骤未完成')).toBeInTheDocument();
+    const evidenceRow = screen.getByText('现有材料').closest('tr');
     expect(evidenceRow).not.toBeNull();
-    expect(within(evidenceRow as HTMLElement).getByText('abstract_only')).toBeInTheDocument();
-    expect(screen.getByText(/OpenAlex rate limited/)).toBeInTheDocument();
-    expect(screen.getByText(/HTTP 429/)).toBeInTheDocument();
-    expect(screen.getByText('abstract_acquisition')).toBeInTheDocument();
+    expect(within(evidenceRow as HTMLElement).getByText('仅摘要')).toBeInTheDocument();
+    expect(screen.getByText('openalex: 来源暂时限流')).toBeInTheDocument();
+    expect(screen.getByText('材料仍有缺口')).toBeInTheDocument();
+    expect(screen.getByText('获取摘要')).toBeInTheDocument();
+    expect(screen.queryByText('abstract_acquisition')).not.toBeInTheDocument();
+    expect(screen.queryByText('HTTP 429')).not.toBeInTheDocument();
   });
 
   it('allows a pending workflow to run or be cancelled', () => {

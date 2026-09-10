@@ -9,6 +9,10 @@ import re
 from sqlalchemy import or_, select, text
 from sqlalchemy.orm import Session
 
+from research_navigator.documents.material_binding import (
+    expected_arxiv_identity,
+    material_is_current,
+)
 from research_navigator.documents.parser import ParsedDocument, chunk_document
 from research_navigator.documents.retrieval import (
     HybridCandidate,
@@ -17,7 +21,7 @@ from research_navigator.documents.retrieval import (
     hashing_vector,
     rank_hybrid,
 )
-from research_navigator.models import PaperChunk, PaperDocument
+from research_navigator.models import Paper, PaperChunk, PaperDocument
 
 
 def index_document(
@@ -78,10 +82,33 @@ def search_document_chunks(
     query: str,
     top_k: int,
 ) -> list[RetrievalHit]:
+    paper = session.get(Paper, paper_id)
+    document = session.scalar(
+        select(PaperDocument)
+        .where(
+            PaperDocument.paper_id == paper_id,
+            or_(PaperDocument.user_id == user_id, PaperDocument.user_id.is_(None)),
+        )
+        .order_by(PaperDocument.created_at.desc(), PaperDocument.id.desc())
+    )
+    if (
+        paper is None
+        or document is None
+        or document.parse_status not in {"succeeded", "partial"}
+        or not material_is_current(
+            document.material_binding_json,
+            paper_id=paper.id,
+            arxiv_id=expected_arxiv_identity(paper),
+            doi=paper.doi,
+            sha256=document.sha256,
+        )
+    ):
+        return []
     accessible = list(
         session.scalars(
             select(PaperChunk).where(
                 PaperChunk.paper_id == paper_id,
+                PaperChunk.document_id == document.id,
                 or_(PaperChunk.user_id == user_id, PaperChunk.user_id.is_(None)),
             )
         )

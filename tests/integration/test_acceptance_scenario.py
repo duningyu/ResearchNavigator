@@ -45,7 +45,12 @@ def test_http_first_acceptance_scenario_stops_before_real_human_confirmation(
     assert report["search"]["requested_limit"] == 50
     assert report["paper_set"]["paper_ids"]
     assert report["comparison"]["row_count"] >= 10
-    assert report["gap"]["workflow_stage"] == "awaiting_human_confirmation"
+    # The fixture corpus lacks direction-matched cited evidence: stopping now is required.
+    assert report["gap"]["workflow_stage"] == "evidence_required"
+    assert report["gap"]["id"] is None
+    assert report["gap"]["generation_status"] == 409
+    assert report["gap"]["reason"]
+    assert report["gap"]["actions"]
     assert report["human_confirmation"] == "not_performed"
     assert report["plan"] is None
 

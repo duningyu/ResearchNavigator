@@ -3,39 +3,27 @@ import {
   CompassOutlined,
   DashboardOutlined,
   DatabaseOutlined,
-  ExperimentOutlined,
   FileSearchOutlined,
-  FolderOpenOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuOutlined,
   MenuUnfoldOutlined,
-  ProfileOutlined,
   SafetyCertificateOutlined,
-  SettingOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Avatar, Button, Drawer, Grid, Layout, Menu, Space, Typography } from 'antd';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 const { Header, Sider, Content } = Layout;
 
 const baseItems = [
-  ['/', <DashboardOutlined />, '概览'],
-  ['/profile', <ProfileOutlined />, '研究档案'],
-  ['/projects', <FolderOpenOutlined />, '研究项目'],
-  ['/search', <FileSearchOutlined />, '论文搜索'],
-  ['/library', <BookOutlined />, '我的论文库'],
-  ['/compare', <UnorderedListOutlined />, '论文对比'],
-  ['/gaps', <ExperimentOutlined />, '候选研究空白'],
-  ['/plans', <UnorderedListOutlined />, '研究计划'],
-  ['/jobs', <DatabaseOutlined />, '任务进度'],
-  ['/direction-map', <ExperimentOutlined />, '方向聚类'],
-  ['/evaluations', <SafetyCertificateOutlined />, '专家评测'],
-  ['/sources', <DatabaseOutlined />, '数据源状态'],
-  ['/settings', <SettingOutlined />, '设置'],
+  ['/', <DashboardOutlined />, '研究首页'],
+  ['/search', <FileSearchOutlined />, '找论文'],
+  ['/library', <BookOutlined />, '我的论文'],
+  ['/compare', <UnorderedListOutlined />, '比较与找空白'],
+  ['/plans', <UnorderedListOutlined />, '下一步计划'],
 ].map(([key, icon, label]) => ({ key: key as string, icon, label }));
 
 const pageTitles: Record<string, string> = {
@@ -50,6 +38,8 @@ export function AppShell() {
   const desktop = Boolean(screens.lg);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const contentRef = useRef<HTMLElement>(null);
+  const previousPath = useRef(location.pathname);
   const pageTitle = pageTitles[location.pathname] ?? '研究工作台';
   const userInitial = (user?.display_name ?? user?.email ?? 'R').slice(0, 1).toUpperCase();
   const adminItems = user?.is_admin ? [
@@ -57,7 +47,32 @@ export function AppShell() {
     { key: '/admin', icon: <SafetyCertificateOutlined />, label: '管理员配置' },
   ] : [];
   const items = [...baseItems, ...adminItems];
-  const go = (key: string) => { navigate(key); setDrawerOpen(false); };
+  const go = (key: string) => {
+    const project = new URLSearchParams(location.search).get('project');
+    const scopedDestination = baseItems.some((item) => item.key === key);
+    // Carry only the explicit direction scope, never another screen's result/ticket parameters.
+    navigate(scopedDestination && project && /^[1-9]\d*$/.test(project)
+      ? `${key}?${new URLSearchParams({ project })}` : key);
+    setDrawerOpen(false);
+  };
+
+  useEffect(() => {
+    const from = previousPath.current;
+    previousPath.current = location.pathname;
+    if (from === location.pathname) return;
+    const returningToSearch = from.startsWith('/papers/') && location.pathname === '/search';
+    const frame = requestAnimationFrame(() => {
+      if (returningToSearch) {
+        const restoredTarget = document.querySelector<HTMLElement>('[data-search-paper]');
+        if (restoredTarget) {
+          restoredTarget.focus({ preventScroll: true });
+          return;
+        }
+      }
+      contentRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [location.pathname]);
 
   const navigation = <>
     <div className="brand"><span className="brand-mark">R</span>{!collapsed && <span><strong>研途智选</strong><small>RESEARCH NAVIGATOR</small></span>}</div>
@@ -74,14 +89,15 @@ export function AppShell() {
       <Header className="app-header">
         <Space align="center">
           {desktop ? <Button className="nav-collapse-trigger" aria-label={collapsed ? '展开导航栏' : '收起导航栏'} icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />} onClick={() => setCollapsed((value) => !value)} /> : <Button className="mobile-nav-trigger" aria-label="打开导航菜单" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)} />}
-          <div><Typography.Text className="header-overline">RESEARCH SPACE</Typography.Text><Typography.Title level={4}>{pageTitle}</Typography.Title></div>
+          <div><Typography.Text className="header-overline">研途智选</Typography.Text><Typography.Title level={4}>{pageTitle}</Typography.Title></div>
         </Space>
         <Space size="middle">
-          <div className="header-user"><Avatar>{userInitial}</Avatar><span><strong>{user?.display_name ?? user?.email}</strong><small>本地研究空间</small></span></div>
+          <div className="header-user"><Avatar>{userInitial}</Avatar><span><strong>{user?.display_name ?? user?.email}</strong><small>研究空间</small></span></div>
+          <Button onClick={() => go('/settings')}>设置与来源</Button>
           <Button className="logout-button" icon={<LogoutOutlined />} onClick={() => void clearSession()}>退出</Button>
         </Space>
       </Header>
-      <Content className="app-content"><Outlet /></Content>
+      <Content ref={contentRef} className="app-content" tabIndex={-1}><Outlet /></Content>
     </Layout>
   </Layout>;
 }
