@@ -41,7 +41,7 @@ export function PlansPage() {
   return <>
     {error && <Alert type="error" title={error} />}
     <Typography.Paragraph>完成状态由你记录，不代表研究结论已验证。</Typography.Paragraph>
-    {!plans.length && <Card title="从下一步行动开始"><Typography.Paragraph>你可以先从阅读或验证任务开始，不需要先确认研究空白。</Typography.Paragraph><Space wrap><Button disabled={!projectId} onClick={() => openCreate('reading')}>创建阅读计划</Button><Button disabled={!projectId} onClick={() => openCreate('exploration')}>创建探索计划</Button><Button disabled={!projectId} onClick={() => openCreate('manual')}>手动添加行动</Button></Space>{!projectId && <Typography.Paragraph type="secondary">请先从一个研究课题进入计划。</Typography.Paragraph>}</Card>}
+    <Card title="从下一步行动开始"><Typography.Paragraph>{plans.length ? '继续添加阅读、探索或手动行动计划。' : '你可以先从阅读或验证任务开始，不需要先确认研究空白。'}</Typography.Paragraph><Space wrap><Button disabled={!projectId} onClick={() => openCreate('reading')}>创建阅读计划</Button><Button disabled={!projectId} onClick={() => openCreate('exploration')}>创建探索计划</Button><Button disabled={!projectId} onClick={() => openCreate('manual')}>手动添加行动</Button></Space>{!projectId && <Typography.Paragraph type="secondary">请先从一个研究课题进入计划。</Typography.Paragraph>}</Card>
     <List dataSource={plans} locale={{ emptyText: '暂无计划；你可以先从阅读或验证任务开始，不需要先确认研究空白。' }} renderItem={(plan) => {
       const done = plan.items.filter((item) => item.status === 'done').length;
       return <List.Item><Card style={{ width: '100%' }} title={plan.title}>

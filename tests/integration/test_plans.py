@@ -151,3 +151,78 @@ def test_reading_plan_can_be_created_without_a_gap(tmp_path: Path) -> None:
         assert payload["gap_id"] is None
         assert payload["review_required"] is False
         assert payload["objective"] == "先确认任务定义、适用条件和待核验问题。"
+
+
+def test_exploration_plan_without_a_gap_is_executable(tmp_path: Path) -> None:
+    with TestClient(create_app(settings_for(tmp_path))) as client:
+        auth = client.post(
+            "/api/auth/register",
+            json={
+                "email": "exploration@example.com",
+                "password": "research-pass-123",
+                "display_name": "Explorer",
+            },
+        ).json()
+        headers = {"Authorization": f"Bearer {auth['access_token']}"}
+        project = client.post(
+            "/api/projects", headers=headers,
+            json={"name": "Exploration Project", "broad_direction": "时序异常预测"},
+        ).json()
+        created = client.post("/api/plans", headers=headers, json={
+            "project_id": project["id"], "gap_id": None, "plan_kind": "exploration",
+            "title": "探索计划", "objective": "提出一个有边界的探索问题。",
+        })
+        assert created.status_code == 201, created.text
+        payload = created.json()
+        assert payload["plan_kind"] == "exploration"
+        assert payload["gap_id"] is None
+        assert payload["review_required"] is False
+        updated = client.put(
+            f"/api/plan-items/{payload['items'][0]['id']}", headers=headers, json={"status": "done"}
+        )
+        assert updated.status_code == 200, updated.text
+
+
+def test_manual_plan_without_a_gap_is_not_review_locked(tmp_path: Path) -> None:
+    with TestClient(create_app(settings_for(tmp_path))) as client:
+        auth = client.post(
+            "/api/auth/register",
+            json={
+                "email": "manual@example.com",
+                "password": "research-pass-123",
+                "display_name": "Manual User",
+            },
+        ).json()
+        headers = {"Authorization": f"Bearer {auth['access_token']}"}
+        project = client.post(
+            "/api/projects", headers=headers,
+            json={"name": "Manual Project", "broad_direction": "时序异常预测"},
+        ).json()
+        created = client.post("/api/plans", headers=headers, json={
+            "project_id": project["id"], "gap_id": None, "plan_kind": "manual",
+            "title": "手动计划", "objective": "记录一个手动行动。",
+        })
+        assert created.status_code == 201, created.text
+        assert created.json()["review_required"] is False
+
+
+def test_confirmed_gap_plan_without_a_gap_is_rejected(tmp_path: Path) -> None:
+    with TestClient(create_app(settings_for(tmp_path))) as client:
+        auth = client.post(
+            "/api/auth/register",
+            json={
+                "email": "confirmed-negative@example.com",
+                "password": "research-pass-123",
+                "display_name": "Negative Control",
+            },
+        ).json()
+        headers = {"Authorization": f"Bearer {auth['access_token']}"}
+        project = client.post(
+            "/api/projects", headers=headers,
+            json={"name": "Negative Project", "broad_direction": "时序异常预测"},
+        ).json()
+        rejected = client.post("/api/plans", headers=headers, json={
+            "project_id": project["id"], "gap_id": None, "plan_kind": "confirmed_gap",
+            "title": "confirmed gap negative control", "objective": "negative control",
+        })
+        assert rejected.status_code == 422

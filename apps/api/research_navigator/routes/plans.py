@@ -64,7 +64,7 @@ def _plan_read(session: Session, row: ResearchPlan) -> ResearchPlanRead:
 
 def _review_reason(session: Session, row: ResearchPlan) -> str | None:
     if row.gap_id is None:
-        if row.plan_kind == "reading":
+        if row.plan_kind in {"reading", "exploration", "manual"}:
             return None
         return "此计划未关联已确认研究缺口，仅可回顾，需人工核验后再推进。"
     gap = session.get(GapCandidate, row.gap_id) if row.gap_id else None
