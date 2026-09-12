@@ -7,7 +7,7 @@ export function DashboardPage() {
     <Space orientation="vertical" size="large" style={{ width: '100%' }}>
       <section className="dashboard-hero">
         <div><Tag className="section-tag">用证据推进研究</Tag><Typography.Title level={1}>今日研究起点</Typography.Title><Typography.Paragraph>先建立方向与约束，再检索、阅读、反证和形成可执行计划。每一步都应保留可追溯依据。</Typography.Paragraph></div>
-        <div className="dashboard-actions"><Link to="/search"><Button type="primary" size="large" icon={<FileSearchOutlined />}>开始检索</Button></Link><Link to="/projects"><Button size="large" icon={<FolderAddOutlined />}>新建项目</Button></Link></div>
+        <div className="dashboard-actions"><Link to="/search"><Button type="primary" size="large" icon={<FileSearchOutlined />}>开始检索</Button></Link><Link to="/projects"><Button size="large" icon={<FolderAddOutlined />}>创建研究课题</Button></Link></div>
       </section>
       <Alert className="boundary-alert" type="warning" showIcon title="科研主张边界" description="候选研究空白不是创新性证明。请保留检索式、数据源、反向证据和人工确认记录。" />
       <Row gutter={[20, 20]}>

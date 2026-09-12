@@ -30,7 +30,7 @@ export function GapsPage() {
   useEffect(load, []);
 
   const generate = async () => {
-    if (!projectId || !papers.length) { message.error('请选择研究项目，并显式选择至少一篇论文'); return; }
+    if (!projectId || !papers.length) { message.error('请选择研究课题，并显式选择至少一篇论文'); return; }
     setError(null);
     setScientificDecision(false);
     setGenerating(true);
@@ -70,7 +70,7 @@ export function GapsPage() {
       </Space>
     </Card>}
     {error && <Alert type="error" showIcon title="候选研究空白流程失败" description={error} />}
-    <Card title="生成候选研究空白"><Form layout="vertical"><Form.Item label="研究项目 / 方向" required><Select placeholder="选择自己的研究方向" value={projectId ?? undefined} options={projects.map((project) => ({ value: project.id, label: `${project.name}${project.broad_direction ? ` · ${project.broad_direction}` : ''}` }))} onChange={setProjectId} /></Form.Item><Form.Item label="证据论文"><PaperSelectionPanel purpose="gap" ariaLabel="选择用于候选研究空白的论文" initialPaperSetId={initialPaperSetId} initialSessionId={initialSessionId} selected={papers} onChange={setPapers} /></Form.Item><Space orientation="vertical" style={{ width: '100%' }}>{generatingStage && <Alert type="info" showIcon message={generatingStage} />}<Button type="primary" loading={generating} disabled={generating || !projectId || !papers.length} onClick={() => void generate()}>构建证据矩阵并解释候选空白</Button></Space></Form></Card>
+    <Card title="生成候选研究空白"><Form layout="vertical"><Form.Item label="研究课题 / 方向" required><Select placeholder="选择自己的研究方向" value={projectId ?? undefined} options={projects.map((project) => ({ value: project.id, label: `${project.name}${project.broad_direction ? ` · ${project.broad_direction}` : ''}` }))} onChange={setProjectId} /></Form.Item><Form.Item label="证据论文"><PaperSelectionPanel purpose="gap" ariaLabel="选择用于候选研究空白的论文" initialPaperSetId={initialPaperSetId} initialSessionId={initialSessionId} selected={papers} onChange={setPapers} /></Form.Item><Space orientation="vertical" style={{ width: '100%' }}>{generatingStage && <Alert type="info" showIcon message={generatingStage} />}<Button type="primary" loading={generating} disabled={generating || !projectId || !papers.length} onClick={() => void generate()}>构建证据矩阵并解释候选空白</Button></Space></Form></Card>
     <List dataSource={gaps} locale={{ emptyText: '尚未生成候选研究空白' }} renderItem={(gap) => <List.Item><Card style={{ width: '100%' }} title={<Tag>{gap.review_required ? '旧结果需复核' : gapState(gap.status)}</Tag>}>
       {gap.review_required && <Alert type="warning" title={gap.review_reason || '材料或研究方向已变化，请重新核验后继续'} />}
       <Typography.Paragraph strong>{gap.claim}</Typography.Paragraph>

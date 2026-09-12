@@ -36,7 +36,7 @@ describe('DirectionMapPage', () => {
     });
     render(<MemoryRouter><DirectionMapPage /></MemoryRouter>);
     expect(await screen.findByText(/不是学术领域的客观分类/)).toBeInTheDocument();
-    fireEvent.mouseDown(screen.getByLabelText('研究项目'));
+    fireEvent.mouseDown(screen.getByLabelText('研究课题'));
     fireEvent.click(await screen.findByText('TSAD'));
     fireEvent.click(await screen.findByLabelText(/Paper Seven/));
     fireEvent.click(screen.getByLabelText(/Paper Eight/));

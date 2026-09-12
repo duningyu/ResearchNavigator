@@ -29,7 +29,7 @@ export function LibraryPage() {
 
   return <Space orientation="vertical" size="large" style={{ width: '100%' }}>
     <Card title="我的论文库" extra={<Space><Button disabled={selectedIds.length < 2} onClick={() => void createSetAndNavigate('compare')}>对比选中论文</Button><Button type="primary" disabled={!selectedIds.length} onClick={() => void createSetAndNavigate('gap')}>探索候选研究空白</Button></Space>}>
-      <Typography.Paragraph type="secondary">收藏不只是书签。勾选论文后会生成显式 paper set，可在论文对比和候选研究空白中与自己选择的研究项目/方向共同使用。</Typography.Paragraph>
+      <Typography.Paragraph type="secondary">收藏不只是书签。勾选论文后会生成显式 paper set，可在论文对比和候选研究空白中与自己选择的研究课题/方向共同使用。</Typography.Paragraph>
       <Checkbox.Group value={selectedIds} onChange={(ids) => setSelectedIds(ids as number[])} style={{ width: '100%' }}>
         <List dataSource={favorites} locale={{ emptyText: '尚未收藏论文' }} renderItem={(row) => <List.Item className="library-paper-row">
           <div className="library-paper-select"><Checkbox value={row.paper.id} /></div>

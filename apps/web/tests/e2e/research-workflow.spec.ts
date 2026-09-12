@@ -70,7 +70,7 @@ test('golden browser loop: explicit search corpus, analysis, favourites, compare
   await page.getByRole('button', { name: '收藏论文' }).click();
   await page.getByLabel('研究笔记').fill(`Golden note ${suffix}`);
   await page.getByRole('button', { name: '保存笔记' }).click();
-  const paperProjectSelect = page.locator('.ant-select', { hasText: '选择研究项目，用于方向关联分析' }).first();
+  const paperProjectSelect = page.locator('.ant-select', { hasText: '选择研究课题，用于方向关联分析' }).first();
   await paperProjectSelect.locator('input').first().focus();
   await page.keyboard.press('Enter');
   await pickOptionByKeyboard(page, projectName);

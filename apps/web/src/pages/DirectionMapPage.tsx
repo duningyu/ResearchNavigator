@@ -36,7 +36,7 @@ export function DirectionMapPage() {
   }, [run]);
 
   const execute = async () => {
-    if (!projectId) { message.error('请先选择研究项目'); return; }
+    if (!projectId) { message.error('请先选择研究课题'); return; }
     if (paperIds.length < 2) { message.error('方向聚类至少需要两篇论文'); return; }
     setBusy(true); setError(null);
     try {
@@ -61,8 +61,8 @@ export function DirectionMapPage() {
     <Card title="选择项目与论文">
       <Space orientation="vertical" style={{ width: '100%' }}>
         <Select
-          aria-label="研究项目"
-          placeholder="选择研究项目"
+          aria-label="研究课题"
+          placeholder="选择研究课题"
           value={projectId ?? undefined}
           options={projects.map((project) => ({ value: project.id, label: `${project.name}${project.broad_direction ? ` · ${project.broad_direction}` : ''}` }))}
           onChange={setProjectId}

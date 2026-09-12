@@ -395,7 +395,7 @@ export function PaperPage() {
       </Descriptions>
       <Divider />
       <Space wrap>
-        <Select allowClear placeholder="选择研究项目，用于方向关联分析" style={{ minWidth: 260 }} value={projectId ?? undefined} options={projects.map((project) => ({ value: project.id, label: project.name }))} onChange={(value) => setProjectId(value ?? null)} />
+        <Select allowClear placeholder="选择研究课题，用于方向关联分析" style={{ minWidth: 260 }} value={projectId ?? undefined} options={projects.map((project) => ({ value: project.id, label: project.name }))} onChange={(value) => setProjectId(value ?? null)} />
         <Button onClick={() => void favorite()}>收藏论文</Button>
         <Button type="primary" loading={busy} onClick={() => void analyze()}>执行证据级分析</Button>
         {!hasFulltextAnalysis && (analysis?.analysis.evidence_level === 'metadata_only' || paper.is_fixture || paper.abstract_evidence_verified === false) && <Button loading={busy} onClick={() => void acquireEvidence()}>获取更多证据并重新分析</Button>}
