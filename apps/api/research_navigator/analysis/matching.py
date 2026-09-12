@@ -13,8 +13,8 @@ from research_navigator.models import Paper, ResearchProfile
 
 
 class WeightedScoreResult(BaseModel):
-    score: float
-    evidence_coverage: float
+    score: float | None
+    evidence_coverage: float | None
     components: dict[str, float | None]
     reasons: dict[str, str]
     score_version: str = "direction-match-v2"
@@ -30,11 +30,13 @@ def missing_aware_weighted_score(
         for name, value in components.items()
         if value is not None and name in weights
     )
-    score = 0.0 if available_weight == 0 else weighted / available_weight
-    coverage = 0.0 if total_weight == 0 else available_weight / total_weight
+    score = None if available_weight == 0 else weighted / available_weight
+    coverage = (
+        None if available_weight == 0 or total_weight == 0 else available_weight / total_weight
+    )
     return WeightedScoreResult(
-        score=round(max(0.0, min(1.0, score)) * 100, 2),
-        evidence_coverage=round(coverage, 4),
+        score=None if score is None else round(max(0.0, min(1.0, score)) * 100, 2),
+        evidence_coverage=None if coverage is None else round(coverage, 4),
         components=dict(components),
         reasons={},
     )
@@ -52,7 +54,10 @@ def _overlap(left: str, right: str) -> float | None:
     a, b = _tokens(left), _tokens(right)
     if not a or not b:
         return None
-    return len(a & b) / max(1, len(a | b))
+    shared = a & b
+    if not shared:
+        return None
+    return len(shared) / len(a | b)
 
 
 def assess_direction_match(

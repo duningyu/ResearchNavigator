@@ -120,3 +120,34 @@ def test_plan_can_only_be_created_from_confirmed_gap_and_items_are_persisted(
             assert actual["description"].startswith("产出：")
             assert actual["expected_output"] == "任务定义对照表，标注待核验条件"
             assert actual["purpose"] == "确认任务是否可比较"
+
+
+def test_reading_plan_can_be_created_without_a_gap(tmp_path: Path) -> None:
+    with TestClient(create_app(settings_for(tmp_path))) as client:
+        auth = client.post(
+            "/api/auth/register",
+            json={
+                "email": "reading@example.com",
+                "password": "research-pass-123",
+                "display_name": "Reader",
+            },
+        ).json()
+        headers = {"Authorization": f"Bearer {auth['access_token']}"}
+        project = client.post(
+            "/api/projects", headers=headers,
+            json={"name": "Reading Project", "broad_direction": "时序异常预测"},
+        ).json()
+        response = client.post(
+            "/api/plans", headers=headers,
+            json={
+                "project_id": project["id"],
+                "gap_id": None,
+                "title": "阅读三篇摘要并记录证据边界",
+                "objective": "先确认任务定义、适用条件和待核验问题。",
+            },
+        )
+        assert response.status_code == 201, response.text
+        payload = response.json()
+        assert payload["gap_id"] is None
+        assert payload["review_required"] is False
+        assert payload["objective"] == "先确认任务定义、适用条件和待核验问题。"

@@ -64,7 +64,7 @@ def _auth_headers(client: TestClient, email: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {response.json()['access_token']}"}
 
 
-def test_translation_route_uses_real_app_and_process_cache(tmp_path: Path) -> None:
+def test_translation_route_generates_on_post_and_reads_durable_cache(tmp_path: Path) -> None:
     app = create_app(_settings(tmp_path))
     adapter = CountingAdapter(TranslationDraft("稳定译文"))
     with TestClient(app) as client:
@@ -72,7 +72,7 @@ def test_translation_route_uses_real_app_and_process_cache(tmp_path: Path) -> No
         headers = _auth_headers(client, "translation-route@example.com")
         paper_id = _seed_paper(app, "A 5% increase is not guaranteed.")
 
-        first = client.get(
+        first = client.post(
             f"/api/papers/{paper_id}/abstract-translation?target_language=zh-CN",
             headers=headers,
         )
@@ -84,7 +84,19 @@ def test_translation_route_uses_real_app_and_process_cache(tmp_path: Path) -> No
         assert first.status_code == 200
         assert first.json()["translated_abstract"] == "稳定译文"
         assert first.json()["original_abstract"] == "A 5% increase is not guaranteed."
+        assert first.json()["cache_hit"] is False
         assert second.json()["cache_hit"] is True
+        assert adapter.calls == 1
+
+        fresh_service = TranslationService(adapter, pipeline_version="route-v1")
+        app.state.translation_service = fresh_service
+        durable = client.get(
+            f"/api/papers/{paper_id}/abstract-translation?target_language=zh-CN",
+            headers=headers,
+        )
+        assert durable.status_code == 200
+        assert durable.json()["translated_abstract"] == "稳定译文"
+        assert durable.json()["cache_hit"] is True
         assert adapter.calls == 1
 
         with app.state.database.session_factory() as session:
@@ -93,7 +105,7 @@ def test_translation_route_uses_real_app_and_process_cache(tmp_path: Path) -> No
             paper.abstract = "A 10% increase remains uncertain."
             session.commit()
 
-        changed = client.get(
+        changed = client.post(
             f"/api/papers/{paper_id}/abstract-translation?target_language=zh-CN",
             headers=headers,
         )
@@ -110,7 +122,7 @@ def test_translation_route_preserves_failure_contracts(tmp_path: Path) -> None:
         app.state.translation_service = TranslationService(
             CountingAdapter(RuntimeError("stub failure")), pipeline_version="route-v1"
         )
-        failed = client.get(f"/api/papers/{paper_id}/abstract-translation", headers=headers)
+        failed = client.post(f"/api/papers/{paper_id}/abstract-translation", headers=headers)
         assert failed.status_code == 200
         assert failed.json()["status"] == "failed"
         assert failed.json()["translated_abstract"] is None
@@ -118,6 +130,6 @@ def test_translation_route_preserves_failure_contracts(tmp_path: Path) -> None:
         app.state.translation_service = TranslationService(
             CountingAdapter({"text": "片段", "complete": False}), pipeline_version="route-v1"
         )
-        partial = client.get(f"/api/papers/{paper_id}/abstract-translation", headers=headers)
+        partial = client.post(f"/api/papers/{paper_id}/abstract-translation", headers=headers)
         assert partial.json()["status"] == "partial"
         assert partial.json()["translated_abstract"] is None

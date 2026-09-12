@@ -16,7 +16,18 @@ def test_compute_constraint_alone_cannot_make_an_unrelated_paper_relevant() -> N
     )
     result = assess_direction_match(profile, paper, analysis)
     assert result.components["resource_fit"] is None
-    assert result.score == 0
+    assert result.score is None
+    assert result.evidence_coverage is None
+
+
+def test_missing_direction_profile_is_unknown_not_zero() -> None:
+    paper = Paper(id=1, title="A paper", abstract="An abstract")
+    analysis = PaperAnalysisOutput(
+        paper_id=1, evidence_level="abstract_only", summary="Summary", executive_summary="Summary"
+    )
+    result = assess_direction_match(None, paper, analysis)
+    assert result.score is None
+    assert result.evidence_coverage is None
 
 
 def test_matching_has_no_industrial_template_for_a_segmentation_direction() -> None:
@@ -52,3 +63,34 @@ def test_missing_aware_score_renormalizes_only_over_available_components() -> No
     assert result.score == round(expected * 100, 2)
     assert result.evidence_coverage == round((0.35 + 0.25) / (0.35 + 0.25 + 0.15), 4)
     assert result.components["data_modality"] is None
+
+
+def test_negation_scope_does_not_hide_topic_in_without_labels_phrase() -> None:
+    from research_navigator.gaps.eligibility import evaluate_evidence
+
+    row = {
+        "paper_id": 1,
+        "work_identity": "paper-1",
+        "research_problem": "We study anomaly detection without labels.",
+        "limitations_author_stated": ["Evaluation is limited to one benchmark."],
+        "field_states": {
+            "research_problem": "evidenced",
+            "limitations_author_stated": "evidenced",
+        },
+        "field_citations": {
+            "research_problem": [{
+                "source_type": "abstract", "section": "Abstract",
+                "supporting_text": "We study anomaly detection without labels.",
+                "material_verified": True,
+            }],
+            "limitations_author_stated": [{
+                "source_type": "abstract", "section": "Abstract",
+                "supporting_text": "Evaluation is limited to one benchmark.",
+                "material_verified": True,
+            }],
+        },
+    }
+
+    decision = evaluate_evidence("anomaly detection", [row])
+
+    assert decision.evidence[0].relation == "direct"

@@ -106,7 +106,7 @@ def _comparison_cell(
         return {
             "paper_id": paper_id,
             "value": direction.model_dump(mode="json"),
-            "evidence_state": "evidenced" if direction.evidence_coverage > 0 else "unknown",
+            "evidence_state": "evidenced" if (direction.evidence_coverage or 0) > 0 else "unknown",
             "citations": [item.model_dump(mode="json") for item in analysis.citations],
         }
     if field == "evidence_level":

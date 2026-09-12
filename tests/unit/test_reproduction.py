@@ -69,3 +69,20 @@ def test_unknown_is_excluded_but_missing_is_known_negative() -> None:
     assert assessment.evidence_coverage == 0.8
     assert "data_availability" in assessment.blocking_reasons
     assert "code_availability" not in assessment.blocking_reasons
+
+
+def test_all_unknown_reproduction_dimensions_are_not_zero() -> None:
+    assessment = calculate_reproduction_assessment(
+        [
+            ReproductionDimension(
+                name="code_availability", weight=0.5, status="unknown", score=None,
+                evidence="尚未核验。",
+            ),
+            ReproductionDimension(
+                name="data_availability", weight=0.5, status="unknown", score=None,
+                evidence="尚未核验。",
+            ),
+        ]
+    )
+    assert assessment.score is None
+    assert assessment.evidence_coverage is None

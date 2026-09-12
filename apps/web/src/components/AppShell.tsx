@@ -27,8 +27,10 @@ const baseItems = [
 ].map(([key, icon, label]) => ({ key: key as string, icon, label }));
 
 const pageTitles: Record<string, string> = {
-  '/': '研究工作台', '/profile': '研究档案', '/projects': '研究项目', '/search': '论文检索', '/library': '我的论文库', '/compare': '论文对比', '/gaps': '候选研究空白', '/plans': '研究计划', '/jobs': '任务进度', '/direction-map': '方向聚类', '/evaluations': '专家评测', '/sources': '数据源状态', '/settings': '设置', '/backup': '备份与恢复', '/admin': '管理员配置',
+  '/': '研究工作台', '/profile': '研究档案', '/projects': '研究课题', '/search': '论文检索', '/library': '我的论文库', '/compare': '论文对比', '/gaps': '候选研究空白', '/plans': '研究计划', '/jobs': '任务进度', '/direction-map': '方向聚类', '/evaluations': '专家评测', '/sources': '数据源状态', '/settings': '设置', '/backup': '备份与恢复', '/admin': '管理员配置',
 };
+const APP_HISTORY_KEY = 'rn-app-navigation-v1';
+const fallbackRoutes: Record<string, string> = { '/profile': '/', '/projects': '/', '/settings': '/', '/sources': '/', '/library': '/', '/papers': '/search', '/compare': '/', '/gaps': '/compare', '/plans': '/' };
 
 export function AppShell() {
   const location = useLocation();
@@ -39,7 +41,7 @@ export function AppShell() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const contentRef = useRef<HTMLElement>(null);
-  const previousPath = useRef(location.pathname);
+  const previousPath = useRef(`${location.pathname}${location.search}${location.hash}`);
   const pageTitle = pageTitles[location.pathname] ?? '研究工作台';
   const userInitial = (user?.display_name ?? user?.email ?? 'R').slice(0, 1).toUpperCase();
   const adminItems = user?.is_admin ? [
@@ -55,11 +57,24 @@ export function AppShell() {
       ? `${key}?${new URLSearchParams({ project })}` : key);
     setDrawerOpen(false);
   };
+  const locationKey = `${location.pathname}${location.search}${location.hash}`;
+  const readHistory = () => { try { const parsed = JSON.parse(sessionStorage.getItem(APP_HISTORY_KEY) ?? '[]'); return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string' && value.startsWith('/')) : []; } catch { return []; } };
+  const safeBack = () => {
+    const stack = readHistory();
+    const previous = stack.pop();
+    sessionStorage.setItem(APP_HISTORY_KEY, JSON.stringify(stack.slice(-30)));
+    if (previous && previous !== locationKey) { navigate(previous); return; }
+    const fallback = Object.entries(fallbackRoutes).find(([prefix]) => location.pathname === prefix || location.pathname.startsWith(`${prefix}/`))?.[1] ?? '/';
+    const project = new URLSearchParams(location.search).get('project');
+    navigate(project && fallback !== '/' ? `${fallback}?project=${encodeURIComponent(project)}` : fallback);
+  };
 
   useEffect(() => {
     const from = previousPath.current;
-    previousPath.current = location.pathname;
-    if (from === location.pathname) return;
+    previousPath.current = locationKey;
+    if (from === locationKey) return;
+    const stack = readHistory();
+    if (from.startsWith('/') && from !== locationKey && stack[stack.length - 1] !== from) sessionStorage.setItem(APP_HISTORY_KEY, JSON.stringify([...stack, from].slice(-30)));
     const returningToSearch = from.startsWith('/papers/') && location.pathname === '/search';
     const frame = requestAnimationFrame(() => {
       if (returningToSearch) {
@@ -72,7 +87,7 @@ export function AppShell() {
       contentRef.current?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
-  }, [location.pathname]);
+  }, [locationKey]);
 
   const navigation = <>
     <div className="brand"><span className="brand-mark">R</span>{!collapsed && <span><strong>研途智选</strong><small>RESEARCH NAVIGATOR</small></span>}</div>
@@ -93,6 +108,7 @@ export function AppShell() {
         </Space>
         <Space size="middle">
           <div className="header-user"><Avatar>{userInitial}</Avatar><span><strong>{user?.display_name ?? user?.email}</strong><small>研究空间</small></span></div>
+          {location.pathname !== '/' && <Button onClick={safeBack}>← 返回</Button>}
           <Button onClick={() => go('/settings')}>设置与来源</Button>
           <Button className="logout-button" icon={<LogoutOutlined />} onClick={() => void clearSession()}>退出</Button>
         </Space>

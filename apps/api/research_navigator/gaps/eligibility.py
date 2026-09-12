@@ -91,6 +91,20 @@ def _citations(row: dict[str, Any], field: str) -> list[dict[str, Any]]:
     ]
 
 
+def _has_scoped_topic_negation(text: str) -> bool:
+    """Reject explicit topic dismissal, not a negated method condition."""
+    return bool(
+        re.search(
+            r"\b(?:do|does|did)\s+not\s+(?:study|address|examine|focus\s+on|consider)\b"
+            r"|\bnot\s+(?:related|relevant)\s+to\b"
+            r"|\b(?:unrelated|irrelevant)\s+to\b"
+            r"|\b(?:exclude|excluding)\s+(?:the\s+)?topic\b"
+            r"|不研究|不涉及|无关|并非研究|未研究",
+            text,
+        )
+    )
+
+
 def evaluate_evidence(direction: str, rows: list[dict[str, Any]]) -> GateDecision:
     evidence: list[PaperEligibilityEvidence] = []
     normalized = _normalize(direction)
@@ -100,14 +114,9 @@ def evaluate_evidence(direction: str, rows: list[dict[str, Any]]) -> GateDecisio
         relation_citations = _citations(row, "research_problem")
         cited_task = _normalize(" ".join(str(c["supporting_text"]) for c in relation_citations))
         overlap = terms & set(cited_task.split())
-        # A literal topic mention in a denial is not positive task evidence.
-        # Ambiguous/negative wording abstains rather than inventing relevance.
-        denied = bool(
-            re.search(
-                r"\b(no|not|never|without|unrelated|exclude|excluding)\b|不研究|不涉及|无关|并非|未研究",
-                cited_task,
-            )
-        )
+        # Scope the denial to the topic itself. For example, "without labels"
+        # negates a method condition, not the subject "anomaly detection".
+        denied = _has_scoped_topic_negation(cited_task)
         # At least two meaningful terms and most of the specified direction.
         aligned = (
             not denied

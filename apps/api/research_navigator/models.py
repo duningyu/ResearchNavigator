@@ -119,6 +119,31 @@ class Paper(TimestampMixin, Base):
     keywords_json: Mapped[str] = mapped_column(Text, default="[]", nullable=False)
 
 
+class AbstractTranslationCache(TimestampMixin, Base):
+    __tablename__ = "abstract_translation_cache"
+    __table_args__ = (
+        UniqueConstraint(
+            "paper_id",
+            "source_abstract_sha256",
+            "target_language",
+            "pipeline_version",
+            name="uq_abstract_translation_cache_key",
+        ),
+        Index("ix_abstract_translation_cache_paper", "paper_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    paper_id: Mapped[int] = mapped_column(
+        ForeignKey("papers.id", ondelete="CASCADE"), nullable=False
+    )
+    source_abstract_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    target_language: Mapped[str] = mapped_column(String(40), nullable=False)
+    pipeline_version: Mapped[str] = mapped_column(String(80), nullable=False)
+    translated_abstract: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="ready")
+    fallback_reason: Mapped[str | None] = mapped_column(String(120), nullable=True)
+
+
 class PaperSource(TimestampMixin, Base):
     __tablename__ = "paper_sources"
     __table_args__ = (
@@ -425,6 +450,7 @@ class ResearchPlan(TimestampMixin, Base):
     gap_id: Mapped[int | None] = mapped_column(
         ForeignKey("gap_candidates.id", ondelete="SET NULL"), nullable=True, index=True
     )
+    plan_kind: Mapped[str] = mapped_column(String(40), nullable=False, default="confirmed_gap")
     title: Mapped[str] = mapped_column(String(240), nullable=False)
     objective: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(String(40), default="active", nullable=False)

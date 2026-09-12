@@ -39,11 +39,11 @@ const analysis = {
   reproduction_assessment: { score: 0, evidence_coverage: 0 },
 };
 
-function renderPage(translation: unknown) {
-  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+function renderPage(translation: unknown, postTranslation?: unknown) {
+  vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
     const url = String(input);
     if (url.endsWith('/papers/7')) return json(paper);
-    if (url.includes('/papers/7/abstract-translation')) return json(translation);
+    if (url.includes('/papers/7/abstract-translation')) return json(postTranslation && init?.method === 'POST' ? postTranslation : translation);
     if (url.endsWith('/papers/7/analysis')) return json(analysis);
     if (url.endsWith('/papers/7/documents')) return json([]);
     if (url.endsWith('/papers/7/authors')) return json([]);
@@ -97,8 +97,22 @@ describe('abstract translation boundary', () => {
     });
 
     expect(await screen.findByText(paper.abstract)).toBeInTheDocument();
-    expect(screen.getByText('中文译文暂未生成，以下为论文原始摘要。')).toBeInTheDocument();
+    expect(screen.getByText('译文不完整，以下为论文原始摘要。')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '查看中文' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '重新翻译' })).toBeInTheDocument();
     expect(screen.queryByText(/translated_abstract|translation_status|fallback_reason/)).not.toBeInTheDocument();
+  });
+
+  it('generates a translation through the explicit action and then shows Chinese', async () => {
+    renderPage({
+      paper_id: 7, original_abstract: paper.abstract, translated_abstract: null, status: 'unavailable',
+      source_abstract_sha256: 'source-hash', target_language: 'zh-CN', pipeline_version: 'stub-v1', fallback_reason: 'translation_not_generated',
+    }, {
+      paper_id: 7, original_abstract: paper.abstract, translated_abstract: '生成的中文摘要', status: 'ready',
+      source_abstract_sha256: 'source-hash', target_language: 'zh-CN', pipeline_version: 'stub-v1', fallback_reason: null,
+    });
+    expect(await screen.findByRole('button', { name: '生成中文译文' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '生成中文译文' }));
+    expect(await screen.findByText('生成的中文摘要')).toBeInTheDocument();
   });
 });

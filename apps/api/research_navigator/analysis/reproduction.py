@@ -22,8 +22,8 @@ class ReproductionDimension(BaseModel):
 
 
 class ReproductionAssessment(BaseModel):
-    score: float
-    evidence_coverage: float
+    score: float | None
+    evidence_coverage: float | None
     dimensions: list[ReproductionDimension]
     estimated_difficulty: str
     estimated_compute_level: str
@@ -39,12 +39,22 @@ def calculate_reproduction_assessment(
     available_weight = sum(item.weight for item in known)
     total_weight = sum(item.weight for item in dimensions)
     weighted = sum(item.weight * float(item.score or 0.0) for item in known)
-    score = 0.0 if available_weight == 0 else 100 * weighted / available_weight
+    score = None if available_weight == 0 else 100 * weighted / available_weight
     blocking = [item.name for item in dimensions if item.status == "missing"]
-    difficulty = "high" if blocking or score < 45 else "medium" if score < 75 else "low"
+    difficulty = (
+        "high"
+        if blocking or (score is not None and score < 45)
+        else "medium"
+        if score is not None and score < 75
+        else "unknown"
+    )
     return ReproductionAssessment(
-        score=round(score, 2),
-        evidence_coverage=round(available_weight / total_weight, 4) if total_weight else 0.0,
+        score=None if score is None else round(score, 2),
+        evidence_coverage=(
+            round(available_weight / total_weight, 4)
+            if available_weight and total_weight
+            else None
+        ),
         dimensions=dimensions,
         estimated_difficulty=difficulty,
         estimated_compute_level="unknown",

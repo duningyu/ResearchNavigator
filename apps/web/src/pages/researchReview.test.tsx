@@ -27,7 +27,7 @@ it('links gap evidence to its exact paper, project and cited excerpt', async () 
 it('offers editable steps, skip and reopen without treating self-report as evidence', async () => {
   const fetcher = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify([{ id: 1, title: '核验计划', objective: '核对原文',
     items: [{ id: 2, title: '原文对照', category: 'baseline', status: 'done', description: '输出对照表' }] }]), { headers: { 'Content-Type': 'application/json' } }));
-  render(<PlansPage />);
+  render(<MemoryRouter><PlansPage /></MemoryRouter>);
   fireEvent.click(await screen.findByRole('button', { name: '重新打开' }));
   await waitFor(() => expect(fetcher.mock.calls.some(([, init]) => init?.method === 'PUT' && JSON.parse(String(init.body)).status === 'pending')).toBe(true));
   expect(screen.getByText('完成状态由你记录，不代表研究结论已验证。')).toBeInTheDocument();
@@ -50,7 +50,7 @@ it('keeps legacy gaps review-only and hides executor/JSON state', async () => {
 it('prevents completing stale plans and explains why', async () => {
   vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify([{ id: 1, title: '核验计划', objective: '核对原文',
     review_required: true, review_reason: '候选需要复核', items: [{ id: 2, title: '对照', category: 'baseline', status: 'pending', description: '复核相同条件' }] }]), { headers: { 'Content-Type': 'application/json' } }));
-  render(<PlansPage />);
+  render(<MemoryRouter><PlansPage /></MemoryRouter>);
   expect(await screen.findByText('候选需要复核')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /完\s*成/ })).toBeDisabled();
   expect(screen.getByText('建立对照')).toBeInTheDocument();
@@ -71,7 +71,7 @@ it('renders an evidence decision instead of exposing a 409 gap error', async () 
   fireEvent.click(screen.getByRole('button', { name: '构建证据矩阵并解释候选空白' }));
 
   await waitFor(() => expect(screen.getByText('当前证据还不足以确认一个可靠的研究空白。')).toBeInTheDocument());
-  expect(screen.getByText('补充更直接相关的论文')).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: '补充更多论文' })).toBeInTheDocument();
   expect(screen.queryByText('候选研究空白流程失败')).not.toBeInTheDocument();
   expect(screen.queryByText('INSUFFICIENT_RELEVANT_CITED_EVIDENCE')).not.toBeInTheDocument();
   expect(screen.queryByText('409')).not.toBeInTheDocument();

@@ -5,6 +5,7 @@ import { apiRequest } from '../api/client';
 import type { LibraryItem, PaperSet } from '../types/domain';
 
 type LibraryPayload = { items: LibraryItem[] };
+const readingStatusLabels: Record<string, string> = { unread: '未读', queued: '待读', reading: '阅读中', read: '已读', reproducing: '复现中', archived: '已归档' };
 
 export function LibraryPage() {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ export function LibraryPage() {
       <Checkbox.Group value={selectedIds} onChange={(ids) => setSelectedIds(ids as number[])} style={{ width: '100%' }}>
         <List dataSource={favorites} locale={{ emptyText: '尚未收藏论文' }} renderItem={(row) => <List.Item className="library-paper-row">
           <div className="library-paper-select"><Checkbox value={row.paper.id} /></div>
-          <List.Item.Meta title={<Space wrap><Link to={`/papers/${row.paper.id}`}>{row.paper.title}</Link><Tag>{row.paper.publication_year ?? '年份未知'}</Tag>{row.tags.map((tag) => <Tag key={tag.id} color="blue">{tag.name}</Tag>)}</Space>} description={<Space orientation="vertical" style={{ width: '100%' }}>
-            <Space wrap><Select size="small" value={row.reading_status?.status ?? 'unread'} style={{ width: 130 }} options={['unread','queued','reading','read','reproducing','archived'].map((value) => ({ value }))} onChange={(status) => void setReading(row.paper.id, status, row.reading_status?.progress ?? 0)} /><Progress size="small" style={{ width: 160 }} percent={row.reading_status?.progress ?? 0} /><Button size="small" danger onClick={() => void removeFavorite(row.paper.id)}>取消收藏</Button></Space>
+          <List.Item.Meta className="library-paper-main" title={<Space wrap><Link to={`/papers/${row.paper.id}`}>{row.paper.title}</Link><Tag>{row.paper.publication_year ?? '年份未知'}</Tag>{row.tags.map((tag) => <Tag key={tag.id} color="blue">{tag.name}</Tag>)}</Space>} description={<Space orientation="vertical" style={{ width: '100%' }}>
+            <Space wrap><Select aria-label="阅读状态" size="small" value={row.reading_status?.status ?? 'unread'} style={{ width: 130 }} options={Object.entries(readingStatusLabels).map(([value, label]) => ({ value, label }))} onChange={(status) => void setReading(row.paper.id, status, row.reading_status?.progress ?? 0)} /><Progress size="small" style={{ width: 160 }} percent={row.reading_status?.progress ?? 0} /><Button size="small" danger onClick={() => void removeFavorite(row.paper.id)}>取消收藏</Button></Space>
             {row.notes.map((note) => <Typography.Text key={note.id} type="secondary">笔记：{note.content}</Typography.Text>)}
             <Space.Compact style={{ maxWidth: 560, width: '100%' }}><Input size="small" placeholder="新增研究笔记" value={noteDrafts[row.paper.id] ?? ''} onChange={(event) => setNoteDrafts((current) => ({ ...current, [row.paper.id]: event.target.value }))} /><Button size="small" onClick={() => void addNote(row.paper.id)}>保存</Button></Space.Compact>
             <Space.Compact style={{ maxWidth: 420, width: '100%' }}><Input size="small" placeholder="新增标签" value={tagDrafts[row.paper.id] ?? ''} onChange={(event) => setTagDrafts((current) => ({ ...current, [row.paper.id]: event.target.value }))} /><Button size="small" onClick={() => void addTag(row.paper.id)}>添加</Button></Space.Compact>

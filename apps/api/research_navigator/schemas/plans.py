@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
 
 class PlanCreate(BaseModel):
+    plan_kind: Literal["reading", "exploration", "confirmed_gap", "manual"] | None = None
     project_id: int
-    gap_id: int
+    gap_id: int | None = None
     title: str | None = Field(default=None, max_length=240)
+    objective: str | None = Field(default=None, min_length=1, max_length=4000)
 
 
 class PlanItemUpdate(BaseModel):
@@ -39,6 +42,7 @@ class ResearchPlanRead(BaseModel):
     id: int
     project_id: int
     gap_id: int | None
+    plan_kind: Literal["reading", "exploration", "confirmed_gap", "manual"]
     title: str
     objective: str
     status: str

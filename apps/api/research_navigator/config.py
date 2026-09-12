@@ -86,6 +86,8 @@ class Settings:
     r2_endpoint: str | None = None
     r2_region: str = "auto"
     upload_signing_secret: str | None = field(default=None, repr=False)
+    translation_provider: str = "none"
+    translation_model: str | None = None
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -166,6 +168,8 @@ class Settings:
             r2_endpoint=os.getenv("R2_ENDPOINT") or None,
             r2_region=os.getenv("R2_REGION", "auto"),
             upload_signing_secret=os.getenv("RN_UPLOAD_SIGNING_SECRET") or None,
+            translation_provider=os.getenv("RN_TRANSLATION_PROVIDER", "none").strip().lower(),
+            translation_model=os.getenv("RN_TRANSLATION_MODEL") or None,
         )
 
         if instance.storage_backend == "r2":

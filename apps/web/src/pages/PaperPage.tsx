@@ -72,6 +72,7 @@ export function PaperPage() {
   const [params, setParams] = useSearchParams();
   const [paper, setPaper] = useState<Paper | null>(null);
   const [abstractTranslation, setAbstractTranslation] = useState<AbstractTranslation | null>(null);
+  const [translationBusy, setTranslationBusy] = useState(false);
   const [readingRecommendation, setReadingRecommendation] = useState<ReadingRecommendation | null>(null);
   const [abstractView, setAbstractView] = useState<'translated' | 'original'>('translated');
   const [analysis, setAnalysis] = useState<PaperAnalysis | null>(null);
@@ -117,6 +118,21 @@ export function PaperPage() {
       if (isCurrentScope()) setAbstractTranslation(value);
     } catch {
       if (isCurrentScope()) setAbstractTranslation(null);
+    }
+  };
+  const requestTranslation = async () => {
+    if (!paper?.abstract && !abstractTranslation?.original_abstract) return;
+    setTranslationBusy(true); setError(null);
+    try {
+      const value = await apiRequest<AbstractTranslation>(`/papers/${paperId}/abstract-translation?target_language=zh-CN`, { method: 'POST' });
+      if (isCurrentScope()) {
+        setAbstractTranslation(value);
+        if (value.status === 'ready') setAbstractView('translated');
+      }
+    } catch (reason) {
+      if (isCurrentScope()) setError(reason instanceof Error ? reason.message : String(reason));
+    } finally {
+      if (isCurrentScope()) setTranslationBusy(false);
     }
   };
   const loadReadingRecommendation = async () => {
@@ -366,10 +382,13 @@ export function PaperPage() {
               ? abstractTranslation.translated_abstract
               : abstractTranslation?.original_abstract ?? paper.abstract ?? '当前来源未提供摘要。'}
             {abstractTranslation?.status === 'ready' && abstractView === 'translated' && <Typography.Text type="secondary">中文译文由当前原始摘要生成，专名、数字和单位按原文保留。</Typography.Text>}
-            {abstractTranslation && abstractTranslation.status !== 'ready' && abstractTranslation.original_abstract && <Alert type="warning" showIcon message="中文译文暂未生成，以下为论文原始摘要。" />}
+            {abstractTranslation?.status === 'unavailable' && <Alert type="warning" showIcon message="中文译文暂未生成，以下为论文原始摘要。" />}
+            {abstractTranslation?.status === 'failed' && <Alert type="warning" showIcon message="本次翻译未完成，以下为论文原始摘要。" />}
+            {abstractTranslation?.status === 'partial' && <Alert type="warning" showIcon message="译文不完整，以下为论文原始摘要。" />}
             <Space wrap>
               <Button size="small" disabled={!abstractTranslation?.original_abstract && !paper.abstract} onClick={() => setAbstractView('original')}>查看原文</Button>
               <Button size="small" disabled={abstractTranslation?.status !== 'ready'} onClick={() => setAbstractView('translated')}>查看中文</Button>
+              {(paper.abstract || abstractTranslation?.original_abstract) && abstractTranslation?.status !== 'ready' && <Button size="small" loading={translationBusy} onClick={() => void requestTranslation()}>{translationBusy ? '正在翻译摘要…' : abstractTranslation?.status === 'failed' || abstractTranslation?.status === 'partial' ? '重新翻译' : '生成中文译文'}</Button>}
             </Space>
           </Space>
         </Descriptions.Item>

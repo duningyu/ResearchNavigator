@@ -8,8 +8,8 @@ export function ScoreBreakdown({ title, score }: { title: string; score: ScoreRe
   return (
     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       <Typography.Title level={5} style={{ margin: 0 }}>{title}</Typography.Title>
-      <Progress percent={clampScore(score.score)} status="active" />
-      <Tag>证据覆盖 {coverage}%</Tag>
+      {score.score === null ? <Tag color="default">暂无法判断</Tag> : <Progress percent={clampScore(score.score)} status="active" />}
+      <Tag>证据覆盖 {coverage === null ? '尚未评估' : `${coverage}%`}</Tag>
       {score.components && (
         <Descriptions size="small" bordered column={1}>
           {Object.entries(score.components).filter(([key]) => Object.hasOwn(scoreLabels, key)).map(([key, value]) => (

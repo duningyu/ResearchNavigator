@@ -116,8 +116,8 @@ export type Project = {
 };
 
 export type ScoreResult = {
-  score: number;
-  evidence_coverage: number;
+  score: number | null;
+  evidence_coverage: number | null;
   components?: Record<string, number | null>;
   reasons?: Record<string, string>;
   blocking_reasons?: string[];

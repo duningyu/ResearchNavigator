@@ -42,7 +42,7 @@ from research_navigator.routes import (
 )
 from research_navigator.scholarly.coordinator import ArxivRequestCoordinator
 from research_navigator.scholarly.service import build_search_service
-from research_navigator.translation.service import TranslationService
+from research_navigator.translation.service import TranslationService, build_translation_adapter
 
 
 def create_app(
@@ -75,7 +75,9 @@ def create_app(
         )
         app.state.pdf_fetcher = build_pdf_fetcher(resolved)
         app.state.analysis_provider = build_analysis_provider(resolved)
-        app.state.translation_service = TranslationService()
+        app.state.translation_service = TranslationService(
+            build_translation_adapter(resolved),
+        )
         runtime_config_path = resolved.data_dir / "admin_runtime_config.json"
         runtime_config = {"source_health_timeout_seconds": 5.0, "worker_max_attempts_default": 3}
         if runtime_config_path.exists():

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal, cast
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -49,6 +51,9 @@ def _plan_read(session: Session, row: ResearchPlan) -> ResearchPlanRead:
         id=row.id,
         project_id=row.project_id,
         gap_id=row.gap_id,
+        plan_kind=cast(
+            "Literal['reading', 'exploration', 'confirmed_gap', 'manual']", row.plan_kind
+        ),
         title=row.title,
         objective=row.objective,
         status=row.status,
@@ -58,6 +63,10 @@ def _plan_read(session: Session, row: ResearchPlan) -> ResearchPlanRead:
 
 
 def _review_reason(session: Session, row: ResearchPlan) -> str | None:
+    if row.gap_id is None:
+        if row.plan_kind == "reading":
+            return None
+        return "此计划未关联已确认研究缺口，仅可回顾，需人工核验后再推进。"
     gap = session.get(GapCandidate, row.gap_id) if row.gap_id else None
     if (
         gap is None
@@ -103,34 +112,44 @@ def create_plan(
     )
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
-    gap = session.scalar(
-        select(GapCandidate).where(
-            GapCandidate.id == payload.gap_id,
-            GapCandidate.user_id == user.id,
-            GapCandidate.project_id == project.id,
+    plan_kind = payload.plan_kind or ("confirmed_gap" if payload.gap_id is not None else "reading")
+    gap = None
+    if plan_kind == "confirmed_gap" and payload.gap_id is None:
+        raise HTTPException(status_code=422, detail="confirmed_gap plans require a gap candidate")
+    if payload.gap_id is not None:
+        gap = session.scalar(
+            select(GapCandidate).where(
+                GapCandidate.id == payload.gap_id,
+                GapCandidate.user_id == user.id,
+                GapCandidate.project_id == project.id,
+            )
         )
-    )
-    if gap is None:
-        raise HTTPException(status_code=404, detail="Gap candidate not found")
-    try:
-        assert_current_gap(session, gap)
-    except StaleGapEvidence as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
-    if gap.status != "confirmed":
-        raise HTTPException(status_code=409, detail="Only a human-confirmed gap can create a plan")
+        if gap is None:
+            raise HTTPException(status_code=404, detail="Gap candidate not found")
+        try:
+            assert_current_gap(session, gap)
+        except StaleGapEvidence as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if gap.status != "confirmed":
+            raise HTTPException(
+                status_code=409, detail="Only a human-confirmed gap can create a plan"
+            )
     if replay is not None:
         return _plan_read(session, _owned_plan(session, user_id=user.id, plan_id=int(replay["id"])))
     row = ResearchPlan(
         user_id=user.id,
         project_id=project.id,
-        gap_id=gap.id,
-        title=payload.title or f"研究计划：{gap.suggested_research_question[:160]}",
-        objective=gap.suggested_research_question,
+        gap_id=gap.id if gap else None,
+        plan_kind=plan_kind,
+        title=payload.title
+        or (f"研究计划：{gap.suggested_research_question[:160]}" if gap else "阅读与验证计划"),
+        objective=payload.objective
+        or (gap.suggested_research_question if gap else "先阅读材料并记录待核验问题。"),
         status="active",
     )
     session.add(row)
     session.flush()
-    for item in default_plan_items(gap.claim):
+    for item in default_plan_items(gap.claim if gap else row.objective):
         session.add(PlanItem(plan_id=row.id, user_id=user.id, **item))
     session.commit()
     session.refresh(row)
