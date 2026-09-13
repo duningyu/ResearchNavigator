@@ -25,6 +25,15 @@ import { ReadingRecommendationCard } from '../components/ReadingRecommendationCa
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
 import { evidenceText, gapState } from '../lib/researchDisplay';
 import { locateCitation } from '../lib/citationNavigation';
+
+function translationFailureMessage(reason?: string | null): string {
+  if (reason === 'provider_timeout') return '翻译服务响应超时，请稍后重试。';
+  if (reason === 'provider_http_429') return '翻译服务当前较忙，请稍后重试。';
+  if (reason === 'provider_http_401' || reason === 'provider_http_403') return '翻译服务认证配置异常，请联系维护者。';
+  if (reason === 'provider_request_error') return '暂时无法连接翻译服务，请稍后重试。';
+  if (reason?.startsWith('provider_http_')) return '翻译服务返回异常，请稍后重试。';
+  return '翻译服务暂时不可用，请稍后重试。';
+}
 import type {
   AuthorCard,
   AbstractTranslation,
@@ -383,7 +392,7 @@ export function PaperPage() {
               : abstractTranslation?.original_abstract ?? paper.abstract ?? '当前来源未提供摘要。'}
             {abstractTranslation?.status === 'ready' && abstractView === 'translated' && <Typography.Text type="secondary">中文译文由当前原始摘要生成，专名、数字和单位按原文保留。</Typography.Text>}
             {abstractTranslation?.status === 'unavailable' && <Alert type="warning" showIcon message="中文译文暂未生成，以下为论文原始摘要。" />}
-            {abstractTranslation?.status === 'failed' && <Alert type="warning" showIcon message="本次翻译未完成，以下为论文原始摘要。" />}
+            {abstractTranslation?.status === 'failed' && <Alert type="warning" showIcon title={translationFailureMessage(abstractTranslation.fallback_reason)} description="以下仍显示论文原始摘要，不影响继续阅读。" />}
             {abstractTranslation?.status === 'partial' && <Alert type="warning" showIcon message="译文不完整，以下为论文原始摘要。" />}
             <Space wrap>
               <Button size="small" disabled={!abstractTranslation?.original_abstract && !paper.abstract} onClick={() => setAbstractView('original')}>查看原文</Button>

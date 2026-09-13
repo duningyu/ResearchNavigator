@@ -103,6 +103,32 @@ describe('abstract translation boundary', () => {
     expect(screen.queryByText(/translated_abstract|translation_status|fallback_reason/)).not.toBeInTheDocument();
   });
 
+  it.each([
+    ['provider_timeout', '翻译服务响应超时，请稍后重试。'],
+    ['provider_http_429', '翻译服务当前较忙，请稍后重试。'],
+    ['provider_http_401', '翻译服务认证配置异常，请联系维护者。'],
+    ['provider_http_403', '翻译服务认证配置异常，请联系维护者。'],
+    ['provider_request_error', '暂时无法连接翻译服务，请稍后重试。'],
+    ['translation_unavailable', '翻译服务暂时不可用，请稍后重试。'],
+    ['provider_http_500', '翻译服务返回异常，请稍后重试。'],
+  ])('maps failed translation reason %s to a safe user message', async (fallbackReason, message) => {
+    renderPage({
+      paper_id: 7,
+      original_abstract: paper.abstract,
+      translated_abstract: null,
+      status: 'failed',
+      source_abstract_sha256: 'source-hash',
+      target_language: 'zh-CN',
+      pipeline_version: 'stub-v1',
+      fallback_reason: fallbackReason,
+    });
+
+    expect(await screen.findByText(message)).toBeInTheDocument();
+    expect(screen.getByText('以下仍显示论文原始摘要，不影响继续阅读。')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '重新翻译' })).toBeInTheDocument();
+    expect(screen.queryByText(fallbackReason)).not.toBeInTheDocument();
+  });
+
   it('generates a translation through the explicit action and then shows Chinese', async () => {
     renderPage({
       paper_id: 7, original_abstract: paper.abstract, translated_abstract: null, status: 'unavailable',
