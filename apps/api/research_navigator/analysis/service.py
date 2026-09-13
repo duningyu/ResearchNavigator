@@ -132,6 +132,46 @@ def _stable_hash(value: object) -> str:
     ).hexdigest()
 
 
+def _cached_analysis(
+    session: Session,
+    *,
+    user_id: int,
+    paper_id: int,
+    project_id: int | None,
+    evidence_hash: str,
+    analysis_version: str,
+    provider: str,
+    model_name: str | None,
+    prompt_version: str | None,
+) -> PaperAnalysisRecord | None:
+    rows = session.scalars(
+        select(PaperAnalysisRecord)
+        .where(
+            PaperAnalysisRecord.user_id == user_id,
+            PaperAnalysisRecord.paper_id == paper_id,
+            PaperAnalysisRecord.project_id == project_id,
+            PaperAnalysisRecord.input_evidence_hash == evidence_hash,
+            PaperAnalysisRecord.analysis_version == analysis_version,
+            PaperAnalysisRecord.provider == provider,
+            PaperAnalysisRecord.model_name == model_name,
+            PaperAnalysisRecord.prompt_version == prompt_version,
+        )
+        .order_by(PaperAnalysisRecord.created_at.desc(), PaperAnalysisRecord.id.desc())
+    )
+    for row in rows:
+        try:
+            direction = json.loads(row.direction_similarity_json)
+            reproduction = json.loads(row.reproduction_assessment_json)
+        except (TypeError, json.JSONDecodeError):
+            continue
+        if (
+            direction.get("score_version") == "direction-match-v3"
+            and reproduction.get("score_version") == "reproduction-v3"
+        ):
+            return row
+    return None
+
+
 def run_paper_analysis(
     session: Session,
     *,
@@ -176,20 +216,34 @@ def run_paper_analysis(
         }
         for span in evidence_spans
     ]
-    provider_name = "deterministic"
-    model_name: str | None = None
+    input_evidence_hash = _stable_hash(input_contract)
+    provider_name = (
+        str(getattr(provider_override, "provider_name", type(provider_override).__name__))
+        if provider_override is not None
+        else "deterministic"
+    )
+    model_name = getattr(provider_override, "model_name", None) if provider_override else None
+    effective_prompt_version = prompt_version if provider_override is not None else None
+    cached = _cached_analysis(
+        session,
+        user_id=user_id,
+        paper_id=paper.id,
+        project_id=project_id,
+        evidence_hash=input_evidence_hash,
+        analysis_version=deterministic.analysis_version,
+        provider=provider_name,
+        model_name=model_name,
+        prompt_version=effective_prompt_version,
+    )
+    if cached is not None:
+        cached.__dict__["_analysis_cache_hit"] = True
+        return cached
     analysis_mode = "deterministic"
     fallback_reason: str | None = None
     analysis_run_id: str | None = None
     provider_output_hash: str | None = None
-    input_evidence_hash = _stable_hash(input_contract)
-
     if provider_override is not None:
         analysis_run_id = uuid.uuid4().hex
-        provider_name = str(
-            getattr(provider_override, "provider_name", type(provider_override).__name__)
-        )
-        model_name = getattr(provider_override, "model_name", None)
         run = AgentRun(
             run_id=analysis_run_id,
             user_id=user_id,
@@ -305,7 +359,7 @@ def run_paper_analysis(
         analysis_mode=analysis_mode,
         provider=provider_name,
         model_name=model_name,
-        prompt_version=prompt_version if provider_override is not None else None,
+        prompt_version=effective_prompt_version,
         input_evidence_hash=input_evidence_hash,
         provider_output_hash=provider_output_hash,
         fallback_reason=fallback_reason,
@@ -316,4 +370,5 @@ def run_paper_analysis(
         session.refresh(row)
     else:
         session.flush()
+    row.__dict__["_analysis_cache_hit"] = False
     return row

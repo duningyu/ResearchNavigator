@@ -12,6 +12,16 @@ from research_navigator.main import create_app
 from research_navigator.models import AgentRun, PaperAnalysisRecord, ToolCall
 
 
+class CountingProvider(DeterministicMockProvider):
+    def __init__(self, payload: dict[str, object]) -> None:
+        super().__init__(payload)
+        self.calls = 0
+
+    def complete(self, *, snippets: list[dict[str, object]]) -> dict[str, object]:
+        self.calls += 1
+        return super().complete(snippets=snippets)
+
+
 def settings_for(tmp_path: Path) -> Settings:
     data_dir = tmp_path / "state"
     return Settings(
@@ -133,3 +143,28 @@ def test_default_analysis_remains_deterministic(tmp_path: Path) -> None:
         response = client.post(f"/api/papers/{pid}/analyze", headers=headers, json={})
         assert response.status_code == 200
         assert response.json()["analysis_mode"] == "deterministic"
+
+
+def test_analysis_reuses_matching_material_and_provider_contract(tmp_path: Path) -> None:
+    app = create_app(settings_for(tmp_path))
+    provider = CountingProvider(
+        {
+            "research_background": "Industrial monitoring requires reliable alerts.",
+            "citations": [{"field": "research_background", "chunk_id": None}],
+        }
+    )
+    with TestClient(app) as client:
+        headers = register(client)
+        pid = paper_id(client, headers)
+        app.state.analysis_provider = provider
+        first = client.post(
+            f"/api/papers/{pid}/analyze", headers=headers, json={"provider": "configured"}
+        )
+        second = client.post(
+            f"/api/papers/{pid}/analyze", headers=headers, json={"provider": "configured"}
+        )
+        assert first.status_code == 200, first.text
+        assert second.status_code == 200, second.text
+        assert first.json()["id"] == second.json()["id"]
+        assert provider.calls == 1
+        assert second.json()["analysis_cache_hit"] is True

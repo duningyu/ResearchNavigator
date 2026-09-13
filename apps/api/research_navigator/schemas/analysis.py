@@ -31,6 +31,7 @@ class PaperAnalysisResponse(BaseModel):
     model_name: str | None = None
     prompt_version: str | None = None
     fallback_reason: str | None = None
+    analysis_cache_hit: bool = False
 
 
 class EvidenceAcquireRequest(BaseModel):

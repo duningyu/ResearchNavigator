@@ -52,6 +52,7 @@ def _response(row: PaperAnalysisRecord) -> PaperAnalysisResponse:
         model_name=row.model_name,
         prompt_version=row.prompt_version,
         fallback_reason=row.fallback_reason,
+        analysis_cache_hit=bool(getattr(row, "_analysis_cache_hit", False)),
     )
 
 
