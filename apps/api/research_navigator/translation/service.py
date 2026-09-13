@@ -230,6 +230,14 @@ class TranslationService:
                 status, reason, translated = "partial", "partial_translation", None
             else:
                 status, reason, translated = "ready", None, text.strip()
+        except httpx.TimeoutException:
+            status, reason, translated = "failed", "provider_timeout", None
+        except httpx.HTTPStatusError as exc:
+            status = "failed"
+            reason = f"provider_http_{exc.response.status_code}"
+            translated = None
+        except httpx.RequestError:
+            status, reason, translated = "failed", "provider_request_error", None
         except Exception:
             status, reason, translated = "failed", "translation_unavailable", None
         result = self._result(

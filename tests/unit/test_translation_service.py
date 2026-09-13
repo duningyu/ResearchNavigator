@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import httpx
+
 from research_navigator.translation.service import TranslationService
 
 
@@ -95,3 +97,54 @@ def test_missing_original_abstract_is_unavailable() -> None:
 
     assert result.status == "unavailable"
     assert result.translated_abstract is None
+
+
+@dataclass
+class ExceptionAdapter:
+    error: Exception
+
+    def translate(self, text: str, target_language: str):
+        raise self.error
+
+
+def _http_status_error(status_code: int) -> httpx.HTTPStatusError:
+    request = httpx.Request("POST", "https://provider.invalid")
+    response = httpx.Response(status_code, request=request)
+    return httpx.HTTPStatusError("provider error", request=request, response=response)
+
+
+def test_translation_timeout_is_classified_without_exposing_provider_details() -> None:
+    result = TranslationService(
+        adapter=ExceptionAdapter(httpx.TimeoutException("provider timed out"))
+    ).translate(1, "Original abstract.", "zh-CN")
+
+    assert result.status == "failed"
+    assert result.fallback_reason == "provider_timeout"
+
+
+def test_translation_http_status_errors_are_classified_by_status_code() -> None:
+    for status_code in (401, 429):
+        result = TranslationService(
+            adapter=ExceptionAdapter(_http_status_error(status_code))
+        ).translate(1, "Original abstract.", "zh-CN")
+
+        assert result.status == "failed"
+        assert result.fallback_reason == f"provider_http_{status_code}"
+
+
+def test_translation_request_error_is_classified_without_provider_details() -> None:
+    result = TranslationService(
+        adapter=ExceptionAdapter(httpx.ConnectError("provider unavailable"))
+    ).translate(1, "Original abstract.", "zh-CN")
+
+    assert result.status == "failed"
+    assert result.fallback_reason == "provider_request_error"
+
+
+def test_unexpected_translation_error_remains_unavailable() -> None:
+    result = TranslationService(
+        adapter=ExceptionAdapter(RuntimeError("unexpected provider failure"))
+    ).translate(1, "Original abstract.", "zh-CN")
+
+    assert result.status == "failed"
+    assert result.fallback_reason == "translation_unavailable"
