@@ -197,8 +197,8 @@ def build_runtime_storage(settings: RuntimeStorageSettings) -> DurableStorage:
             local_root=settings.upload_dir,
         )
 
-    import boto3  # type: ignore[import-untyped]
-    from botocore.config import Config  # type: ignore[import-untyped]
+    import boto3
+    from botocore.config import Config
 
     account_id = settings.r2_account_id
     endpoint = settings.r2_endpoint or (
