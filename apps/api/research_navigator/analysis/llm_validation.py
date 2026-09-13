@@ -10,6 +10,7 @@ from research_navigator.analysis.structured import (
     CitationLocator,
     EvidenceLevel,
     PaperAnalysisOutput,
+    QuickInterpretationZh,
 )
 
 _FULLTEXT_ONLY_FIELDS = {
@@ -90,6 +91,16 @@ def validate_and_merge_llm_analysis(
         cited.setdefault(field, []).append(locator)
 
     updates: dict[str, object] = {}
+    raw_quick = llm_output.get("quick_interpretation_zh")
+    if isinstance(raw_quick, Mapping):
+        quick_values = {
+            key: value
+            for key, value in raw_quick.items()
+            if key in {"overview", "background", "problem", "task", "method", "result"}
+            and (value is None or isinstance(value, str))
+        }
+        if quick_values and any(value for value in quick_values.values()):
+            updates["quick_interpretation_zh"] = QuickInterpretationZh.model_validate(quick_values)
     field_states = dict(deterministic.field_states)
     field_citations = {key: list(value) for key, value in deterministic.field_citations.items()}
     missing = set(deterministic.missing_fields)

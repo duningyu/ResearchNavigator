@@ -27,6 +27,7 @@ const analysis = {
   analysis: {
     evidence_level: 'abstract_only',
     executive_summary: '快速解读：该方法在受限数据条件下报告了一个结果。',
+    quick_interpretation_zh: { overview: '该方法在受限数据条件下报告了一个结果。' },
     summary: '内部摘要字段不应直接展示。',
     task_definition: { input: null, output: null, setting: null },
     theoretical_contribution: [], method_innovation: [], research_route: [], inputs: [], outputs: [],
@@ -75,7 +76,7 @@ describe('abstract translation boundary', () => {
     });
 
     expect(await screen.findByText('在有限数据条件下，该模型达到 95% 的准确率，并使用 ImageNet。')).toBeInTheDocument();
-    expect(screen.getByText('快速解读：该方法在受限数据条件下报告了一个结果。')).toBeInTheDocument();
+    expect(screen.getByText('该方法在受限数据条件下报告了一个结果。')).toBeInTheDocument();
     expect(screen.queryByText('内部摘要字段不应直接展示。')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '查看原文' }));

@@ -20,6 +20,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { apiRequest } from '../api/client';
 import { shouldUseDirectUpload, uploadPdfDirect } from '../api/uploads';
 import { EvidenceWorkflowPanel } from '../components/EvidenceWorkflowPanel';
+import { QuickInterpretationPanel } from '../components/QuickInterpretationPanel';
 import { PaperIntelligenceCards } from '../components/PaperIntelligenceCards';
 import { ReadingRecommendationCard } from '../components/ReadingRecommendationCard';
 import { ScoreBreakdown } from '../components/ScoreBreakdown';
@@ -341,7 +342,6 @@ export function PaperPage() {
   };
 
   const evidenceFields = useMemo(() => analysis ? [
-    ['executive_summary', '快速解读', analysis.analysis.executive_summary],
     ['research_background', '研究背景', analysis.analysis.research_background],
     ['research_problem', '研究问题', analysis.analysis.research_problem],
     ['task_definition', '任务定义（输入、输出与研究条件）', analysis.analysis.task_definition],
@@ -451,6 +451,13 @@ export function PaperPage() {
 
     {analysis ? <>
       <Alert type={analysis.analysis.evidence_level === 'abstract_only' ? 'warning' : 'info'} showIcon title={`现有材料：${gapState(analysis.analysis.evidence_level)}`} description={analysis.fallback_reason ? '模型分析不可用，当前保留规则抽取的材料，不代表模型推理已完成。' : '每项结论以可定位的原文为准，缺失信息不作推断。'} />
+      <Space wrap>
+        <Tag>当前材料：{gapState(analysis.analysis.evidence_level)}</Tag>
+        <Tag>分析版本：{analysis.analysis_version}</Tag>
+        <Tag>{analysis.analysis_cache_hit ? '缓存命中' : '本次新分析'}</Tag>
+        {analysis.created_at && <Typography.Text type="secondary">最近分析：{new Date(analysis.created_at).toLocaleString('zh-CN')}</Typography.Text>}
+      </Space>
+      <QuickInterpretationPanel analysis={analysis.analysis} />
       <Card title="执行证据级分析 · 详细解释">
         <Alert type="info" showIcon description="证据缺失会降低分析置信度，但与当前课题的初步匹配判断可基于标题、摘要和研究方向进行；复现准备情况只依据已经核验的信息。" />
         <Descriptions bordered column={1}>

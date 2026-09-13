@@ -9,7 +9,7 @@ from typing import Any
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from research_navigator.analysis.structured import EvidenceLevel
+from research_navigator.analysis.structured import EvidenceLevel, QuickInterpretationZh
 from research_navigator.config import Settings
 
 ABSTENTION = "未在当前可访问文本中找到。"
@@ -79,6 +79,7 @@ class ProviderExtraction(BaseModel):
     summary: str | None = None
     methods: list[str] = Field(default_factory=list)
     citations: list[ProviderCitation] = Field(default_factory=list)
+    quick_interpretation_zh: QuickInterpretationZh | None = None
 
 
 def _evidence_prompt(
@@ -93,7 +94,9 @@ def _evidence_prompt(
             "prompt_version": prompt_version,
             "instruction": (
                 "Extract only claims supported by the supplied evidence. Cite every non-empty "
-                "field with its chunk_id and abstain by leaving unsupported fields empty."
+                "field with its chunk_id and abstain by leaving unsupported fields empty. "
+                "You may also provide concise Chinese display-only paraphrases in "
+                "quick_interpretation_zh; these are not evidence and must not add facts."
             ),
             "evidence": evidence,
         },

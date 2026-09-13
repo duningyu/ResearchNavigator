@@ -47,11 +47,23 @@ class TaskDefinition(BaseModel):
     setting: str | None = None
 
 
+class QuickInterpretationZh(BaseModel):
+    """Display-only Chinese paraphrases; never used as scientific evidence."""
+
+    overview: str | None = None
+    background: str | None = None
+    problem: str | None = None
+    task: str | None = None
+    method: str | None = None
+    result: str | None = None
+
+
 class PaperAnalysisOutput(BaseModel):
     paper_id: int
     evidence_level: EvidenceLevel
     analysis_version: str = "structured-v3"
     citation_granularity: Literal["sentence_to_chunk"] = "sentence_to_chunk"
+    quick_interpretation_zh: QuickInterpretationZh | None = None
 
     # Rich evidence-grade fields used by the ResearchNavigator UI.
     executive_summary: str

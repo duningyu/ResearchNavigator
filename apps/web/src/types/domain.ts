@@ -136,6 +136,14 @@ export type PaperAnalysisBody = {
   evidence_level: string;
   executive_summary: string;
   summary: string;
+  quick_interpretation_zh?: {
+    overview?: string | null;
+    background?: string | null;
+    problem?: string | null;
+    task?: string | null;
+    method?: string | null;
+    result?: string | null;
+  } | null;
   research_background?: string | null;
   research_problem?: string | null;
   task_definition: TaskDefinition;
@@ -177,6 +185,7 @@ export type PaperAnalysis = {
   model_name?: string | null;
   prompt_version?: string | null;
   fallback_reason?: string | null;
+  analysis_cache_hit?: boolean;
 };
 
 export type EvidenceAcquisition = {

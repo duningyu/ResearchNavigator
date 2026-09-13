@@ -97,3 +97,24 @@ def test_abstract_level_cannot_claim_fulltext_only_protocol() -> None:
             ],
             evidence_level="abstract_only",
         )
+
+
+def test_quick_interpretation_is_display_only_and_keeps_evidence_boundary() -> None:
+    merged = validate_and_merge_llm_analysis(
+        deterministic(),
+        {
+            "quick_interpretation_zh": {
+                "overview": "这项研究关注未来告警排序。",
+                "method": "作者使用时间卷积网络。",
+            },
+            "citations": [],
+        },
+        accessible_snippets=[
+            {"chunk_id": None, "text": "Evidence", "citation": citation_payload()}
+        ],
+        evidence_level="abstract_only",
+    )
+    assert merged.quick_interpretation_zh is not None
+    assert merged.quick_interpretation_zh.overview == "这项研究关注未来告警排序。"
+    assert merged.citations == deterministic().citations
+    assert merged.field_citations == deterministic().field_citations
