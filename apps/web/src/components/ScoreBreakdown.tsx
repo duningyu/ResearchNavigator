@@ -13,6 +13,14 @@ export function ScoreBreakdown({ title, score }: { title: string; score: ScoreRe
       {score.score === null ? <Tag color="default">{reproduction ? '信息不足，暂不评分' : '暂无法判断'}</Tag> : <Progress percent={clampScore(score.score)} status="active" />}
       {reproduction && score.score !== null && <Typography.Text>当前准备度 {clampScore(score.score)}%</Typography.Text>}
       <Tag>证据覆盖 {coverage === null ? '尚未评估' : `${coverage}%`}</Tag>
+      {!reproduction && score.score !== null && coverage !== null && coverage < 80 && (
+        <Alert
+          type="info"
+          showIcon
+          message="初步判断"
+          description="当前结果基于研究课题、论文元数据/摘要和已获得证据；补充正文后结论可能变化。"
+        />
+      )}
       {reproduction && score.dimensions && <Descriptions size="small" bordered column={1}>
         {score.dimensions.map((dimension) => <Descriptions.Item key={dimension.name} label={scoreLabels[dimension.name] ?? dimension.name}>
           <Tag>{dimensionStatus[dimension.status] ?? '尚未核验'}</Tag> {dimension.evidence}

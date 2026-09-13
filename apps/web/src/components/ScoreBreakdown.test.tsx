@@ -19,4 +19,14 @@ describe('ScoreBreakdown', () => {
     expect(screen.getByText('先检查作者代码仓库和数据集入口。')).toBeInTheDocument();
     expect(screen.queryByText('0%')).not.toBeInTheDocument();
   });
+
+  it('explains that low-coverage direction matching is preliminary', () => {
+    render(<ScoreBreakdown title="与当前研究课题的匹配度" score={{
+      score: 0.72,
+      evidence_coverage: 0.6,
+      components: { semantic_similarity: 0.72 },
+    }} />);
+    expect(screen.getByText('初步判断')).toBeInTheDocument();
+    expect(screen.getByText('当前结果基于研究课题、论文元数据/摘要和已获得证据；补充正文后结论可能变化。')).toBeInTheDocument();
+  });
 });
