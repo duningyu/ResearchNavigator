@@ -11,12 +11,14 @@ import re
 import time
 from dataclasses import dataclass
 
+from research_navigator.config import Settings
+from research_navigator.data_plane.storage import DurableStorage, R2Storage
 from research_navigator.documents.security import DocumentSecurityError, _safe_filename
 
 PRESIGN_TTL_SECONDS = 300
 MAX_PRESIGN_TTL_SECONDS = 600
-FIXED_R2_BUCKET = "researchnav-documents"
 _SHA256 = re.compile(r"^[0-9a-fA-F]{64}$")
+_BUCKET_MISMATCH_MESSAGE = "Upload storage target does not match current environment"
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,6 +27,26 @@ class PresignMetadata:
     content_type: str
     size_bytes: int
     sha256: str
+
+
+def validated_r2_bucket(*, settings: Settings, storage: DurableStorage) -> str:
+    if (
+        settings.storage_backend != "r2"
+        or not settings.r2_bucket
+        or not isinstance(storage, R2Storage)
+        or storage.bucket != settings.r2_bucket
+    ):
+        raise DocumentSecurityError(_BUCKET_MISMATCH_MESSAGE)
+    return settings.r2_bucket
+
+
+def validate_completion_token_bucket(
+    *, settings: Settings, storage: DurableStorage, claim_bucket: object
+) -> str:
+    bucket = validated_r2_bucket(settings=settings, storage=storage)
+    if not isinstance(claim_bucket, str) or claim_bucket != bucket:
+        raise DocumentSecurityError(_BUCKET_MISMATCH_MESSAGE)
+    return bucket
 
 
 def validate_presign_metadata(

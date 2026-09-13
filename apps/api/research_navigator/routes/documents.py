@@ -41,11 +41,12 @@ from research_navigator.schemas.documents import (
     RetrievalResponse,
 )
 from research_navigator.uploads import (
-    FIXED_R2_BUCKET,
     MAX_PRESIGN_TTL_SECONDS,
     PRESIGN_TTL_SECONDS,
     issue_completion_token,
+    validate_completion_token_bucket,
     validate_presign_metadata,
+    validated_r2_bucket,
     verify_completion_token,
 )
 
@@ -236,8 +237,10 @@ def presign_upload(
     if settings.storage_backend != "r2":
         raise HTTPException(status_code=409, detail="Presigned uploads require R2 storage")
     storage = request.app.state.storage
-    if not isinstance(storage, R2Storage) or storage.bucket != FIXED_R2_BUCKET:
-        raise HTTPException(status_code=503, detail="Configured R2 bucket is not approved")
+    try:
+        bucket = validated_r2_bucket(settings=settings, storage=storage)
+    except DocumentSecurityError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     _paper_or_404(session, paper_id)
     try:
         metadata = validate_presign_metadata(
@@ -267,6 +270,7 @@ def presign_upload(
         claims={
             "user_id": user.id,
             "paper_id": paper_id,
+            "bucket": bucket,
             "key": key,
             "filename": metadata.filename,
             "content_type": metadata.content_type,
@@ -299,6 +303,10 @@ def finalize_upload(
     storage = request.app.state.storage
     if settings.storage_backend != "r2" or not isinstance(storage, R2Storage):
         raise HTTPException(status_code=409, detail="Finalization requires R2 storage")
+    try:
+        validated_r2_bucket(settings=settings, storage=storage)
+    except DocumentSecurityError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     if not settings.upload_signing_secret:
         raise HTTPException(status_code=503, detail="Upload signing is not configured")
     try:
@@ -307,6 +315,17 @@ def finalize_upload(
         )
     except DocumentSecurityError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    try:
+        validate_completion_token_bucket(
+            settings=settings,
+            storage=storage,
+            claim_bucket=claims.get("bucket"),
+        )
+    except DocumentSecurityError as exc:
+        raise HTTPException(
+            status_code=403,
+            detail="Upload completion token is not valid for this environment",
+        ) from exc
     try:
         claim_user_id = _claim_int(claims, "user_id")
         claim_paper_id = _claim_int(claims, "paper_id")

@@ -1,18 +1,21 @@
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from research_navigator.config import Settings
+from research_navigator.data_plane.storage import R2Storage
 from research_navigator.documents.security import DocumentSecurityError
 from research_navigator.main import create_app
 from research_navigator.uploads import (
-    FIXED_R2_BUCKET,
     MAX_PRESIGN_TTL_SECONDS,
     PRESIGN_TTL_SECONDS,
     issue_completion_token,
     redact_presigned_url,
+    validate_completion_token_bucket,
     validate_presign_metadata,
+    validated_r2_bucket,
     verify_completion_token,
 )
 
@@ -148,4 +151,66 @@ def test_presigned_url_redaction_drops_query_credentials() -> None:
 def test_security_contract_constants_are_bounded_and_bucket_fixed() -> None:
     assert PRESIGN_TTL_SECONDS == 300
     assert PRESIGN_TTL_SECONDS <= MAX_PRESIGN_TTL_SECONDS <= 600
-    assert FIXED_R2_BUCKET == "researchnav-documents"
+
+
+class PresignTransport:
+    def put_object(self, *, bucket: str, key: str, data: bytes) -> None: ...
+
+    def get_object(self, *, bucket: str, key: str) -> bytes:
+        return b""
+
+    def delete_object(self, *, bucket: str, key: str) -> None: ...
+
+
+def r2_settings(tmp_path: Path, bucket: str | None) -> Settings:
+    return replace(
+        settings_for(tmp_path),
+        storage_backend="r2",
+        r2_bucket=bucket,
+    )
+
+
+def test_preview_bucket_is_accepted_when_settings_and_storage_match(tmp_path: Path) -> None:
+    settings = r2_settings(tmp_path, "researchnavigator-r3-preview")
+    storage = R2Storage(bucket="researchnavigator-r3-preview", transport=PresignTransport())
+
+    assert validated_r2_bucket(settings=settings, storage=storage) == "researchnavigator-r3-preview"
+
+
+def test_settings_and_storage_bucket_mismatch_is_rejected_safely(tmp_path: Path) -> None:
+    settings = r2_settings(tmp_path, "researchnavigator-r3-preview")
+    storage = R2Storage(bucket="researchnav-documents", transport=PresignTransport())
+
+    with pytest.raises(DocumentSecurityError, match="does not match current environment"):
+        validated_r2_bucket(settings=settings, storage=storage)
+
+
+def test_completion_token_contains_configured_bucket_claim() -> None:
+    token = issue_completion_token(
+        secret="unit-test-secret",
+        claims={"user_id": 7, "paper_id": 8, "bucket": "researchnavigator-r3-preview"},
+        now=100,
+    )
+
+    claims = verify_completion_token(secret="unit-test-secret", token=token, now=100)
+    assert claims["bucket"] == "researchnavigator-r3-preview"
+
+
+def test_completion_token_from_other_bucket_is_rejected(tmp_path: Path) -> None:
+    settings = r2_settings(tmp_path, "researchnav-documents")
+    storage = R2Storage(bucket="researchnav-documents", transport=PresignTransport())
+
+    with pytest.raises(DocumentSecurityError, match="does not match current environment"):
+        validate_completion_token_bucket(
+            settings=settings,
+            storage=storage,
+            claim_bucket="researchnavigator-r3-preview",
+        )
+
+
+def test_missing_configured_bucket_fails_closed(tmp_path: Path) -> None:
+    settings = r2_settings(tmp_path, None)
+    storage = R2Storage(bucket="researchnav-documents", transport=PresignTransport())
+
+    with pytest.raises(DocumentSecurityError, match="does not match current environment"):
+        validated_r2_bucket(settings=settings, storage=storage)
