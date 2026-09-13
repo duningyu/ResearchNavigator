@@ -7,6 +7,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict
 
 CachePolicy = Literal["shared_durable", "not_cacheable", "reject"]
+OpenEvidenceSource = Literal["arxiv", "openalex"]
 OpenEvidenceOutcome = Literal[
     "cache_hit_fulltext",
     "fulltext_acquired",
@@ -21,12 +22,21 @@ OpenEvidenceOutcome = Literal[
 class OpenMaterialCandidate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    source: Literal["arxiv", "openalex"]
+    source: OpenEvidenceSource
     source_record_id: str
     pdf_url: str
     license: str | None = None
     rights_basis: str
     cache_policy: CachePolicy
+
+
+def as_open_evidence_source(source: str) -> OpenEvidenceSource | None:
+    """Narrow adapter-provided source names at the public-material boundary."""
+    if source == "arxiv":
+        return "arxiv"
+    if source == "openalex":
+        return "openalex"
+    return None
 
 
 def expected_arxiv_identity(arxiv_id: str | None) -> str | None:

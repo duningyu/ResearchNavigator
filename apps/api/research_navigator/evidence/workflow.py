@@ -23,6 +23,7 @@ from research_navigator.datasets.service import refresh_dataset_cards
 from research_navigator.documents.ingest import ingest_public_pdf
 from research_navigator.documents.open_evidence import (
     OpenMaterialCandidate,
+    as_open_evidence_source,
     classify_cache_policy,
 )
 from research_navigator.documents.remote_fetch import FetchedPDF
@@ -301,19 +302,22 @@ async def execute_evidence_workflow(
                     selected.source in {"arxiv", "openalex"}
                     and selected.access_decision == "auto_ingest"
                 ):
+                    selected_source = as_open_evidence_source(selected.source)
+                    if selected_source is None:
+                        raise ValueError("Unsupported open evidence source")
                     rights_basis = (
                         "arxiv_license"
-                        if selected.source == "arxiv"
+                        if selected_source == "arxiv"
                         else "openalex_explicit_license"
                     )
                     public_candidate = OpenMaterialCandidate(
-                        source=selected.source,
+                        source=selected_source,
                         source_record_id=selected.source_record_id,
                         pdf_url=selected.pdf_url or "",
                         license=selected.normalized_license or selected.license,
                         rights_basis=rights_basis,
                         cache_policy=classify_cache_policy(
-                            source=selected.source,
+                            source=selected_source,
                             license=selected.normalized_license or selected.license,
                             rights_basis=rights_basis,
                         ),

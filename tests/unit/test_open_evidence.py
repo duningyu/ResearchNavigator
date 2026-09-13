@@ -1,5 +1,6 @@
 from research_navigator.documents.open_evidence import (
     OpenMaterialCandidate,
+    as_open_evidence_source,
     classify_cache_policy,
     expected_arxiv_identity,
 )
@@ -31,3 +32,9 @@ def test_public_candidate_binds_to_exact_arxiv_identity() -> None:
     )
     assert expected_arxiv_identity("2401.12345v2") == candidate.source_record_id
     assert expected_arxiv_identity("2401.12345v1") != candidate.source_record_id
+
+
+def test_open_evidence_source_boundary_rejects_unknown_sources() -> None:
+    assert as_open_evidence_source("arxiv") == "arxiv"
+    assert as_open_evidence_source("openalex") == "openalex"
+    assert as_open_evidence_source("publisher") is None
