@@ -108,7 +108,11 @@ def test_abstract_analysis_is_structured_scored_and_persisted(tmp_path: Path) ->
         assert payload["analysis"]["evidence_level"] == "abstract_only"
         assert payload["analysis"]["future_work_explicit"] == []
         assert 0 <= payload["direction_similarity"]["score"] <= 100
-        assert 0 <= payload["reproduction_assessment"]["score"] <= 100
+        reproduction = payload["reproduction_assessment"]
+        assert reproduction["score"] is None
+        assert reproduction["evidence_coverage"] is not None
+        assert reproduction["dimensions"]
+        assert reproduction["recommended_first_step"]
 
         stored = client.get(f"/api/papers/{paper_id}/analysis", headers=headers)
         assert stored.status_code == 200

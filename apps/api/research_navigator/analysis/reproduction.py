@@ -29,7 +29,7 @@ class ReproductionAssessment(BaseModel):
     estimated_compute_level: str
     blocking_reasons: list[str]
     recommended_first_step: str
-    score_version: str = "reproduction-v2"
+    score_version: str = "reproduction-v3"
 
 
 def calculate_reproduction_assessment(
@@ -39,7 +39,12 @@ def calculate_reproduction_assessment(
     available_weight = sum(item.weight for item in known)
     total_weight = sum(item.weight for item in dimensions)
     weighted = sum(item.weight * float(item.score or 0.0) for item in known)
-    score = None if available_weight == 0 else 100 * weighted / available_weight
+    coverage = available_weight / total_weight if total_weight else 0.0
+    score = (
+        None
+        if available_weight == 0 or coverage < 0.40 or len(known) < 2
+        else 100 * weighted / available_weight
+    )
     blocking = [item.name for item in dimensions if item.status == "missing"]
     difficulty = (
         "high"
@@ -51,7 +56,7 @@ def calculate_reproduction_assessment(
     return ReproductionAssessment(
         score=None if score is None else round(score, 2),
         evidence_coverage=(
-            round(available_weight / total_weight, 4)
+            round(coverage, 4)
             if available_weight and total_weight
             else None
         ),
@@ -127,11 +132,11 @@ def assess_reproduction(paper: Paper, analysis: PaperAnalysisOutput) -> Reproduc
         ReproductionDimension(
             name="evaluation_protocol",
             weight=0.10,
-            status="partial" if analysis.metrics else "unknown",
-            score=0.5 if analysis.metrics else None,
-            evidence="发现评价指标，但尚未核验切分和实现协议。"
-            if analysis.metrics
-            else "未找到评价协议信息。",
+            status="partial" if analysis.experimental_protocol else "unknown",
+            score=0.5 if analysis.experimental_protocol else None,
+            evidence="已发现实验协议证据。"
+            if analysis.experimental_protocol
+            else "仅有评价指标不足以核验实验协议。",
         ),
         ReproductionDimension(
             name="license_clarity",

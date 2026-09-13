@@ -122,6 +122,8 @@ export type ScoreResult = {
   reasons?: Record<string, string>;
   blocking_reasons?: string[];
   estimated_difficulty?: string;
+  dimensions?: Array<{ name: string; status: string; score: number | null; evidence: string }>;
+  recommended_first_step?: string;
 };
 
 export type TaskDefinition = {

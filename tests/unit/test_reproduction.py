@@ -86,3 +86,51 @@ def test_all_unknown_reproduction_dimensions_are_not_zero() -> None:
     )
     assert assessment.score is None
     assert assessment.evidence_coverage is None
+
+
+def test_abstract_only_readiness_keeps_dimensions_but_hides_insufficient_score() -> None:
+    paper = Paper(id=1, title="A paper", abstract="We use Dataset X and a Transformer method.")
+    analysis = PaperAnalysisOutput(
+        paper_id=1,
+        evidence_level="abstract_only",
+        executive_summary="A summary",
+        summary="A summary",
+        methods=["Transformer"],
+        datasets=["Dataset X"],
+        metrics=["F1"],
+    )
+    result = assess_reproduction(paper, analysis)
+    assert result.score is None
+    assert result.evidence_coverage is not None and result.evidence_coverage > 0
+    assert len(result.dimensions) >= 2
+    assert result.score_version == "reproduction-v3"
+    assert result.recommended_first_step
+
+
+def test_metrics_without_protocol_are_unknown() -> None:
+    analysis = PaperAnalysisOutput(
+        paper_id=1,
+        evidence_level="abstract_only",
+        executive_summary="A summary",
+        summary="A summary",
+        metrics=["F1"],
+    )
+    result = assess_reproduction(Paper(id=1, title="A paper"), analysis)
+    protocol = next(item for item in result.dimensions if item.name == "evaluation_protocol")
+    assert protocol.status == "unknown"
+
+
+def test_sufficient_known_reproduction_dimensions_show_score() -> None:
+    dimensions = [
+        ReproductionDimension(
+            name="code", weight=0.3, status="verified", score=0.9, evidence="verified"
+        ),
+        ReproductionDimension(
+            name="method", weight=0.3, status="partial", score=0.6, evidence="partial"
+        ),
+        ReproductionDimension(
+            name="data", weight=0.4, status="unknown", score=None, evidence="unknown"
+        ),
+    ]
+    result = calculate_reproduction_assessment(dimensions)
+    assert result.score is not None

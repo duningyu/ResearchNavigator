@@ -145,6 +145,7 @@ def run_paper_analysis(
     paper = session.get(Paper, paper_id)
     if paper is None:
         raise LookupError("Paper not found")
+    project: ResearchProject | None = None
     if project_id is not None:
         project = session.scalar(
             select(ResearchProject).where(
@@ -289,7 +290,7 @@ def run_paper_analysis(
             run.finished_at = finished
             run.output_hash = _stable_hash(json.loads(run.output_json))
 
-    direction = assess_direction_match(profile, paper, analysis)
+    direction = assess_direction_match(profile, paper, analysis, project=project)
     reproduction = assess_reproduction(paper, analysis)
     row = PaperAnalysisRecord(
         user_id=user_id,

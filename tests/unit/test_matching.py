@@ -3,7 +3,68 @@ from research_navigator.analysis.matching import (
     missing_aware_weighted_score,
 )
 from research_navigator.analysis.structured import PaperAnalysisOutput
-from research_navigator.models import Paper, ResearchProfile
+from research_navigator.models import Paper, ResearchProfile, ResearchProject
+
+
+def _analysis(problem: str | None = None) -> PaperAnalysisOutput:
+    return PaperAnalysisOutput(
+        paper_id=1,
+        evidence_level="abstract_only",
+        summary="summary",
+        executive_summary="summary",
+        research_problem=problem,
+    )
+
+
+def test_abstract_only_project_match_is_available() -> None:
+    project = ResearchProject(
+        name="工业异常检测",
+        broad_direction="多变量时间序列异常检测",
+        description="面向未来窗口的异常预警",
+    )
+    paper = Paper(id=1, title="多变量时间序列异常检测方法", abstract="研究时间序列异常检测。")
+    result = assess_direction_match(
+        project=project, profile=None, paper=paper, analysis=_analysis("anomaly detection")
+    )
+    assert result.score is not None and result.score > 0
+    assert result.evidence_coverage is not None
+    assert result.score_version == "direction-match-v3"
+
+
+def test_chinese_direction_uses_bigrams() -> None:
+    project = ResearchProject(name="方向", broad_direction="多变量时间序列异常检测")
+    paper = Paper(id=1, title="基于深度模型的时间序列异常检测方法", abstract=None)
+    result = assess_direction_match(
+        project=project, profile=None, paper=paper, analysis=_analysis()
+    )
+    assert result.components["semantic_similarity"] is not None
+    assert result.components["semantic_similarity"] > 0
+
+
+def test_explicitly_unrelated_text_is_zero_not_unknown() -> None:
+    project = ResearchProject(name="方向", broad_direction="多变量时间序列异常检测")
+    paper = Paper(
+        id=1, title="Image generation for artistic typography", abstract="A study of fonts."
+    )
+    result = assess_direction_match(
+        project=project, profile=None, paper=paper, analysis=_analysis()
+    )
+    assert result.components["semantic_similarity"] == 0.0
+
+
+def test_selected_project_beats_unrelated_project() -> None:
+    paper = Paper(id=1, title="时间序列异常检测", abstract="检测序列中的异常。")
+    relevant = ResearchProject(name="时间序列", broad_direction="时间序列异常检测")
+    unrelated = ResearchProject(name="医学图像", broad_direction="医学图像分割")
+    relevant_result = assess_direction_match(
+        project=relevant, profile=None, paper=paper, analysis=_analysis()
+    )
+    unrelated_result = assess_direction_match(
+        project=unrelated, profile=None, paper=paper, analysis=_analysis()
+    )
+    assert relevant_result.score is not None
+    assert unrelated_result.score is not None
+    assert relevant_result.score > unrelated_result.score
 
 
 def test_compute_constraint_alone_cannot_make_an_unrelated_paper_relevant() -> None:
@@ -16,8 +77,8 @@ def test_compute_constraint_alone_cannot_make_an_unrelated_paper_relevant() -> N
     )
     result = assess_direction_match(profile, paper, analysis)
     assert result.components["resource_fit"] is None
-    assert result.score is None
-    assert result.evidence_coverage is None
+    assert result.score == 0.0
+    assert result.evidence_coverage == 0.6
 
 
 def test_missing_direction_profile_is_unknown_not_zero() -> None:

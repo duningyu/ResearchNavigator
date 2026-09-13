@@ -452,11 +452,12 @@ export function PaperPage() {
     {analysis ? <>
       <Alert type={analysis.analysis.evidence_level === 'abstract_only' ? 'warning' : 'info'} showIcon title={`现有材料：${gapState(analysis.analysis.evidence_level)}`} description={analysis.fallback_reason ? '模型分析不可用，当前保留规则抽取的材料，不代表模型推理已完成。' : '每项结论以可定位的原文为准，缺失信息不作推断。'} />
       <Card title="执行证据级分析 · 详细解释">
+        <Alert type="info" showIcon description="证据缺失会降低分析置信度，但与当前课题的初步匹配判断可基于标题、摘要和研究方向进行；复现准备情况只依据已经核验的信息。" />
         <Descriptions bordered column={1}>
           {evidenceFields.map(([field, label, value]) => <Descriptions.Item key={field} label={label}><EvidenceField body={analysis.analysis} field={field} label={label} value={value} /></Descriptions.Item>)}
         </Descriptions>
       </Card>
-      <Row gutter={[16, 16]}><Col xs={24} lg={12}><Card><ScoreBreakdown title="与当前研究方向的匹配度" score={analysis.direction_similarity} /></Card></Col><Col xs={24} lg={12}><Card><ScoreBreakdown title="复现推荐度" score={analysis.reproduction_assessment} /></Card></Col></Row>
+      <Row gutter={[16, 16]}><Col xs={24} lg={12}><Card><ScoreBreakdown title="与当前研究课题的匹配度" score={analysis.direction_similarity} /></Card></Col><Col xs={24} lg={12}><Card><ScoreBreakdown title="复现准备情况" score={analysis.reproduction_assessment} /></Card></Col></Row>
     </> : <Alert type="info" showIcon title="尚未执行证据级分析" description="点击“执行证据级分析”后，本页会直接显示方法创新、理论贡献、研究路线、数据集、实验协议、结果、Future Work、局限及字段级引用；状态和缺失提示始终显示在上方。" />}
   </Space>;
 }
