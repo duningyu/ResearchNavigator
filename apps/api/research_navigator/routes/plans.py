@@ -12,7 +12,7 @@ from research_navigator.deps import get_current_user, get_db
 from research_navigator.gaps.guard import StaleGapEvidence, assert_current_gap
 from research_navigator.idempotency import replay_snapshot, store_snapshot
 from research_navigator.models import GapCandidate, PlanItem, ResearchPlan, ResearchProject, User
-from research_navigator.plans.service import default_plan_items
+from research_navigator.plans.service import build_plan_items
 from research_navigator.schemas.plans import (
     PlanCreate,
     PlanItemRead,
@@ -149,7 +149,11 @@ def create_plan(
     )
     session.add(row)
     session.flush()
-    for item in default_plan_items(gap.claim if gap else row.objective):
+    for item in build_plan_items(
+        plan_kind=plan_kind,
+        objective=row.objective,
+        gap_claim=gap.claim if gap else None,
+    ):
         session.add(PlanItem(plan_id=row.id, user_id=user.id, **item))
     session.commit()
     session.refresh(row)

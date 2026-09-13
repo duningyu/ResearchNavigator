@@ -151,6 +151,14 @@ def test_reading_plan_can_be_created_without_a_gap(tmp_path: Path) -> None:
         assert payload["gap_id"] is None
         assert payload["review_required"] is False
         assert payload["objective"] == "先确认任务定义、适用条件和待核验问题。"
+        assert [item["category"] for item in payload["items"]] == [
+            "reading_question",
+            "reading_triage",
+            "core_reading",
+            "evidence_notes",
+            "direction_link",
+            "reading_output",
+        ]
 
 
 def test_exploration_plan_without_a_gap_is_executable(tmp_path: Path) -> None:
@@ -177,6 +185,14 @@ def test_exploration_plan_without_a_gap_is_executable(tmp_path: Path) -> None:
         assert payload["plan_kind"] == "exploration"
         assert payload["gap_id"] is None
         assert payload["review_required"] is False
+        assert [item["category"] for item in payload["items"]] == [
+            "exploration_question",
+            "support_search",
+            "counter_search",
+            "neighbor_comparison",
+            "minimal_validation",
+            "decision_gate",
+        ]
         updated = client.put(
             f"/api/plan-items/{payload['items'][0]['id']}", headers=headers, json={"status": "done"}
         )
@@ -203,7 +219,10 @@ def test_manual_plan_without_a_gap_is_not_review_locked(tmp_path: Path) -> None:
             "title": "手动计划", "objective": "记录一个手动行动。",
         })
         assert created.status_code == 201, created.text
-        assert created.json()["review_required"] is False
+        payload = created.json()
+        assert payload["review_required"] is False
+        assert len(payload["items"]) == 1
+        assert payload["items"][0]["category"] == "manual_action"
 
 
 def test_confirmed_gap_plan_without_a_gap_is_rejected(tmp_path: Path) -> None:
