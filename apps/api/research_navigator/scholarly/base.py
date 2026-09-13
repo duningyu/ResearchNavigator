@@ -43,6 +43,7 @@ class PaperRecord(BaseModel):
     publisher_url: str | None = None
     pdf_url: str | None = None
     open_access_status: str | None = None
+    license: str | None = None
     citation_count: int | None = None
     reference_count: int | None = None
     fields_of_study: list[str] = Field(default_factory=list)

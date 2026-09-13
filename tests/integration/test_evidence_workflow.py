@@ -254,7 +254,7 @@ def test_workflow_ingests_permitted_oa_pdf_and_finishes(tmp_path: Path) -> None:
         assert body["result"]["document_id"] > 0
         assert any(event["event_type"] == "pdf_parse_and_index" for event in body["events"])
         documents = client.get(f"/api/papers/{paper_id}/documents", headers=headers).json()
-        assert documents[0]["source_type"] == "open_access_repository"
+        assert documents[0]["source_type"] == "openalex_oa"
 
 
 def test_workflow_external_pdf_failure_preserves_abstract_and_reports_reason(

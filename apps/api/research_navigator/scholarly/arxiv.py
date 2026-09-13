@@ -104,6 +104,7 @@ class ArxivAdapter(ScholarlyAdapter):
                 ),
                 None,
             )
+            license_text = (entry.findtext(f"{_ARXIV}license") or "").strip() or None
             doi = entry.findtext(f"{_ARXIV}doi")
             raw_hash = hashlib.sha256(ET.tostring(entry)).hexdigest()
             abstract = " ".join((entry.findtext(f"{_ATOM}summary") or "").split()) or None
@@ -133,6 +134,7 @@ class ArxivAdapter(ScholarlyAdapter):
                     publisher_url=links.get("alternate") or entry_id,
                     pdf_url=pdf_url,
                     open_access_status="green",
+                    license=license_text,
                     keywords=[
                         category.attrib.get("term", "")
                         for category in entry.findall(f"{_ATOM}category")

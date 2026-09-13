@@ -81,6 +81,7 @@ class OpenAlexAdapter(ScholarlyAdapter):
             return None
         ids = item.get("ids") or {}
         source = (item.get("primary_location") or {}).get("source") or {}
+        primary = item.get("primary_location") or {}
         provenance = SourceProvenance(
             source=self.name,
             source_id=str(item.get("id") or identifier),
@@ -106,6 +107,7 @@ class OpenAlexAdapter(ScholarlyAdapter):
             publisher_url=(item.get("primary_location") or {}).get("landing_page_url"),
             pdf_url=(item.get("primary_location") or {}).get("pdf_url"),
             open_access_status=(item.get("open_access") or {}).get("oa_status"),
+            license=primary.get("license") or (item.get("open_access") or {}).get("license"),
             source_provenance=[provenance],
         )
 
@@ -193,6 +195,10 @@ class OpenAlexAdapter(ScholarlyAdapter):
                     publisher_url=primary.get("landing_page_url"),
                     pdf_url=primary.get("pdf_url"),
                     open_access_status=(item.get("open_access") or {}).get("oa_status"),
+                    license=(
+                        primary.get("license")
+                        or (item.get("open_access") or {}).get("license")
+                    ),
                     citation_count=item.get("cited_by_count"),
                     concepts=[
                         concept.get("display_name", "")

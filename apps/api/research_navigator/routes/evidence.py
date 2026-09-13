@@ -77,7 +77,8 @@ def _read(session: Session, row: Job) -> EvidenceWorkflowRead:
             valid = (
                 valid
                 and document is not None
-                and (document.user_id == row.user_id and document.paper_id == paper_id)
+                and document.paper_id == paper_id
+                and document.user_id in {row.user_id, None}
             )
         integrity = "verified" if valid else "missing_or_mismatched"
         if not valid:

@@ -20,6 +20,12 @@ from research_navigator.authors.service import refresh_author_cards
 from research_navigator.config import Settings
 from research_navigator.data_plane.storage import DurableStorage
 from research_navigator.datasets.service import refresh_dataset_cards
+from research_navigator.documents.ingest import ingest_public_pdf
+from research_navigator.documents.open_evidence import (
+    OpenMaterialCandidate,
+    classify_cache_policy,
+)
+from research_navigator.documents.remote_fetch import FetchedPDF
 from research_navigator.models import Job, JobEvent, Paper, ResearchProject
 from research_navigator.open_access.base import OpenAccessResolution, PaperIdentity
 from research_navigator.open_access.fetcher import PdfFetchResult
@@ -132,6 +138,8 @@ async def execute_evidence_workflow(
     enrichment_warnings: list[str] = []
     source_status: dict[str, object] = {}
     document_id: int | None = None
+    material_outcome = "no_open_fulltext"
+    cache_hit = False
     acquisition_run_id: str | None = None
     evidence_before = strongest_evidence(session, user_id=job.user_id, paper=paper)
 
@@ -248,7 +256,20 @@ async def execute_evidence_workflow(
             warnings.append(warning)
             add_event(session, job, "oa_location_discovery", {"error": warning})
 
-        selected = resolution.selected
+        selected = next(
+            (
+                candidate
+                for candidate in resolution.candidates
+                if candidate.source in {"arxiv", "openalex"}
+                and candidate.pdf_url is not None
+                and candidate.access_decision
+                in {"auto_ingest", "requires_user_confirmation"}
+                and (
+                    candidate.access_decision == "auto_ingest" or confirm_limited
+                )
+            ),
+            None,
+        )
         permitted = selected is not None and (
             selected.access_decision == "auto_ingest"
             or (
@@ -276,17 +297,61 @@ async def execute_evidence_workflow(
                         "response_hash": fetched.response_hash,
                     },
                 )
-                document = ingest_open_access_pdf(
-                    session,
-                    settings=settings,
-                    user_id=job.user_id,
-                    paper=current_paper,
-                    candidate=selected,
-                    fetched=fetched,
-                    acquisition_run_id=acquisition_run_id or f"job-{job.id}",
-                    user_confirmed_limited_license=confirm_limited,
-                    storage=storage,
-                )
+                if (
+                    selected.source in {"arxiv", "openalex"}
+                    and selected.access_decision == "auto_ingest"
+                ):
+                    rights_basis = (
+                        "arxiv_license"
+                        if selected.source == "arxiv"
+                        else "openalex_explicit_license"
+                    )
+                    public_candidate = OpenMaterialCandidate(
+                        source=selected.source,
+                        source_record_id=selected.source_record_id,
+                        pdf_url=selected.pdf_url or "",
+                        license=selected.normalized_license or selected.license,
+                        rights_basis=rights_basis,
+                        cache_policy=classify_cache_policy(
+                            source=selected.source,
+                            license=selected.normalized_license or selected.license,
+                            rights_basis=rights_basis,
+                        ),
+                    )
+                    public_fetched = FetchedPDF(
+                        data=fetched.data,
+                        content_type=fetched.content_type,
+                        final_url=fetched.final_url,
+                        sha256=fetched.sha256,
+                        response_hash=fetched.response_hash,
+                    )
+                    public_ingest = ingest_public_pdf(
+                        session,
+                        settings=settings,
+                        paper=current_paper,
+                        candidate=public_candidate,
+                        fetched=public_fetched,
+                        acquisition_run_id=acquisition_run_id or f"job-{job.id}",
+                        storage=storage,
+                    )
+                    document = public_ingest.document
+                    cache_hit = public_ingest.cache_hit
+                    material_outcome = (
+                        "cache_hit_fulltext" if cache_hit else "fulltext_acquired"
+                    )
+                else:
+                    document = ingest_open_access_pdf(
+                        session,
+                        settings=settings,
+                        user_id=job.user_id,
+                        paper=current_paper,
+                        candidate=selected,
+                        fetched=fetched,
+                        acquisition_run_id=acquisition_run_id or f"job-{job.id}",
+                        user_confirmed_limited_license=confirm_limited,
+                        storage=storage,
+                    )
+                    material_outcome = "fulltext_acquired"
                 session.commit()
                 document_id = document.id
                 add_event(
@@ -403,6 +468,8 @@ async def execute_evidence_workflow(
         "evidence_after": evidence_after,
         "analysis_id": analysis.id,
         "document_id": document_id,
+        "material_outcome": material_outcome,
+        "cache_hit": cache_hit,
         "acquisition_run_id": acquisition_run_id,
         "source_status": source_status,
         "oa_resolution": resolution.model_dump(mode="json"),
