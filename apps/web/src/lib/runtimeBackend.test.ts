@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { getApiBaseUrl, getRuntimeBackendOrigin, isAllowedOrigin } from './runtimeBackend';
+import { getApiBaseUrl, getRuntimeBackendOrigin, hasConfiguredBackend, isAllowedOrigin } from './runtimeBackend';
 
 afterEach(() => {
   window.history.replaceState({}, '', '/');
@@ -31,5 +31,11 @@ describe('runtime backend origin', () => {
     window.history.replaceState({}, '', '/?rn_backend=https%3A%2F%2Fevil.example');
     expect(getRuntimeBackendOrigin()).toBe(null);
     expect(getApiBaseUrl()).toBe('/api');
+    expect(hasConfiguredBackend()).toBe(false);
+  });
+
+  it('treats the same-origin API fallback as configured', () => {
+    expect(getApiBaseUrl()).toBe('/api');
+    expect(hasConfiguredBackend()).toBe(true);
   });
 });

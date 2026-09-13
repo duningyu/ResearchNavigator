@@ -45,7 +45,7 @@ export function getApiBaseUrl(): string {
 export function hasConfiguredBackend(): boolean {
   if (hasInvalidRuntimeBackendParam()) return false;
   if (getRuntimeBackendOrigin()) return true;
-  return Boolean(import.meta.env.VITE_API_BASE_URL?.trim());
+  return Boolean(import.meta.env.VITE_API_BASE_URL?.trim()) || getApiBaseUrl() === '/api';
 }
 
 export function clearRuntimeBackendOrigin(): void {

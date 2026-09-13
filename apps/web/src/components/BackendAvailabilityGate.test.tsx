@@ -26,14 +26,15 @@ afterEach(() => {
 
 
 describe('public demo backend availability gate', () => {
-  it('shows a polished not-configured state without requesting the naked public origin', () => {
-    const fetchMock = vi.fn();
+  it('uses the same-origin API when no runtime or build-time backend is configured', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(response(200));
     vi.stubGlobal('fetch', fetchMock);
     render(<BackendAvailabilityGate forcePublicDemo><div>workspace</div></BackendAvailabilityGate>);
 
-    expect(screen.getByTestId('backend-status')).toHaveTextContent('BACKEND_NOT_CONFIGURED');
-    expect(screen.getByText('ResearchNavigator 演示当前离线')).toBeVisible();
-    expect(fetchMock).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByText('workspace')).toBeVisible());
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith('/api/health', expect.anything());
+    expect(screen.queryByTestId('backend-status')).toBeNull();
   });
 
   it('classifies an unreachable stored tunnel as offline', async () => {
